@@ -1,7 +1,7 @@
 # Личный проект «YetiCave»
 
 * Студент: [Petras Blaževičius](https://up.htmlacademy.ru/php/12/user/147450).
-* Наставник: `Неизвестно`.
+* Наставник: `Олег Мифле`.
 
 ---
 
