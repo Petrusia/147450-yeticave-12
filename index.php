@@ -14,6 +14,7 @@ $layout = include_template(
     'layout.php',
     [
         'main' => $main,
+        'categories' => $categories,
         'is_auth' => $is_auth,
         'user_name' => $user_name,
         'title' => 'Главная стараница'
