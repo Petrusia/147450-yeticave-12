@@ -2,9 +2,9 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Главная</title>
-    <link href="css/normalize.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+    <title><?=h($title)?></title>
+    <link href="<?= WEB_ROOT . 'normalize.min.css' ?>" rel="stylesheet">
+    <link href="<?= WEB_ROOT . 'css/style.css' ?>" rel="stylesheet">
 </head>
 <body>
 <div class="page-wrapper">
@@ -27,7 +27,7 @@
                 <?php
                 if ($is_auth) : ?>
                     <div class="user-menu__logged">
-                        <p><?= $user_name; ?></p>
+                        <p><?= h($user_name) ?></p>
                         <a class="user-menu__bets" href="pages/my-bets.html">Мои ставки</a>
                         <a class="user-menu__logout" href="#">Выход</a>
                     </div>

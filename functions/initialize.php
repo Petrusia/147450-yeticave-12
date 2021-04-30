@@ -2,9 +2,9 @@
 $is_auth = rand(0, 1);
 $user_name = 'Petras'; // укажите здесь ваше имя
 
-
-define("PATH", dirname(__FILE__));
-define("PROJECT_PATH", dirname(PATH));
+//define("PATH", dirname(__FILE__));
+define("PROJECT_ROOT", dirname(__DIR__));
+define("WEB_ROOT",  substr($_SERVER['SCRIPT_NAME'], 0, 1));
 
 $categories = [
     "Доски и лыжи", "Крепления", "Ботинки", "Одежда", "Инструменты", "Разное"
@@ -49,6 +49,6 @@ $items =  [
     ]
 ];
 
-require_once(PROJECT_PATH . '/inc/header.php');
-require_once('helper-functions.php');
+require_once(PROJECT_ROOT . '/helpers.php');
+require_once('validation.php');
 
