@@ -1,12 +1,16 @@
 <?php
 
 require_once('functions/initialize.php');
+$db = getDb();
+$categories = getCategories($db);
+$lots = getLots($db);
+
 
 $main = include_template(
     'main.php',
     [
         'categories' => $categories,
-        'items' => $items,
+        'lots' => $lots,
     ]
 );
 
