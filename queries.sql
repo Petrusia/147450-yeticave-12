@@ -123,3 +123,9 @@ FROM lot
          INNER JOIN bet ON lot.id = bet.id
 WHERE lot.id = 1
 ORDER BY lot_start ASC;
+
+UPDATE lot
+SET lot_desc = 'Легкий маневренный сноуборд, готовый дать жару в любом парке,
+растопив снег мощным щелчкоми четкими дугами. Стекловолокно Bi-Ax,
+уложенное в двух направлениях. '
+WHERE id = '1';

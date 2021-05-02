@@ -13,8 +13,8 @@ function getDb(): mysqli
 
 function getCategories(mysqli $db): array
 {
-    $sqlQuerySelect = "SELECT * FROM category";
-    $sqlQueryResult = mysqli_query($db, $sqlQuerySelect);
+    $sqlQuery = "SELECT * FROM category";
+    $sqlQueryResult = mysqli_query($db, $sqlQuery);
 
     if (!$sqlQueryResult) {
         echo mysqli_error($db);
@@ -24,17 +24,29 @@ function getCategories(mysqli $db): array
 
 function getLots(mysqli $db): array
 {
-    $sqlQuerySelect = "SELECT *
+    $sqlQuery = "SELECT *
 
     FROM lot
         INNER JOIN category ON category_id = category.id
         INNER JOIN user ON author_id = user.id  ORDER BY lot_start DESC ";
 
 
-    $sqlQueryResult = mysqli_query($db, $sqlQuerySelect);
+    $sqlQueryResult = mysqli_query($db, $sqlQuery);
 
     if (!$sqlQueryResult) {
         echo mysqli_error($db);
     }
     return mysqli_fetch_all($sqlQueryResult, MYSQLI_ASSOC);
+}
+
+function getLot(mysqli $db, int $lotId): array
+{
+    $sql = "SELECT * FROM lot
+        INNER JOIN category ON category_id = category.id
+        WHERE lot.id = ?";
+    $stmt = mysqli_prepare($db, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $lotId);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_assoc($res);
 }

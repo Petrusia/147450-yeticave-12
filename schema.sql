@@ -24,7 +24,7 @@ CREATE TABLE lot
 (
     id          INT AUTO_INCREMENT PRIMARY KEY,
     lot_name    VARCHAR(255)           NOT NULL,
-    lot_desc    VARCHAR(255),
+    lot_desc    TEXT,
     lot_img     VARCHAR(255),
     lot_price   DECIMAL(10, 2) UNSIGNED NOT NULL,
     lot_start   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
