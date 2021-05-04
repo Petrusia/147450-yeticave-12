@@ -1,27 +1,28 @@
 <?php
+
 require_once('functions/initialize.php');
-$title = 'Главная страница';
 $db = getDb();
 $categories = getCategories($db);
-$lots = getLots($db);
 
 
 $main = include_template(
-    'main.php',
+    'add-template.php',
     [
         'categories' => $categories,
-        'lots' => $lots,
+        'lot' => $lot,
     ]
 );
 
+
 $layout = include_template(
-    'layout.php',
+    'lot-layout.php',
     [
         'main' => $main,
         'categories' => $categories,
         'is_auth' => $is_auth,
         'user_name' => $user_name,
-        'title' => $title
+        'title' => 'Добавление лота'
+
     ]
 );
 print ($layout);

@@ -15,7 +15,6 @@ if (!$lotId) {
 } else {
     $lot = getLot($db, $lotId);
 
-
     $main = include_template(
         'lot-template.php',
         [
@@ -24,6 +23,7 @@ if (!$lotId) {
         ]
     );
 }
+
 $layout = include_template(
     'lot-layout.php',
     [
@@ -31,7 +31,8 @@ $layout = include_template(
         'categories' => $categories,
         'is_auth' => $is_auth,
         'user_name' => $user_name,
-        'title' => 'Главная стараница'
+        'title' => $lot['lot_name']
+
     ]
 );
 print ($layout);

@@ -42,7 +42,7 @@ INSERT INTO lot
 SET lot_name    = '2014 Rossignol District Snowboard',
     lot_price   = 10999,
     lot_img     = 'img/lot-1.jpg',
-    lot_start   = '2021-05-01',
+    lot_create   = '2021-05-01',
     lot_end     = '2021-05-20',
     bet_step    = 1000,
     author_id   = 1,
@@ -51,7 +51,7 @@ INSERT INTO lot
 SET lot_name    = 'DC Ply Mens 2016/2017 Snowboard',
     lot_price   = 159999,
     lot_img     = 'img/lot-2.jpg',
-    lot_start   = '2021-05-01',
+    lot_create   = '2021-05-01',
     lot_end     = '2021-05-20',
     bet_step    = 1000,
     author_id   = 2,
@@ -60,7 +60,7 @@ INSERT INTO lot
 SET lot_name    = 'Крепления Union Contact Pro 2015 года размер L/XL',
     lot_price   = 8000,
     lot_img     = 'img/lot-3.jpg',
-    lot_start   = '2021-05-01',
+    lot_create   = '2021-05-01',
     lot_end     = '2021-05-20',
     bet_step    = 1120,
     author_id   = 3,
@@ -69,7 +69,7 @@ INSERT INTO lot
 SET lot_name    = 'Ботинки для сноуборда DC Mutiny Charocal',
     lot_price   = 10999,
     lot_img     = 'img/lot-4.jpg',
-    lot_start   = '2021-05-01',
+    lot_create   = '2021-05-01',
     lot_end     = '2021-05-20',
     bet_step    = 550,
     author_id   = 4,
@@ -78,7 +78,7 @@ INSERT INTO lot
 SET lot_name    = 'Куртка для сноуборда DC Mutiny Charocal',
     lot_price   = 7500,
     lot_img     = 'img/lot-5.jpg',
-    lot_start   = '2021-05-01',
+    lot_create  = '2021-05-01',
     lot_end     = '2021-05-20',
     bet_step    = 720,
     author_id   = 1,
@@ -87,7 +87,7 @@ INSERT INTO lot
 SET lot_name    = 'Маска Oakley Canopy',
     lot_price   = 5400,
     lot_img     = 'img/lot-6.jpg',
-    lot_start   = '2021-05-01',
+    lot_create   = '2021-05-01',
     lot_end     = '2021-05-20',
     bet_step    = 2020,
     author_id   = 2,
@@ -112,7 +112,7 @@ SELECT lot_name, lot_price, lot_img, bet_price, category_name
 FROM lot
          INNER JOIN bet ON lot.id = bet.id
          INNER JOIN category ON lot.category_id = category.id
-WHERE lot.lot_start < lot.lot_end;
+WHERE lot.lot_create< lot.lot_end;
 
 UPDATE lot
 SET lot_name = '2019 Rossignol District Snowboard'
@@ -122,7 +122,7 @@ SELECT lot.id, lot_name, bet.id, bet_start, bet_price
 FROM lot
          INNER JOIN bet ON lot.id = bet.id
 WHERE lot.id = 1
-ORDER BY lot_start ASC;
+ORDER BY lot_create ;
 
 UPDATE lot
 SET lot_desc = 'Легкий маневренный сноуборд, готовый дать жару в любом парке,

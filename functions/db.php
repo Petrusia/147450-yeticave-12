@@ -28,7 +28,7 @@ function getLots(mysqli $db): array
 
     FROM lot
         INNER JOIN category ON category_id = category.id
-        INNER JOIN user ON author_id = user.id  ORDER BY lot_start DESC ";
+        INNER JOIN user ON author_id = user.id  ORDER BY lot_create DESC ";
 
 
     $sqlQueryResult = mysqli_query($db, $sqlQuery);

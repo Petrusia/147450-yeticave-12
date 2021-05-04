@@ -36,8 +36,8 @@
                         </h3>
                         <div class="lot__state">
                             <div class="lot__rate">
-                                <span class="lot__amount"><?= h($lot['lot_price']) ?></span>
-                                <span class="lot__cost">цена<b class="rub">р</b></span>
+                                <span class="lot__amount">Стартовая цена</span>
+                                <span class="lot__cost"><?= get_price(h($lot['lot_price'])) ?></span>
                             </div>
                             <div class="lot__timer timer <?= ($data['hours'] <= 0) ? 'timer--finishing' : ''; ?>">
                                 <?= h($data['hours']) . ':' . h($data['minutes']) ?>

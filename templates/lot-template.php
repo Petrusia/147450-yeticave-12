@@ -1,5 +1,4 @@
-<?php
-$data = getDateDiff($lot['lot_end']) ?>
+
 <main>
     <nav class="nav">
         <ul class="nav__list container">
@@ -25,6 +24,7 @@ $data = getDateDiff($lot['lot_end']) ?>
             </div>
             <div class="lot-item__right">
                 <div class="lot-item__state">
+                    <?php $data = getDateDiff($lot['lot_end']) ?>
                     <div class="lot-item__timer timer<?= ($data['hours'] <= 0) ? 'timer--finishing' : ''; ?>">
                         <?= h($data['hours']) . ':' . h($data['minutes']) ?>
                     </div>

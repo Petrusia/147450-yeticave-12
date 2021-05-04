@@ -1,15 +1,16 @@
 <?php
+
 function getDateDiff(string $expire_at): array
 {
-    $dateDiff = strtotime($expire_at) - time();
-    $time = floor($dateDiff / 60);
-    $hours = floor($dateDiff / 3600);
-    $minutes = $time - $hours*60;
+    $period = strtotime($expire_at) - time();
+    $hours = floor($period / 3600);
+    $minutes = 60 - date('i');
+
+    $hours = str_pad($hours, 2, "0", STR_PAD_LEFT);
     $minutes = str_pad($minutes, 2, "0", STR_PAD_LEFT);
 
     return [
-        'hours' => $time,
+        'hours' => $hours,
         'minutes' => $minutes
     ];
-
 }
