@@ -9,7 +9,8 @@
                     <a href="all-lots.html"><?= h($category['category_name']) ?></a>
                 </li>
             <?php
-            endforeach; ?>
+            endforeach;
+            ?>
         </ul>
     </nav>
     <section class="lot-item container">
