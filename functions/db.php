@@ -83,3 +83,28 @@ function saveLot(mysqli $db, $lotInput)
     header("Location:  lot.php?lot_id={$id}");
     exit;
 }
+
+
+function getLotInput(): array
+{
+    return [
+        'lot-name' => $_POST['lot-name'],
+        'lot-category' => (int) $_POST['lot-category'],
+        'lot-message' => $_POST['lot-message'],
+        'lot-rate' => (float) $_POST['lot-rate'],
+        'lot-step' => (int) $_POST['lot-step'],
+        'lot-date' => $_POST['lot-date'],
+        'lot-img' => ''
+    ];
+}
+
+function getImage(): string
+{
+    $imageName = $_FILES['lot-img']['name'];
+    $tempImageName = $_FILES['lot-img']['tmp_name'];
+    $imageDir = PROJECT_ROOT . '/uploads/';
+    $imageUrl = '/uploads/' . $imageName;
+    move_uploaded_file($tempImageName, $imageDir . $imageName);
+    return $imageUrl;
+}
+

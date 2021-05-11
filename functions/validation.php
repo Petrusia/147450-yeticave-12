@@ -28,33 +28,33 @@ function getPrice(int $price): string
     }
 }
 
-function validateString(string $field, string $errMessage)
+function validateString(string $field, string $errMessage): string
 {
     $field = filter_input(INPUT_POST, $field, FILTER_SANITIZE_SPECIAL_CHARS);
     if ($field) {
-        return false;
+        return '';
     }
     return $errMessage;
 }
 
-function validateInt(string $field, string $errMessage)
+function validateInt(string $field, string $errMessage): string
 {
     $field = filter_input(INPUT_POST, $field,  FILTER_VALIDATE_INT);
     if ($field && $field > 0 ) {
-        return false;
+        return '';
     }
     return  $errMessage;
 }
 
-function validateFloat(string $field, string $errMessage)
+function validateFloat(string $field, string $errMessage): string
 {
     $field = filter_input(INPUT_POST, $field,  FILTER_VALIDATE_FLOAT);
     if ($field && $field > 0 ) {
-        return false;
+        return '';
     }
     return $errMessage;
 }
-function validateDate(string $field, string $errMessage)
+function validateDate(string $field, string $errMessage): string
 {
     $field = $_POST[$field];
     if (empty( $field)) {
@@ -68,7 +68,7 @@ function validateDate(string $field, string $errMessage)
     if ($period <= 86400) {
         return $errMessage;
     }
-    return false;
+    return '';
 }
 
 function validateImage($field, $errMessage)
@@ -80,7 +80,7 @@ function validateImage($field, $errMessage)
     if (!(in_array($mimetype, ['image/jpeg', 'image/png']))) {
         return $errMessage;
     }
-    return false;
+    return '';
 }
 
 function getErrors(): array
@@ -96,26 +96,4 @@ function getErrors(): array
             'lot-img' => validateImage('lot-img', 'Добавьте изображение лота')
         ];
         return array_filter($errors);
-}
-
-function getLotInput(): array
-{
-        return [
-            'lot-name' => $_POST['lot-name'],
-            'lot-category' => (int) $_POST['lot-category'],
-            'lot-message' => $_POST['lot-message'],
-            'lot-rate' => (float) $_POST['lot-rate'],
-            'lot-step' => (int) $_POST['lot-step'],
-            'lot-date' => $_POST['lot-date'],
-            'lot-img' => ''
-        ];
-}
-
-function getImage() {
-    $imageName = $_FILES['lot-img']['name'];
-    $tempImageName = $_FILES['lot-img']['tmp_name'];
-    $imageDir = PROJECT_ROOT . '/uploads/';
-    $imageUrl = '/uploads/' . $imageName;
-    move_uploaded_file($tempImageName, $imageDir . $imageName);
-    return $imageUrl;
 }
