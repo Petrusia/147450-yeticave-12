@@ -1,19 +1,32 @@
 <?php
-require_once('functions/initialize.php');
 
-$title = 'Главная страница';
+require_once('functions/initialize.php');
+$title = 'Добавление лота';
+
 $db = getDb();
 $categories = getCategories($db);
-$lots = getLots($db);
+$lotInput = [];
+$errors =[];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $lotInput = getLotInput();
+    $errors = getErrors();
+    if (empty($errors)) {
+        $lotInput['lot-img'] = getImage();
+        saveLot($db, $lotInput);
+    }
+
+}
 
 
 $main = include_template(
-    'main-template.php',
+    'add-template.php',
     [
         'categories' => $categories,
-        'lots' => $lots,
+        'errors' => $errors,
+        'lotInput' => $lotInput
     ]
 );
+
 
 $layout = include_template(
     'layout-template.php',
@@ -24,6 +37,7 @@ $layout = include_template(
         'isAuth' => $isAuth,
         'userName' => $userName,
         'title' => $title
+
     ]
 );
 print ($layout);
