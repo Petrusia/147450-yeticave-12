@@ -1,6 +1,6 @@
 <?php
 require_once('functions/initialize.php');
-$scriptName = $_SERVER['SCRIPT_NAME'];
+
 $title = 'Главная страница';
 $db = getDb();
 $categories = getCategories($db);
@@ -21,8 +21,8 @@ $layout = include_template(
         'scriptName' => $scriptName,
         'main' => $main,
         'categories' => $categories,
-        'is_auth' => $is_auth,
-        'user_name' => $user_name,
+        'isAuth' => $isAuth,
+        'userName' => $userName,
         'title' => $title
     ]
 );

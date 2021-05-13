@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @return mysqli
+ */
 function getDb(): mysqli
 {
     $dbConnection = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
@@ -11,6 +14,10 @@ function getDb(): mysqli
     return $dbConnection;
 }
 
+/**
+ * @param mysqli $db
+ * @return array
+ */
 function getCategories(mysqli $db): array
 {
     $sqlQuery = "SELECT * FROM category";
@@ -22,6 +29,10 @@ function getCategories(mysqli $db): array
     return mysqli_fetch_all($sqlQueryResult, MYSQLI_ASSOC);
 }
 
+/**
+ * @param mysqli $db
+ * @return array
+ */
 function getLots(mysqli $db): array
 {
     $sqlQuery = "SELECT  lot.id, lot_name, lot_desc, lot_img, lot_price, lot_create, lot_end, bet_step,
@@ -40,6 +51,11 @@ author_id, category_id
     return mysqli_fetch_all($sqlQueryResult, MYSQLI_ASSOC);
 }
 
+/**
+ * @param mysqli $db
+ * @param int $lotId
+ * @return array|false|string[]|null
+ */
 function getLot(mysqli $db, int $lotId)
 {
     $sql = "SELECT * FROM lot
@@ -52,6 +68,10 @@ function getLot(mysqli $db, int $lotId)
     return mysqli_fetch_assoc($res);
 }
 
+/**
+ * @param mysqli $db
+ * @param $lotInput
+ */
 function saveLot(mysqli $db, $lotInput)
 {
     $sqlQuery = "INSERT INTO lot (
@@ -85,6 +105,9 @@ function saveLot(mysqli $db, $lotInput)
 }
 
 
+/**
+ * @return array
+ */
 function getLotInput(): array
 {
     return [
@@ -98,6 +121,9 @@ function getLotInput(): array
     ];
 }
 
+/**
+ * @return string
+ */
 function getImage(): string
 {
     $imageName = $_FILES['lot-img']['name'];

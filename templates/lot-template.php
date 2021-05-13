@@ -6,7 +6,7 @@
             <?php
             foreach ($categories as $category) : ?>
                 <li class="nav__item">
-                    <a href="all-lots.html"><?= h($category['category_name']) ?></a>
+                    <a href="all-lots.html"><?= htmlspecialchars($category['category_name']) ?></a>
                 </li>
             <?php
             endforeach;
@@ -14,25 +14,25 @@
         </ul>
     </nav>
     <section class="lot-item container">
-        <h2><?= h($lot['lot_name']) ?></h2>
+        <h2><?= htmlspecialchars($lot['lot_name']) ?></h2>
         <div class="lot-item__content">
             <div class="lot-item__left">
                 <div class="lot-item__image">
-                    <img src="<?= h($lot['lot_img']) ?>" width="730" height="548" alt="Сноуборд">
+                    <img src="<?= htmlspecialchars($lot['lot_img']) ?>" width="730" height="548" alt="Сноуборд">
                 </div>
-                <p class="lot-item__category">Категория: <span><?= h($lot['category_name']) ?></span></p>
-                <p class="lot-item__description"><?= h($lot['lot_desc']) ?></p>
+                <p class="lot-item__category">Категория: <span><?= htmlspecialchars($lot['category_name']) ?></span></p>
+                <p class="lot-item__description"><?= htmlspecialchars($lot['lot_desc']) ?></p>
             </div>
             <div class="lot-item__right">
                 <div class="lot-item__state">
                     <?php $data = getDateDiff($lot['lot_end']) ?>
                     <div class="lot-item__timer timer<?= ($data['hours'] <= 0) ? 'timer--finishing' : ''; ?>">
-                        <?= h($data['hours']) . ':' . h($data['minutes']) ?>
+                        <?= htmlspecialchars($data['hours']) . ':' . htmlspecialchars($data['minutes']) ?>
                     </div>
                     <div class="lot-item__cost-state">
                         <div class="lot-item__rate">
                             <span class="lot-item__amount">Текущая цена</span>
-                            <span class="lot-item__cost"><?= h($lot['lot_price']) ?></span>
+                            <span class="lot-item__cost"><?= htmlspecialchars($lot['lot_price']) ?></span>
                         </div>
                         <div class="lot-item__min-cost">
                             Мин. ставка <span>12 000 р</span>

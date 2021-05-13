@@ -1,7 +1,7 @@
 <?php
 
 require_once('functions/initialize.php');
-$scriptName = $_SERVER['SCRIPT_NAME'];
+
 $db = getDb();
 $categories = getCategories($db);
 $lotId = filter_input(INPUT_GET, 'lot_id', FILTER_SANITIZE_NUMBER_INT);
@@ -32,8 +32,8 @@ $layout = include_template(
         'scriptName' => $scriptName,
         'main' => $main,
         'categories' => $categories,
-        'is_auth' => $is_auth,
-        'user_name' => $user_name,
+        'isAuth' => $isAuth,
+        'userName' => $userName,
         'title' => $lot['lot_name']
 
     ]

@@ -1,12 +1,16 @@
 <?php
-$is_auth = rand(0, 1);
-$user_name = 'Petras'; // укажите здесь ваше имя
+
+/** @var  $isAuth */
+$isAuth = rand(0, 1);
+/** @var  $userName */
+$userName = 'Petras'; // укажите здесь ваше имя
+/** @var  $scriptName */
+$scriptName = $_SERVER['SCRIPT_NAME'];
 date_default_timezone_set('Europe/Vilnius');
-//define("PATH", dirname(__FILE__));
 define("PROJECT_ROOT", dirname(__DIR__));
 define("WEB_ROOT",  substr($_SERVER['SCRIPT_NAME'], 0, 1));
 
-define('DB_HOST', 'mysql');
-define('DB_USER', 'yeti');
-define('DB_PASSWORD', 'secret');
-define('DB_NAME', 'yetidb');
+const DB_HOST = 'mysql';
+const DB_USER = 'yeti';
+const DB_PASSWORD = 'secret';
+const DB_NAME = 'yetidb';

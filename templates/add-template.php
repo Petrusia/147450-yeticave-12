@@ -5,7 +5,7 @@
             <?php
             foreach ($categories as $category) : ?>
                 <li class="nav__item">
-                    <a href="all-lots.html"><?= h($category['category_name']) ?></a>
+                    <a href="all-lots.html"><?= htmlspecialchars($category['category_name']) ?></a>
                 </li>
             <?php
             endforeach; ?>
@@ -27,11 +27,11 @@
                     <option value="">Выберите категорию</option>
                     <?php
                     foreach ($categories as $category): ?>
-                        <option value="<?= h($category['id']); ?>"
+                        <option value="<?= htmlspecialchars($category['id']); ?>"
                                 <?php
                                 if ($category['id'] == $lotInput['lot-category']) : ?>selected<?php
                         endif; ?>
-                        ><?= h($category['category_name']); ?></option>
+                        ><?= htmlspecialchars($category['category_name']); ?></option>
                     <?php
                     endforeach; ?>
                 </select>
