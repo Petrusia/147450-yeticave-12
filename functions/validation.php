@@ -73,18 +73,19 @@ function validateDate(string $field, string $errMessage): ?string
     $endDate = strtotime($field);
     $period = $endDate - $currentDate;
 
-    if ($period <= 86400) {
+    if ($period <= DAY) {
         return $errMessage;
     }
     return null;
 }
 
+
 /**
- * @param $field
- * @param $errMessage
+ * @param string $field
+ * @param string $errMessage
  * @return string|null
  */
-function validateImage($field, $errMessage): ?string
+function validateImage(string $field, string $errMessage): ?string
 {
     if ($_FILES[$field]['error'] > 0 ) {
         return $errMessage;
@@ -96,10 +97,30 @@ function validateImage($field, $errMessage): ?string
     return null;
 }
 
+function validateEmail( mysqli $db, string $field, string $errMessage, string $errEmail): ?string
+{
+    $field = filter_input(INPUT_POST, $field,  FILTER_VALIDATE_EMAIL);
+    if (empty($field)) {
+        return $errMessage;
+    }
+    if (isEmail($db, $field)) {
+        return $errEmail;
+    }
+    return null;
+}
+
+function validatePassword(string $errMessage): ?string
+{
+    if (empty($_POST['user-password'])) {
+        return $errMessage;
+    }
+    return null;
+}
+
 /**
  * @return array
  */
-function getErrors(): array
+function getLotErrors(): array
 {
         $errors = [
             'lot-name' => validateString('lot-name', 'Введите наименование лота'),
@@ -112,3 +133,15 @@ function getErrors(): array
         ];
         return array_filter($errors);
 }
+
+function getRegisterErrors(mysqli $db ): array
+{
+    $errors = [
+        'user-email' => validateEmail($db, 'user-email', 'Введите e-mail', 'Пользователь с этим email уже зарегистрирован'),
+        'user-password' => validatePassword( 'Введите пароль'),
+        'user-name' => validateString('user-name', 'Введите имя'),
+        'user-message' => validateString('user-message', 'Напишите как с вами связаться')
+    ];
+    return array_filter($errors);
+}
+

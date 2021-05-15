@@ -134,3 +134,51 @@ function getImage(): string
     return $imageUrl;
 }
 
+function getRegisterInput(): array
+{
+    return [
+        'user-email' => $_POST['user-email'],
+        'user-password' => password_hash($_POST['user-password'], PASSWORD_DEFAULT),
+        'user-name' => $_POST['user-name'],
+        'user-message' => $_POST['user-message']
+    ];
+}
+
+function isEmail(mysqli $db, string $email): bool
+{
+    $sql = "SELECT id FROM user WHERE email = ?";
+    $stmt = mysqli_prepare($db, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $email);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    if (mysqli_num_rows($res) > 0) {
+        return true;
+    }
+    return false;
+}
+
+function registerUser(mysqli $db, $registerInput)
+{
+    $sqlQuery = "INSERT INTO user (
+                 reg_date,
+                  email,
+                 username,
+                 password,
+                 contact_info
+                 )  VALUES (NOW(),?,?,?,?)";
+    $stmt =  mysqli_prepare($db, $sqlQuery);
+    mysqli_stmt_bind_param($stmt, 'ssss',
+                           $registerInput['user-email'],
+                           $registerInput['user-name'],
+                           $registerInput['user-password'],
+                           $registerInput['user-message']
+    );
+    $sqlQueryResult = mysqli_stmt_execute($stmt);
+    if (!$sqlQueryResult) {
+        echo mysqli_error($db);
+    }
+    $id = mysqli_insert_id($db);
+    header("Location:  pages/login.html");
+    exit;
+}
+

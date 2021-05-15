@@ -14,3 +14,5 @@ const DB_HOST = 'mysql';
 const DB_USER = 'yeti';
 const DB_PASSWORD = 'secret';
 const DB_NAME = 'yetidb';
+
+const DAY = 86400;
