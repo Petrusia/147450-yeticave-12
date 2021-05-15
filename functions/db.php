@@ -178,7 +178,7 @@ function registerUser(mysqli $db, $registerInput)
         echo mysqli_error($db);
     }
     $id = mysqli_insert_id($db);
-    header("Location:  pages/login.html");
+    header("Location:  login.php");
     exit;
 }
 
