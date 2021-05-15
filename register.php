@@ -1,28 +1,27 @@
 <?php
 require_once('functions/initialize.php');
-$title = 'Добавление лота';
+$title = 'Регистрация';
 
 $db = getDb();
 $categories = getCategories($db);
-$lotInput = [];
+$registerInput = [];
 $errors =[];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $lotInput = getLotInput();
-    $errors = getLotErrors();
+    $registerInput = getRegisterInput();
+    $errors = getRegisterErrors($db);
     if (empty($errors)) {
-        $lotInput['lot-img'] = getImage();
-        saveLot($db, $lotInput);
+        registerUser($db, $registerInput);
     }
 
 }
 
 
 $main = include_template(
-    'add-template.php',
+    'register-template.php',
     [
         'categories' => $categories,
         'errors' => $errors,
-        'lotInput' => $lotInput
+        'registerInput' => $registerInput
     ]
 );
 
