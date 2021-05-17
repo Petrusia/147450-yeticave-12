@@ -1,6 +1,9 @@
 <?php
 
 require_once('functions/initialize.php');
+session_start();
+$isAuth = isAuth();
+$userName = $_SESSION['userName'];
 
 $db = getDb();
 $categories = getCategories($db);
@@ -22,6 +25,7 @@ if (!$lotId) {
         [
             'categories' => $categories,
             'lot' => $lot,
+            'isAuth'=>  $isAuth
         ]
     );
 }

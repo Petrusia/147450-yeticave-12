@@ -103,7 +103,7 @@ function validateEmail( mysqli $db, string $field, string $errMessage, string $e
     if (empty($field)) {
         return $errMessage;
     }
-    if (isEmail($db, $field)) {
+    if (isEmailExist($db, $field)) {
         return $errEmail;
     }
     return null;
@@ -145,3 +145,47 @@ function getRegisterErrors(mysqli $db ): array
     return array_filter($errors);
 }
 
+function isAuth(){
+    if(isset($_SESSION['userName'])){
+        return true;
+    }
+    return false;
+}
+
+
+function verifyEmail( mysqli $db, string $email, string $errMessage, string $errEmail): ?string
+{
+    $email = filter_input(INPUT_POST, $email, FILTER_VALIDATE_EMAIL);
+    if (empty($email)) {
+        return $errMessage;
+    }
+    if (isEmailExist($db, $email)) {
+        return null;
+    } else {
+    return $errEmail;
+    }
+}
+
+function verifyPassword(mysqli $db, string $errMessage, string $errPassword ): ?string
+{
+    if (empty($_POST['user-password'])) {
+        return $errMessage;
+    }
+
+    $password = (getPassword($db, $_POST['user-email']));
+
+    if (password_verify($_POST['user-password'], $password['password'])){
+        return null;
+    }  else {
+        return $errPassword;
+    }
+}
+
+function getLoginErrors(mysqli $db): array
+{
+    $errors = [
+        'user-email' => verifyEmail($db, 'user-email', 'Введите e-mail', 'Пользователь с этим email не зарегистрирован'),
+        'user-password' => verifyPassword($db, 'Введите пароль', 'Вы ввели неверный пароль')
+       ];
+    return array_filter($errors);
+}

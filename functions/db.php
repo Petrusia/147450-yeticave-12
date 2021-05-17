@@ -144,14 +144,15 @@ function getRegisterInput(): array
     ];
 }
 
-function isEmail(mysqli $db, string $email): bool
+function isEmailExist(mysqli $db, string $email):bool
 {
-    $sql = "SELECT id FROM user WHERE email = ?";
+    $sql = "SELECT count(id) FROM user WHERE email = ?";
     $stmt = mysqli_prepare($db, $sql);
     mysqli_stmt_bind_param($stmt, 's', $email);
     mysqli_stmt_execute($stmt);
     $res = mysqli_stmt_get_result($stmt);
-    if (mysqli_num_rows($res) > 0) {
+    $res = mysqli_fetch_row($res);
+    if ($res[0]) {
         return true;
     }
     return false;
@@ -182,3 +183,36 @@ function registerUser(mysqli $db, $registerInput)
     exit;
 }
 
+function getPassword(mysqli $db, string $email)
+{
+    $sql = "SELECT password FROM user WHERE email = ?";
+    $stmt = mysqli_prepare($db, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $email);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_assoc($res);
+}
+
+function getLoginInput(): array
+{
+    return [
+        'user-email' => $_POST['user-email'],
+        'user-password' => $_POST['user-password'],
+    ];
+}
+
+
+
+function setSession(mysqli $db, string $email)
+{
+    $sql = "SELECT username, email FROM user WHERE email = ?";
+    $stmt = mysqli_prepare($db, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $email);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    $user = mysqli_fetch_assoc($res);
+    session_regenerate_id(true);
+    $_SESSION['userName'] = $user['username'];
+    header("Location:  /");
+    exit;
+}

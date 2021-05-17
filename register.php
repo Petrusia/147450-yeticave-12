@@ -1,6 +1,14 @@
 <?php
 require_once('functions/initialize.php');
 $title = 'Регистрация';
+session_start();
+$isAuth = isAuth();
+
+if($isAuth){
+    http_response_code(403);
+    header("Location: /");
+    exit;
+}
 
 $db = getDb();
 $categories = getCategories($db);

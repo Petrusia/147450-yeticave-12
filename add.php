@@ -1,7 +1,15 @@
 <?php
 require_once('functions/initialize.php');
 $title = 'Добавление лота';
+session_start();
+$isAuth = isAuth();
+$userName = $_SESSION['userName'];
 
+if(!$isAuth){
+    http_response_code(403);
+    header("Location: login.php");
+    exit;
+}
 $db = getDb();
 $categories = getCategories($db);
 $lotInput = [];

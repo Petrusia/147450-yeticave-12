@@ -1,9 +1,5 @@
 <?php
-
-/** @var  $isAuth */
-$isAuth = rand(0, 1);
-/** @var  $userName */
-$userName = 'Petras'; // укажите здесь ваше имя
+// укажите здесь ваше имя
 /** @var  $scriptName */
 $scriptName = $_SERVER['SCRIPT_NAME'];
 date_default_timezone_set('Europe/Vilnius');
