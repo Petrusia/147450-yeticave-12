@@ -150,12 +150,9 @@ function isEmailExist(mysqli $db, string $email):bool
     $stmt = mysqli_prepare($db, $sql);
     mysqli_stmt_bind_param($stmt, 's', $email);
     mysqli_stmt_execute($stmt);
-    $res = mysqli_stmt_get_result($stmt);
-    $res = mysqli_fetch_row($res);
-    if ($res[0]) {
-        return true;
-    }
-    return false;
+    $result = mysqli_stmt_get_result($stmt);
+    $result = mysqli_fetch_row($result);
+    return $result[0];
 }
 
 function registerUser(mysqli $db, $registerInput)
