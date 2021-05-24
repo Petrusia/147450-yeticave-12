@@ -134,6 +134,9 @@ function getImage(): string
     return $imageUrl;
 }
 
+/**
+ * @return array
+ */
 function getRegisterInput(): array
 {
     return [
@@ -144,6 +147,11 @@ function getRegisterInput(): array
     ];
 }
 
+/**
+ * @param mysqli $db
+ * @param string $email
+ * @return bool
+ */
 function isEmailExist(mysqli $db, string $email):bool
 {
     $sql = "SELECT count(id) FROM user WHERE email = ?";
@@ -155,6 +163,10 @@ function isEmailExist(mysqli $db, string $email):bool
     return $result[0];
 }
 
+/**
+ * @param mysqli $db
+ * @param $registerInput
+ */
 function registerUser(mysqli $db, $registerInput)
 {
     $sqlQuery = "INSERT INTO user (
@@ -180,6 +192,11 @@ function registerUser(mysqli $db, $registerInput)
     exit;
 }
 
+/**
+ * @param mysqli $db
+ * @param string $email
+ * @return array|false|string[]|null
+ */
 function getPassword(mysqli $db, string $email)
 {
     $sql = "SELECT password FROM user WHERE email = ?";
@@ -190,6 +207,9 @@ function getPassword(mysqli $db, string $email)
     return mysqli_fetch_assoc($res);
 }
 
+/**
+ * @return array
+ */
 function getLoginInput(): array
 {
     return [
@@ -199,7 +219,10 @@ function getLoginInput(): array
 }
 
 
-
+/**
+ * @param mysqli $db
+ * @param string $email
+ */
 function setSession(mysqli $db, string $email)
 {
     $sql = "SELECT username, email FROM user WHERE email = ?";
