@@ -5,11 +5,10 @@ session_start();
 $isAuth = isAuth();
 $userName = $_SESSION['userName'];
 
-if(!$isAuth){
-    http_response_code(403);
-    header("Location: login.php");
-    exit;
-}
+// 7. Закрыть доступ к странице add.php для анонимных пользователей. При попытке обращения к этой странице
+// анонимному пользователю должен возвращаться HTTP-код ответа 403.
+closePage(!$isAuth, 'login.php');
+
 $db = getDb();
 $categories = getCategories($db);
 $lotInput = [];

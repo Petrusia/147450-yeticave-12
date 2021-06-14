@@ -145,7 +145,8 @@ function getRegisterErrors(mysqli $db ): array
     return array_filter($errors);
 }
 
-function isAuth(){
+function isAuth(): bool
+{
     if(isset($_SESSION['userName'])){
         return true;
     }
@@ -188,4 +189,14 @@ function getLoginErrors(mysqli $db): array
         'user-password' => verifyPassword($db, 'Введите пароль', 'Вы ввели неверный пароль')
        ];
     return array_filter($errors);
+}
+
+// для залогиненных пользователей надо закрыть страницу регистрации.
+function closePage(bool $isAuth, $location = '/')
+{
+    if ($isAuth) {
+        http_response_code(403);
+        header("Location: {$location}");
+        exit;
+    }
 }

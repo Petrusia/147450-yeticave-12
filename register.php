@@ -4,11 +4,9 @@ $title = 'Регистрация';
 session_start();
 $isAuth = isAuth();
 
-if($isAuth){
-    http_response_code(403);
-    header("Location: /");
-    exit;
-}
+// 8. По такому же принципу для залогиненных пользователей
+// надо закрыть страницу регистрации.
+closePage($isAuth);
 
 $db = getDb();
 $categories = getCategories($db);
