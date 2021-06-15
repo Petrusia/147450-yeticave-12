@@ -1,9 +1,5 @@
 <?php
-
-/** @var  $isAuth */
-$isAuth = rand(0, 1);
-/** @var  $userName */
-$userName = 'Petras'; // укажите здесь ваше имя
+// укажите здесь ваше имя
 /** @var  $scriptName */
 $scriptName = $_SERVER['SCRIPT_NAME'];
 date_default_timezone_set('Europe/Vilnius');
@@ -14,3 +10,5 @@ const DB_HOST = 'mysql';
 const DB_USER = 'yeti';
 const DB_PASSWORD = 'secret';
 const DB_NAME = 'yetidb';
+
+const DAY = 86400;

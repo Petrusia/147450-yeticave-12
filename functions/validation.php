@@ -73,18 +73,19 @@ function validateDate(string $field, string $errMessage): ?string
     $endDate = strtotime($field);
     $period = $endDate - $currentDate;
 
-    if ($period <= 86400) {
+    if ($period <= DAY) {
         return $errMessage;
     }
     return null;
 }
 
+
 /**
- * @param $field
- * @param $errMessage
+ * @param string $field
+ * @param string $errMessage
  * @return string|null
  */
-function validateImage($field, $errMessage): ?string
+function validateImage(string $field, string $errMessage): ?string
 {
     if ($_FILES[$field]['error'] > 0 ) {
         return $errMessage;
@@ -96,10 +97,30 @@ function validateImage($field, $errMessage): ?string
     return null;
 }
 
+function validateEmail( mysqli $db, string $field, string $errMessage, string $errEmail): ?string
+{
+    $field = filter_input(INPUT_POST, $field,  FILTER_VALIDATE_EMAIL);
+    if (empty($field)) {
+        return $errMessage;
+    }
+    if (isEmailExist($db, $field)) {
+        return $errEmail;
+    }
+    return null;
+}
+
+function validatePassword(string $errMessage): ?string
+{
+    if (empty($_POST['user-password'])) {
+        return $errMessage;
+    }
+    return null;
+}
+
 /**
  * @return array
  */
-function getErrors(): array
+function getLotErrors(): array
 {
         $errors = [
             'lot-name' => validateString('lot-name', 'Введите наименование лота'),
@@ -111,4 +132,71 @@ function getErrors(): array
             'lot-img' => validateImage('lot-img', 'Добавьте изображение лота')
         ];
         return array_filter($errors);
+}
+
+function getRegisterErrors(mysqli $db ): array
+{
+    $errors = [
+        'user-email' => validateEmail($db, 'user-email', 'Введите e-mail', 'Пользователь с этим email уже зарегистрирован'),
+        'user-password' => validatePassword( 'Введите пароль'),
+        'user-name' => validateString('user-name', 'Введите имя'),
+        'user-message' => validateString('user-message', 'Напишите как с вами связаться')
+    ];
+    return array_filter($errors);
+}
+
+function isAuth(): bool
+{
+    if(isset($_SESSION['userName'])){
+        return true;
+    }
+    return false;
+}
+
+
+function verifyEmail( mysqli $db, string $email, string $errMessage, string $errEmail): ?string
+{
+    $email = filter_input(INPUT_POST, $email, FILTER_VALIDATE_EMAIL);
+    if (empty($email)) {
+        return $errMessage;
+    }
+    if (isEmailExist($db, $email)) {
+        return null;
+    } else {
+    return $errEmail;
+    }
+}
+
+function verifyPassword(mysqli $db, string $errMessage, string $errPassword ): ?string
+{
+    if (empty($_POST['user-password'])) {
+        return $errMessage;
+    }
+
+    $password = (getPassword($db, $_POST['user-email']));
+
+    if (password_verify($_POST['user-password'], $password['password'])){
+        return null;
+    }  else {
+        return $errPassword;
+    }
+}
+
+function getLoginErrors(mysqli $db): array
+{
+    $errors = [
+        'user-email' => verifyEmail($db, 'user-email', 'Введите e-mail', 'Пользователь с этим email не зарегистрирован'),
+        'user-password' => verifyPassword($db, 'Введите пароль', 'Вы ввели неверный пароль')
+       ];
+    return array_filter($errors);
+}
+
+// для залогиненных пользователей надо закрыть страницу регистрации.
+function closePage(bool $isAuth, $location = '/')
+{
+    if ($isAuth) {
+        http_response_code(403);
+        header("Location: {$location}");
+        exit;
+    }
 }

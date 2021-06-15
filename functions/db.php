@@ -134,3 +134,105 @@ function getImage(): string
     return $imageUrl;
 }
 
+/**
+ * @return array
+ */
+function getRegisterInput(): array
+{
+    return [
+        'user-email' => $_POST['user-email'],
+        'user-password' => password_hash($_POST['user-password'], PASSWORD_DEFAULT),
+        'user-name' => $_POST['user-name'],
+        'user-message' => $_POST['user-message']
+    ];
+}
+
+/**
+ * @param mysqli $db
+ * @param string $email
+ * @return bool
+ */
+function isEmailExist(mysqli $db, string $email):bool
+{
+    $sql = "SELECT count(id) FROM user WHERE email = ?";
+    $stmt = mysqli_prepare($db, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $email);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $result = mysqli_fetch_row($result);
+    return $result[0];
+}
+
+/**
+ * @param mysqli $db
+ * @param $registerInput
+ */
+function registerUser(mysqli $db, $registerInput)
+{
+    $sqlQuery = "INSERT INTO user (
+                 reg_date,
+                  email,
+                 username,
+                 password,
+                 contact_info
+                 )  VALUES (NOW(),?,?,?,?)";
+    $stmt =  mysqli_prepare($db, $sqlQuery);
+    mysqli_stmt_bind_param($stmt, 'ssss',
+                           $registerInput['user-email'],
+                           $registerInput['user-name'],
+                           $registerInput['user-password'],
+                           $registerInput['user-message']
+    );
+    $sqlQueryResult = mysqli_stmt_execute($stmt);
+    if (!$sqlQueryResult) {
+        echo mysqli_error($db);
+    }
+    $id = mysqli_insert_id($db);
+    header("Location:  login.php");
+    exit;
+}
+
+/**
+ * @param mysqli $db
+ * @param string $email
+ * @return array|false|string[]|null
+ */
+function getPassword(mysqli $db, string $email)
+{
+    $sql = "SELECT password FROM user WHERE email = ?";
+    $stmt = mysqli_prepare($db, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $email);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_assoc($res);
+}
+
+/**
+ * @return array
+ */
+function getLoginInput(): array
+{
+    return [
+        'user-email' => $_POST['user-email'],
+        'user-password' => $_POST['user-password'],
+    ];
+}
+
+
+/**
+ * @param mysqli $db
+ * @param string $email
+ */
+function setSession(mysqli $db, string $email)
+{
+    $sql = "SELECT username, email FROM user WHERE email = ?";
+    $stmt = mysqli_prepare($db, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $email);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    $user = mysqli_fetch_assoc($res);
+    session_regenerate_id(true);
+    $_SESSION['userName'] = $user['username'];
+    header("Location:  /");
+    exit;
+}

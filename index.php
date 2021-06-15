@@ -1,6 +1,10 @@
 <?php
 require_once('functions/initialize.php');
 
+session_start();
+$isAuth = isAuth();
+$userName = $_SESSION['userName'];
+
 $title = 'Главная страница';
 $db = getDb();
 $categories = getCategories($db);

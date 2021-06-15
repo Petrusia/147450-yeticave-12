@@ -1,4 +1,3 @@
-
 <main>
     <nav class="nav">
         <ul class="nav__list container">
@@ -24,15 +23,17 @@
                 <p class="lot-item__description"><?= htmlspecialchars($lot['lot_desc']) ?></p>
             </div>
             <div class="lot-item__right">
+              <?php if($isAuth) : ?>
                 <div class="lot-item__state">
-                    <?php $data = getDateDiff($lot['lot_end']) ?>
+                    <?php
+                    $data = getDateDiff($lot['lot_end']) ?>
                     <div class="lot-item__timer timer<?= ($data['hours'] <= 0) ? 'timer--finishing' : ''; ?>">
                         <?= htmlspecialchars($data['hours']) . ':' . htmlspecialchars($data['minutes']) ?>
                     </div>
                     <div class="lot-item__cost-state">
                         <div class="lot-item__rate">
                             <span class="lot-item__amount">Текущая цена</span>
-                            <span class="lot-item__cost"><?= htmlspecialchars($lot['lot_price']) ?></span>
+                            <span class="lot-item__cost"><?= htmlspecialchars(getPrice($lot['lot_price'])) ?></span>
                         </div>
                         <div class="lot-item__min-cost">
                             Мин. ставка <span>12 000 р</span>
@@ -47,6 +48,7 @@
                         <button type="submit" class="button">Сделать ставку</button>
                     </form>
                 </div>
+              <?php endif; ?>
                 <div class="history">
                     <h3>История ставок (<span>10</span>)</h3>
                     <table class="history__list">
@@ -103,6 +105,7 @@
                     </table>
                 </div>
             </div>
+
         </div>
     </section>
 </main>
