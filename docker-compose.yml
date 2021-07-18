@@ -1,0 +1,52 @@
+version: '3.9'
+
+networks:
+  yeti:
+    name: yeti
+services:
+  nginx:
+    build:
+      context: ./docker
+      dockerfile: nginx.dockerfile
+    container_name: nginx_yc
+    depends_on:
+      - php
+      - mysql
+    ports:
+      - 81:80
+      - 444:443
+    volumes:
+      - . :/var/www/html
+    networks:
+      - yeti
+
+
+  php:
+    build:
+      context: ./docker
+      dockerfile: php.dockerfile
+    container_name: php_yc
+    volumes:
+      - . :/var/www/html
+    networks:
+      - yeti
+
+  mysql:
+    image: mysql:5.7.33
+    container_name: mysql_yc
+    ports:
+      - 4306:3306
+    volumes:
+      - ./docker/mysql:/var/lib/mysql
+    command: [ '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    environment:
+      MYSQL_DATABASE: yetidb
+      MYSQL_USER: yeti
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
+
+    networks:
+      - yeti
+
+
+
