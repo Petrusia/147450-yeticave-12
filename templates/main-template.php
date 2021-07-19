@@ -21,6 +21,7 @@
         <ul class="lots__list">
             <!--заполните этот список из массива с товарами-->
             <?php
+
             foreach ($lots as $lot) :?>
                 <?php
                 $data = getDateDiff($lot['lot_end']) ?>

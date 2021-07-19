@@ -36,7 +36,7 @@ function getCategories(mysqli $db): array
 function getLots(mysqli $db): array
 {
     $sqlQuery = "SELECT  lot.id, lot_name, lot_desc, lot_img, lot_price, lot_create, lot_end, bet_step,
-author_id, category_id
+author_id, category_id, category_name
 
     FROM lot
         INNER JOIN category ON category_id = category.id

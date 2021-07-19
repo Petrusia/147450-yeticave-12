@@ -1,5 +1,5 @@
 .DS_Store
-.idea
+../.idea
 *.ai
 *.log
 *.pdf
@@ -7,6 +7,7 @@
 *.sublime*
 Thumbs.db
 vendor
-uploads/*
-!uploads/.gitkeep
-docker/mysql
+src/uploads/*
+!src/uploads/.gitkeep
+docker
+docker-compose.yml

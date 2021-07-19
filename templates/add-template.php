@@ -5,7 +5,7 @@
             <?php
             foreach ($categories as $category) : ?>
                 <li class="nav__item">
-                    <a href="all.php?category=<?= htmlspecialchars($category['category_alias']) ?>"><?= htmlspecialchars($category['category_name']) ?></a>
+                    <a href="add.php?category=<?= htmlspecialchars($category['category_alias']) ?>"><?= htmlspecialchars($category['category_name']) ?></a>
                 </li>
             <?php
             endforeach; ?>
@@ -18,7 +18,7 @@
             <div class="form__item   <?= !empty($errors['lot-name']) ? 'form__item--invalid' : '' ?> "> <!-- form__item--invalid -->
                 <label for="lot-name">Наименование <sup>*</sup></label>
                 <input id="lot-name" type="text" name="lot-name"
-                       placeholder="Введите наименование лота" value= "<?= $lotInput['lot-name'] ?>">
+                       placeholder="Введите наименование лота" value= "<?= $lotInput['lot-name']?? '' ?>">
                 <span class="form__error"><?= $errors['lot-name'] ?? '' ?></span>
             </div>
             <div class="form__item <?= !empty($errors['lot-category']) ? 'form__item--invalid' : '' ?>">
@@ -26,6 +26,7 @@
                 <select id="category" name="lot-category">
                     <option value="">Выберите категорию</option>
                     <?php
+                    var_dump($categories);
                     foreach ($categories as $category): ?>
                         <option value="<?= htmlspecialchars($category['id']); ?>"
                                 <?php
