@@ -1,11 +1,10 @@
 <?php
 
-require_once('functions/initialize.php');
-session_start();
+require('initialize.php');
+
 $isAuth = isAuth();
 $userName = $_SESSION['userName'];
 
-$db = getDb();
 $categories = getCategories($db);
 $lotId = filter_input(INPUT_GET, 'lot_id', FILTER_SANITIZE_NUMBER_INT);
 
@@ -25,7 +24,7 @@ if (!$lotId) {
         [
             'categories' => $categories,
             'lot' => $lot,
-            'isAuth'=>  $isAuth
+            'isAuth'=>  $isAuth ?? null
         ]
     );
 }
@@ -36,8 +35,8 @@ $layout = include_template(
         'scriptName' => $scriptName,
         'main' => $main,
         'categories' => $categories,
-        'isAuth' => $isAuth,
-        'userName' => $userName,
+        'isAuth' => $isAuth ?? null,
+        'userName' => $userName ?? null,
         'title' => $lot['lot_name']
 
     ]

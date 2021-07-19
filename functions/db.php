@@ -21,12 +21,8 @@ function getDb(): mysqli
 function getCategories(mysqli $db): array
 {
     $sqlQuery = "SELECT * FROM category";
-    $sqlQueryResult = mysqli_query($db, $sqlQuery);
-
-    if (!$sqlQueryResult) {
-        echo mysqli_error($db);
-    }
-    return mysqli_fetch_all($sqlQueryResult, MYSQLI_ASSOC);
+    $result = $db->query( $sqlQuery);
+    return $result->fetch_all(MYSQLI_ASSOC);
 }
 
 /**
@@ -42,30 +38,25 @@ author_id, category_id, category_name
         INNER JOIN category ON category_id = category.id
         INNER JOIN user ON author_id = user.id  ORDER BY lot_create DESC ";
 
-
-    $sqlQueryResult = mysqli_query($db, $sqlQuery);
-
-    if (!$sqlQueryResult) {
-        echo mysqli_error($db);
-    }
-    return mysqli_fetch_all($sqlQueryResult, MYSQLI_ASSOC);
+    $result = $db->query($sqlQuery);
+    return $result->fetch_all(MYSQLI_ASSOC);
 }
 
 /**
  * @param mysqli $db
  * @param int $lotId
- * @return array|false|string[]|null
+ * @return array|string[]|null
  */
 function getLot(mysqli $db, int $lotId)
 {
     $sql = "SELECT * FROM lot
         INNER JOIN category ON category_id = category.id
         WHERE lot.id = ?";
-    $stmt = mysqli_prepare($db, $sql);
-    mysqli_stmt_bind_param($stmt, 'i', $lotId);
-    mysqli_stmt_execute($stmt);
-    $res = mysqli_stmt_get_result($stmt);
-    return mysqli_fetch_assoc($res);
+    $stmt = $db->prepare($sql);
+    $stmt->bind_param('s', $lotId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return  $result->fetch_assoc();
 }
 
 /**

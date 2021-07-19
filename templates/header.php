@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title><?=htmlspecialchars($title)?></title>
-    <link href="<?= WEB_ROOT . 'css/normalize.min.css' ?>" rel="stylesheet">
-    <link href="<?= WEB_ROOT .'css/flatpickr.min.css'?>" rel="stylesheet">
-    <link href="<?= WEB_ROOT . 'css/style.css' ?>" rel="stylesheet">
+    <link href="<?='css/normalize.min.css' ?>" rel="stylesheet">
+    <link href="<?='css/flatpickr.min.css'?>" rel="stylesheet">
+    <link href="<?='css/style.css' ?>" rel="stylesheet">
 </head>
 <body>
 <div class="page-wrapper">

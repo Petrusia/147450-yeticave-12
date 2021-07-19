@@ -2,20 +2,6 @@
 
 
 /**
- * @param int $price
- * @return string
- */
-function getPrice(int $price): string
-{
-    if ($price > 0 && $price < 1000) {
-        return $price . ' ₽';
-    }
-    if ($price >= 1000) {
-        return number_format($price, 0, '', ' ') . ' ₽';
-    }
-}
-
-/**
  * @param string $field
  * @param string $errMessage
  * @return string|null

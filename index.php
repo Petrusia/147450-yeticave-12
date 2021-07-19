@@ -1,33 +1,44 @@
 <?php
-require_once('functions/initialize.php');
 
-session_start();
+require __DIR__ . '/initialize.php';
+
 $isAuth = isAuth();
-$userName = $_SESSION['userName'];
+$userName = $_SESSION['userName'] ?? null;
 
 $title = 'Главная страница';
-$db = getDb();
 $categories = getCategories($db);
 $lots = getLots($db);
 
 
-$main = include_template(
+//$main = include_template(
+//    'main-template.php',
+//    [
+//        'categories' => $categories,
+//        'lots' => $lots,
+//    ]
+//);
+//
+//$layout = include_template(
+//    'layout-template.php',
+//    [
+//        'scriptName' => $scriptName,
+//        'main' => $main,
+//        'categories' => $categories,
+//        'isAuth' => $isAuth ?? null,
+//        'userName' => $userName,
+//        'title' => $title
+//    ]
+//);
+
+$content = render(
     'main-template.php',
     [
-        'categories' => $categories,
-        'lots' => $lots,
-    ]
-);
-
-$layout = include_template(
-    'layout-template.php',
-    [
         'scriptName' => $scriptName,
-        'main' => $main,
+        'lots' => $lots,
         'categories' => $categories,
-        'isAuth' => $isAuth,
+        'isAuth' => $isAuth ?? null,
         'userName' => $userName,
         'title' => $title
     ]
 );
-print ($layout);
+echo $content;

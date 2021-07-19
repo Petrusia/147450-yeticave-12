@@ -1,5 +1,5 @@
 <?php
-require_once(PROJECT_ROOT . '/templates/header.php');
-print ($main);
-require_once(PROJECT_ROOT . '/templates/footer.php');
+require(__DIR__ . '/header.php');
+echo $main;
+require(__DIR__ . '/footer.php');
 

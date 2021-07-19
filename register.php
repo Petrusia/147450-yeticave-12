@@ -1,7 +1,7 @@
 <?php
-require_once('functions/initialize.php');
+require('initialize.php');
 $title = 'Регистрация';
-session_start();
+
 $isAuth = isAuth();
 
 // 8. По такому же принципу для залогиненных пользователей
