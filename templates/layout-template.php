@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title><?= htmlspecialchars($title) ?></title>
+    <title><?= esc($title) ?></title>
     <link href="/css/normalize.min.css" rel="stylesheet">
     <link href="/css/flatpickr.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
@@ -27,7 +27,7 @@
                 <?php
                 if ($isAuth) : ?>
                     <div class="user-menu__logged">
-                        <p><?= htmlspecialchars($userName) ?></p>
+                        <p><?= esc($userName) ?></p>
                         <a class="user-menu__bets" href="pages/my-bets.html">Мои ставки</a>
                         <a class="user-menu__logout" href="logout.php">Выход</a>
                     </div>
@@ -52,12 +52,9 @@
     <nav class="nav">
         <ul class="nav__list container">
             <!--заполните этот список из массива категорий-->
-            <?php
-            var_dump($nav);
-            foreach ($categories as $category) : ?>
-
+            <?php foreach ($categories as $category) : ?>
                 <li class="nav__item">
-                    <a href="pages/all-lots.html"><?= htmlspecialchars($category['category_name']) ?></a>
+                    <a href="pages/all-lots.html"><?= esc($category['category_name']) ?></a>
                 </li>
             <?php
             endforeach; ?>

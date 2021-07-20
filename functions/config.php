@@ -1,5 +1,7 @@
 <?php
 return [
+    'env_local' => true,
+    'timezone' => 'Europe/Vilnius',
     'db' => [
         'host' => 'db_server',
         'username' => 'yeticave',

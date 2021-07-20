@@ -23,42 +23,6 @@ function is_date_valid(string $date): bool
 }
 
 /**
- * @param string $expire_at
- * @return array
- */
-function getDateDiff(string $expire_at): array
-{
-    $period = strtotime($expire_at) - time();
-    $hours = floor($period / 3600);
-    $minutes = 60 - date('i');
-
-    $hours = str_pad($hours, 2, "0", STR_PAD_LEFT);
-    $minutes = str_pad($minutes, 2, "0", STR_PAD_LEFT);
-
-    return [
-        'hours' => $hours,
-        'minutes' => $minutes
-    ];
-}
-
-
-/**
- * @param int $price
- * @return string
- */
-function getPrice(int $price): string
-{
-    $price = ceil($price);
-    if ($price > 0 && $price < 1000) {
-        return $price . ' ₽';
-    }
-    if ($price >= 1000) {
-        return number_format($price, 0, '', ' ') . ' ₽';
-    }
-}
-
-
-/**
  * Создает подготовленное выражение на основе готового SQL запроса и переданных данных
  *
  * @param $link mysqli Ресурс соединения
@@ -176,6 +140,40 @@ function include_template(string $name, array $data = []): string
     return ob_get_clean();
 }
 
+
+/**
+ * @param string $expire_at
+ * @return array
+ */
+function getDateDiff(string $expire_at): array
+{
+    $period = strtotime($expire_at) - time();
+    $hours = floor($period / 3600);
+    $minutes = 60 - date('i');
+
+    $hours = str_pad($hours, 2, "0", STR_PAD_LEFT);
+    $minutes = str_pad($minutes, 2, "0", STR_PAD_LEFT);
+
+    return [
+        'hours' => $hours,
+        'minutes' => $minutes
+    ];
+}
+
+
+/**
+ * @param int $price
+ * @return string
+ */
+function getPrice(int $price): string
+{
+    $price = ceil($price);
+    return number_format($price, 0, '', ' ') . ' ₽';
+}
+
+
+
+
 /**
  * Преобразует специальные символы в HTML-сущности
  * @param string $str
@@ -192,7 +190,7 @@ function esc(string $str): string
  * @param array $data
  * @return string
  */
-function  renderTemplate(string $name, string $title, string $isIndex, bool $isAuth, string $userName, array $categories, array $data = []): string
+function  renderTemplate(string $name, string $title, bool $isAuth, string $userName, array $categories, string $isIndex = '', array $data = []): string
 {
     $main = include_template($name, $data);
     return include_template('layout-template.php', [
