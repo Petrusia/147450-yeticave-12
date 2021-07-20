@@ -32,7 +32,7 @@ if (!$lotId) {
 $layout = include_template(
     'layout-template.php',
     [
-        'scriptName' => $scriptName,
+        'isIndex' => $isIndex,
         'main' => $main,
         'categories' => $categories,
         'isAuth' => $isAuth ?? null,

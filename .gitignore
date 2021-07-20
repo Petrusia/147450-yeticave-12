@@ -11,3 +11,4 @@ src/uploads/*
 !src/uploads/.gitkeep
 docker
 docker-compose.yml
+config.php

@@ -59,7 +59,7 @@ function validateDate(string $field, string $errMessage): ?string
     $endDate = strtotime($field);
     $period = $endDate - $currentDate;
 
-    if ($period <= DAY) {
+    if ($period <= SECONDS_IN_DAY) {
         return $errMessage;
     }
     return null;

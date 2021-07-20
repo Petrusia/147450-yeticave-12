@@ -1,16 +1,12 @@
 <?php
 
-require_once('functions/initialize.php');
+require __DIR__ . '/initialize.php';
 $title = 'Вход';
-session_start();
-$isAuth = isAuth();
+
 
 // 8. По такому же принципу для залогиненных пользователей
 // надо закрыть страницу регистрации.
 closePage($isAuth);
-
-$db = getDb();
-$categories = getCategories($db);
 $loginInput = [];
 $errors = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -35,7 +31,7 @@ $main = include_template(
 $layout = include_template(
     'layout-template.php',
     [
-        'scriptName' => $scriptName,
+        'isIndex' => $isIndex,
         'main' => $main,
         'categories' => $categories,
         'isAuth' => $isAuth,

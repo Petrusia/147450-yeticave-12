@@ -176,15 +176,31 @@ function include_template(string $name, array $data = []): string
     return ob_get_clean();
 }
 
-function render(string $name,  array $data = [], string $layout = 'layout-template.php'): string
+/**
+ * Преобразует специальные символы в HTML-сущности
+ * @param string $str
+ * @return string
+ */
+function esc(string $str): string
 {
-    $name = PROJECT_ROOT . '/templates/' . $name;
-    $layout = PROJECT_ROOT . '/templates/' . $layout;
-    extract($data);
-    ob_start();
-    require $name;
-    $main = ob_get_clean();
-    ob_start();
-    require $layout;
-    return ob_get_clean();
+    return htmlspecialchars($str, ENT_QUOTES);
+}
+
+
+/**
+ * @param string $name
+ * @param array $data
+ * @return string
+ */
+function  renderTemplate(string $name, string $title, string $isIndex, bool $isAuth, string $userName, array $categories, array $data = []): string
+{
+    $main = include_template($name, $data);
+    return include_template('layout-template.php', [
+        'title' => $title,
+        'isIndex' => $isIndex,
+        'isAuth' => $isAuth,
+        'userName' => $userName,
+        'categories' => $categories,
+        'main' => $main
+    ]);
 }
