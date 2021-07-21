@@ -22,7 +22,10 @@ author_id, category_id, category_name
 
     FROM lot
         INNER JOIN category ON category_id = category.id
-        INNER JOIN user ON author_id = user.id  ORDER BY lot_create DESC ";
+        INNER JOIN user ON author_id = user.id
+WHERE lot_end > NOW()
+ORDER BY lot_create DESC
+LIMIT 9 ";
 
     $result = $db->query($sqlQuery);
     return $result->fetch_all(MYSQLI_ASSOC);
