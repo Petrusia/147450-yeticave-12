@@ -190,7 +190,7 @@ function esc(string $str): string
  * @param array $data
  * @return string
  */
-function  renderTemplate(string $name, string $title, string $userName, array $categories, string $isIndex = '', array $data = []): string
+function  renderTemplate(string $name, string $title, string $userName, array $categories, bool $isIndex = false, array $data = []): string
 {
     $main = include_template($name, $data);
     return include_template('layout-template.php', [

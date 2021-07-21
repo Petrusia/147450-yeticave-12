@@ -1,7 +1,7 @@
 <?php
 
 require __DIR__ . '/initialize.php';
-
+$isIndex = true; //Используем в  main-header__logo в  layout-template.php
 $title = 'Главная страница';
 $lots = getLots($db);
 
