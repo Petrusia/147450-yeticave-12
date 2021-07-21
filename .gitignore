@@ -7,8 +7,8 @@
 *.sublime*
 Thumbs.db
 vendor
-src/uploads/*
-!src/uploads/.gitkeep
-docker
+uploads/*
+!uploads/.gitkeep
+docker/*
 docker-compose.yml
 config.php

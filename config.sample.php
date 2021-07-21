@@ -1,5 +1,7 @@
 <?php
 return [
+    'env_local' => true,
+    'timezone' => '',
     'db' => [
         'host' => '127.0.0.1',
         'username' => '',

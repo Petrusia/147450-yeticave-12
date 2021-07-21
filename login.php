@@ -6,7 +6,6 @@ $title = 'Вход';
 
 // 8. По такому же принципу для залогиненных пользователей
 // надо закрыть страницу регистрации.
-closePage($isAuth);
 $loginInput = [];
 $errors = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -34,7 +33,7 @@ $layout = include_template(
         'isIndex' => $isIndex,
         'main' => $main,
         'categories' => $categories,
-        'isAuth' => $isAuth,
+        'isAuth' => $userName,
         'userName' => $userName,
         'title' => $title
 

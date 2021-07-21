@@ -1,20 +1,6 @@
 <?php
 
 /**
- * @return mysqli
- */
-function getDb(): mysqli
-{
-    $dbConnection = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-    mysqli_set_charset($dbConnection, "utf8");
-    if (mysqli_connect_error()) {
-        echo mysqli_connect_error();
-        exit;
-    }
-    return $dbConnection;
-}
-
-/**
  * @param mysqli $db
  * @return array
  */

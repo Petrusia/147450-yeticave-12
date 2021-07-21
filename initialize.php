@@ -3,9 +3,14 @@
 // https://www.php.net/manual/ru/language.types.declarations.php
 declare(strict_types=1);
 
+if (!file_exists('config.php')) {
+    $msg = 'Создайте файл config.php на основе config.sample.php и внесите туда настройки сервера MySQL';
+    trigger_error($msg, E_USER_ERROR);
+}
+
 const PROJECT_ROOT = __DIR__;
 
-$config = require PROJECT_ROOT . '/functions/config.php';
+$config = require PROJECT_ROOT . '/config.php';
 require PROJECT_ROOT . '/functions/helpers.php';
 require PROJECT_ROOT . '/functions/db.php';
 require PROJECT_ROOT . '/functions/validation.php';
@@ -14,13 +19,7 @@ require PROJECT_ROOT . '/functions/validation.php';
 error_reporting(E_ALL); // задаем максимальный уровень, чтобы РНР нас информировал обо ВСЕХ ошибках без исключений
 ini_set('display_errors', $config['env_local'] === true ? '1' : 0); // задаем режим вывода на экран
 
-if (!file_exists('functions/config.php')) {
-    $msg = 'Создайте файл config.php на основе config.sample.php и внесите туда настройки сервера MySQL';
-    trigger_error($msg, E_USER_ERROR);
-}
-
 date_default_timezone_set($config['timezone']);
-
 const SECONDS_IN_DAY = 86400; // Используема в  function validateDate() путь  functions/validation.php
 $isIndex = $_SERVER['SCRIPT_NAME'];  //Используем в  main-header__logo в  layout-template.php
 
@@ -35,7 +34,7 @@ $db = new mysqli(
 $db->set_charset($config['db']['charset']);
 
 session_start();
-$isAuth = isAuth();
+$isIndex = true;
 $userName = $_SESSION['userName'] ?? '';
 $categories = getCategories($db);
 

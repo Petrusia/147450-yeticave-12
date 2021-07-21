@@ -131,14 +131,6 @@ function getRegisterErrors(mysqli $db ): array
     return array_filter($errors);
 }
 
-function isAuth(): bool
-{
-    if(isset($_SESSION['userName'])){
-        return true;
-    }
-    return false;
-}
-
 
 function verifyEmail( mysqli $db, string $email, string $errMessage, string $errEmail): ?string
 {

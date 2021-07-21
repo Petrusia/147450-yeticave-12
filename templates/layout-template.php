@@ -12,7 +12,7 @@
     <header class="main-header">
         <div class="main-header__container container">
             <h1 class="visually-hidden">YetiCave</h1>
-            <a class="main-header__logo" <?= ($isIndex !== '/index.php') ? 'href="/"' : ''; ?>>
+            <a class="main-header__logo" <?= !$isIndex ? 'href="/"' : ''; ?>>
                 <img src="img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
             </a>
             <form class="main-header__search" method="get" action="https://echo.htmlacademy.ru" autocomplete="off">
@@ -25,7 +25,7 @@
 
                 <!-- здесь должен быть PHP код для показа меню и данных пользователя -->
                 <?php
-                if ($isAuth) : ?>
+                if ($userName) : ?>
                     <div class="user-menu__logged">
                         <p><?= esc($userName) ?></p>
                         <a class="user-menu__bets" href="pages/my-bets.html">Мои ставки</a>
