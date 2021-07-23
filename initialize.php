@@ -7,7 +7,7 @@ const PROJECT_ROOT = __DIR__;
 const SECONDS_IN_DAY = 86400; // Используема в  function validateDate() путь  functions/validation.php
 
 if (!file_exists(PROJECT_ROOT . '/config.php')) {
-    $msg = 'Создайте файл config.php на основе config.sample.php и внесите туда настройки проекта';
+    $msg = 'Создайте файл config.php на основе config.php и внесите туда настройки проекта';
     trigger_error($msg, E_USER_ERROR);
 }
 $config = require PROJECT_ROOT . '/config.php';

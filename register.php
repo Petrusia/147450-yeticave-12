@@ -1,14 +1,12 @@
 <?php
-require('initialize.php');
+require 'initialize.php';
 $title = 'Регистрация';
 
-$isAuth = isAuth();
+
 
 // 8. По такому же принципу для залогиненных пользователей
 // надо закрыть страницу регистрации.
-httpError($isAuth);
 
-$db = getDb();
 $categories = getCategories($db);
 $registerInput = [];
 $errors =[];

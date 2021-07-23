@@ -201,3 +201,68 @@ function  renderTemplate(string $name, string $title, array|string $authUser, ar
         'main' => $main
     ]);
 }
+
+function normalizedData(array $submittedData, array $submittedFile) : array
+{
+
+    $normalizedData = [
+        'lot-name' => isset($submittedData['lot-name']) ? (string)$submittedData['lot-name'] : '',
+        'lot-category' => isset($submittedData['lot-category']) ? (int)$submittedData['lot-category'] : '',
+        'lot-message' => isset($submittedData['lot-message']) ? (string)$submittedData['lot-message'] : '',
+        'lot-rate' => isset($submittedData['lot-rate']) ? (int)$submittedData['lot-rate'] : 0,
+        'lot-step' => isset($submittedData['lot-step']) ? (int)$submittedData['lot-step'] : 0,
+        'lot-date' => isset($submittedData['lot-date']) ? (string)$submittedData['lot-date'] : ''
+    ];
+    if (isset($submittedFile['lot-img']['error']) && $submittedFile['lot-img']['error'] === UPLOAD_ERR_OK) {
+        $normalizedData['lot-img'] = $submittedFile['lot-img']['tmp_name'];
+    }
+    return $normalizedData;
+}
+
+function validatedData(array $normalizedData) : array
+{
+    $formErrors = [];
+    if ($normalizedData['lot-name'] === '') {
+        $formErrors['lot-name'] = 'Введите наименование лота.';
+    }
+    if ($normalizedData['lot-category'] <= 0) {
+        $formErrors['lot-category'] = 'Выберите категорию.';
+    }
+    if ($normalizedData['lot-message'] === '') {
+        $formErrors['lot-message'] = 'Введите наименование лота.';
+    }
+    if ($normalizedData['lot-rate'] <= 0) {
+        $formErrors['lot-rate'] = 'Введите начальную цену.';
+    }
+    if ($normalizedData['lot-step'] <= 0) {
+        $formErrors['lot-step'] = 'Введите шаг ставки.';
+    }
+    if ($normalizedData['lot-date'] === '') {
+        $formErrors['lot-date'] = 'Введите дату завершения торгов.';
+    } elseif ((strtotime($normalizedData['lot-date']) - time()) <= SECONDS_IN_DAY) {
+        $formErrors['lot-date'] = 'Введите дату больше текущей хотя бы на 1 день.';
+    }
+
+    if (!isset($normalizedData['lot-img'])) {
+        $formErrors['lot-img'] = 'Добавьте изображение лота.';
+    } elseif (is_uploaded_file($normalizedData['lot-img'])) {
+        $alowExt = ['jpeg','jpg', 'png'];
+        $ext = pathinfo($_FILES['lot-img']['name'], PATHINFO_EXTENSION);
+        if(!in_array($ext,  $alowExt)) {
+            $formErrors['lot-img'] = 'Добавьте изображение лота в формате jpeg, jpg или png';
+        }
+    }
+    return $formErrors;
+}
+
+function imageUpload(array $normalizedData) : array
+{
+    if (is_uploaded_file($normalizedData['lot-img'])) {
+        $fileName = $_FILES['lot-img']['name'];
+        $tempFileName = $_FILES['lot-img']['tmp_name'];
+        $picturePath = './uploads/' . $fileName;//
+        move_uploaded_file($tempFileName, $picturePath);
+        $normalizedData['lot-img'] = $picturePath;
+    }
+    return $normalizedData;
+}

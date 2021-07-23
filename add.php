@@ -8,12 +8,13 @@ if (!$authUser) {
     httpError($categories, 403);
 }
 
-$normalizedData = [];
+
 $formErrors = [];
+$normalizedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
     $submittedData = $_POST;
     $submittedFile = $_FILES;
-    $formErrors = [];
 
     // этап 1: привести в порядок  данные запроса:
     $normalizedData = [
@@ -66,8 +67,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (is_uploaded_file($normalizedData['lot-img'])) {
             $fileName = $_FILES['lot-img']['name'];
             $tempFileName = $_FILES['lot-img']['tmp_name'];
-            //если использую  PROJECT_ROOT показывает путь на  Доккер сервере
-            // а не путь  файла на моем компьютере /var/www/html/uploads/
             $picturePath = './uploads/' . $fileName;//
             move_uploaded_file($tempFileName, $picturePath);
             $normalizedData['lot-img'] = $picturePath;
@@ -111,7 +110,7 @@ echo renderTemplate(
     [
         'categories' => $categories,
         'formErrors' => $formErrors,
-        'lotInput' => $normalizedData
+        '$normalizedData' => $normalizedData
     ]
 );
 

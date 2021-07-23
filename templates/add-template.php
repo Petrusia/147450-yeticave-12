@@ -26,7 +26,6 @@
                 <label for="category">Категория <sup>*</sup></label>
 
                 <select id="category" name="lot-category">
-                    <?php var_dump($normalizedData); ?>
                     <option value="">Выберите категорию</option>
                     <?php foreach ($categories as $category): ?>
                         <option value="<?= esc($category['id']);?>"

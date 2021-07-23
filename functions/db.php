@@ -23,7 +23,7 @@ author_id, category_id, category_name
     FROM lot
         INNER JOIN category ON category_id = category.id
         INNER JOIN user ON author_id = user.id
-WHERE lot_end > NOW()
+WHERE lot_end < NOW()
 ORDER BY lot_create DESC
 LIMIT 9 ";
 
@@ -52,9 +52,9 @@ function getLot(mysqli $db, int $lotId): array
  * @param mysqli $db
  * @param $lotInput
  */
-function saveLot(mysqli $db, $lotInput)
+function saveLot(mysqli $db, $normalizedData)
 {
-    $sqlQuery = "INSERT INTO lot (
+    $sql = "INSERT INTO lot (
                  lot_name,
                  lot_desc,
                  lot_img,
@@ -62,24 +62,25 @@ function saveLot(mysqli $db, $lotInput)
                  lot_end,
                  bet_step,
                  category_id,
-                 lot_create,
-                 author_id
-                 )  VALUES (?,?,?,?,?,?,?,NOW(),1)";
-    $stmt =  mysqli_prepare($db, $sqlQuery);
-    mysqli_stmt_bind_param($stmt, 'sssdsii',
-                           $lotInput['lot-name'],
-                           $lotInput['lot-message'],
-                            $lotInput['lot-img'],
-                           $lotInput['lot-rate'],
-                           $lotInput['lot-date'],
-                           $lotInput['lot-step'],
-                           $lotInput['lot-category']
+                 author_id,
+                 lot_create
+                 )  VALUES (?,?,?,?,?,?,?,?,NOW())";
+
+    $stmt = $db->prepare($sql);
+    $stmt->bind_param(
+        'ssssssss',
+        $normalizedData['lot-name'],
+        $normalizedData['lot-message'],
+        $normalizedData['lot-img'],
+        $normalizedData['lot-rate'],
+        $normalizedData['lot-date'],
+        $normalizedData['lot-step'],
+        $normalizedData['lot-category'],
+        $authUser['id']
     );
-    $sqlQueryResult = mysqli_stmt_execute($stmt);
-    if (!$sqlQueryResult) {
-        echo mysqli_error($db);
-    }
-    $id = mysqli_insert_id($db);
+    $stmt->execute();
+
+    $id = $db->insert_id;
     header("Location:  lot.php?lot_id={$id}");
     exit;
 }

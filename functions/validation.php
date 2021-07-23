@@ -182,7 +182,7 @@ function httpError( array $categories, int $responseCode)
     $title =  $error[$responseCode];
 
     http_response_code($responseCode);
-    echo renderTemplate('404-template.php', $title, $userName = false, $categories, [
+    echo renderTemplate('404-template.php', $title, $authUser = false, $categories, [
             'categories' => $categories,
             'message' => $title
         ]);
