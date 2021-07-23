@@ -2,8 +2,6 @@
 
 require('initialize.php');
 
-$isAuth = isAuth();
-$userName = $_SESSION['userName'];
 
 $categories = getCategories($db);
 $lotId = filter_input(INPUT_GET, 'lot_id', FILTER_SANITIZE_NUMBER_INT);
@@ -36,7 +34,7 @@ $layout = include_template(
         'main' => $main,
         'categories' => $categories,
         'isAuth' => $isAuth ?? null,
-        'userName' => $userName ?? null,
+        'authUser' => $authUser ?? null,
         'title' => $lot['lot_name']
 
     ]

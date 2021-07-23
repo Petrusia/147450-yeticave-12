@@ -1,5 +1,7 @@
 <?php
 
+use JetBrains\PhpStorm\NoReturn;
+
 
 /**
  * @param string $field
@@ -170,11 +172,19 @@ function getLoginErrors(mysqli $db): array
 }
 
 // для залогиненных пользователей надо закрыть страницу регистрации.
-function closePage(bool $isAuth, $location = '/')
+function httpError( array $categories, int $responseCode)
 {
-    if ($isAuth) {
-        http_response_code(403);
-        header("Location: {$location}");
+    $error = [
+    403 => '403 - У вас нет права зайти на страницу',
+    404 => '404 - Данной страницы не существует на сайте'
+    ];
+
+    $title =  $error[$responseCode];
+
+    http_response_code($responseCode);
+    echo renderTemplate('404-template.php', $title, $userName = false, $categories, [
+            'categories' => $categories,
+            'message' => $title
+        ]);
         exit;
-    }
 }

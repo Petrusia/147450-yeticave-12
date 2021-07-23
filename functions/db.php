@@ -36,7 +36,7 @@ LIMIT 9 ";
  * @param int $lotId
  * @return array|string[]|null
  */
-function getLot(mysqli $db, int $lotId)
+function getLot(mysqli $db, int $lotId): array
 {
     $sql = "SELECT * FROM lot
         INNER JOIN category ON category_id = category.id
@@ -205,14 +205,14 @@ function getLoginInput(): array
  */
 function setSession(mysqli $db, string $email)
 {
-    $sql = "SELECT username, email FROM user WHERE email = ?";
+    $sql = "SELECT id, username, email FROM user WHERE email = ?";
     $stmt = mysqli_prepare($db, $sql);
     mysqli_stmt_bind_param($stmt, 's', $email);
     mysqli_stmt_execute($stmt);
     $res = mysqli_stmt_get_result($stmt);
     $user = mysqli_fetch_assoc($res);
     session_regenerate_id(true);
-    $_SESSION['userName'] = $user['username'];
+    $_SESSION['authUser'] = $user;
     header("Location:  /");
     exit;
 }

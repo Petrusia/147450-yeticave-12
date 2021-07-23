@@ -25,9 +25,9 @@
 
                 <!-- здесь должен быть PHP код для показа меню и данных пользователя -->
                 <?php
-                if ($userName) : ?>
+                if ($authUser) : ?>
                     <div class="user-menu__logged">
-                        <p><?= esc($userName) ?></p>
+                        <p><?= esc($authUser['username']) ?></p>
                         <a class="user-menu__bets" href="pages/my-bets.html">Мои ставки</a>
                         <a class="user-menu__logout" href="logout.php">Выход</a>
                     </div>

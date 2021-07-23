@@ -6,7 +6,7 @@ $isAuth = isAuth();
 
 // 8. По такому же принципу для залогиненных пользователей
 // надо закрыть страницу регистрации.
-closePage($isAuth);
+httpError($isAuth);
 
 $db = getDb();
 $categories = getCategories($db);
@@ -39,7 +39,7 @@ $layout = include_template(
         'main' => $main,
         'categories' => $categories,
         'isAuth' => $isAuth,
-        'userName' => $userName,
+        'authUser' => $authUser,
         'title' => $title
 
     ]

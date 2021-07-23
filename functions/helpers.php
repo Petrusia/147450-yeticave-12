@@ -190,13 +190,13 @@ function esc(string $str): string
  * @param array $data
  * @return string
  */
-function  renderTemplate(string $name, string $title, string $userName, array $categories,  array $data = [], bool $isIndex = false): string
+function  renderTemplate(string $name, string $title, array|string $authUser, array $categories,  array $data = [], bool $isIndex = false): string
 {
     $main = include_template($name, $data);
     return include_template('layout-template.php', [
         'title' => $title,
         'isIndex' => $isIndex,
-        'userName' => $userName,
+        'authUser' => $authUser,
         'categories' => $categories,
         'main' => $main
     ]);

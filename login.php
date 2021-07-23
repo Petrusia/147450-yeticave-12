@@ -33,8 +33,8 @@ $layout = include_template(
         'isIndex' => $isIndex,
         'main' => $main,
         'categories' => $categories,
-        'isAuth' => $userName,
-        'userName' => $userName,
+        'isAuth' => $authUser,
+        'authUser' => $authUser,
         'title' => $title
 
     ]

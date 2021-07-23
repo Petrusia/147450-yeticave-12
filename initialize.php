@@ -28,5 +28,5 @@ date_default_timezone_set($config['timezone']);
 //Сессию нельзя стартовать до любого вывода, а в ininialize по определению не должно быть никакого вывода, так что стартовать можно где угодно
 //А вот режим вывода ошибок я бы задал как раз повыше.
 session_start();
-$userName = $_SESSION['userName'] ?? '';
+$authUser = $_SESSION['authUser'] ?? '';
 $categories = getCategories($db);
