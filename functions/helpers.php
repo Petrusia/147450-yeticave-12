@@ -198,20 +198,20 @@ function  renderTemplate(string $name, string $title, array|string $authUser, ar
         'isIndex' => $isIndex,
         'authUser' => $authUser,
         'categories' => $categories,
-        'main' => $main
+        'main' => $main,
     ]);
 }
 
-function normalizedData(array $submittedData, array $submittedFile) : array
+function normalizedLotData(array $submittedData, array $submittedFile) : array
 {
 
     $normalizedData = [
-        'lot-name' => isset($submittedData['lot-name']) ? (string)$submittedData['lot-name'] : '',
-        'lot-category' => isset($submittedData['lot-category']) ? (int)$submittedData['lot-category'] : '',
-        'lot-message' => isset($submittedData['lot-message']) ? (string)$submittedData['lot-message'] : '',
-        'lot-rate' => isset($submittedData['lot-rate']) ? (int)$submittedData['lot-rate'] : 0,
-        'lot-step' => isset($submittedData['lot-step']) ? (int)$submittedData['lot-step'] : 0,
-        'lot-date' => isset($submittedData['lot-date']) ? (string)$submittedData['lot-date'] : ''
+        'lot-name' => trim((string)($submittedData['lot-name'])) ?? null,
+        'lot-category' => (int)($submittedData['lot-category']) ?? null,
+        'lot-message' => trim((string)($submittedData['lot-message'])) ?? null,
+        'lot-rate' => (int)($submittedData['lot-rate']) ?? null,
+        'lot-step' => (int)($submittedData['lot-step']) ?? null,
+        'lot-date' => trim((string)($submittedData['lot-date'])) ?? null,
     ];
     if (isset($submittedFile['lot-img']['error']) && $submittedFile['lot-img']['error'] === UPLOAD_ERR_OK) {
         $normalizedData['lot-img'] = $submittedFile['lot-img']['tmp_name'];
@@ -219,25 +219,27 @@ function normalizedData(array $submittedData, array $submittedFile) : array
     return $normalizedData;
 }
 
-function validatedData(array $normalizedData) : array
+function validatedLotData(array $normalizedData, array $categories) : array
 {
     $formErrors = [];
-    if ($normalizedData['lot-name'] === '') {
+    if (!$normalizedData['lot-name']) {
         $formErrors['lot-name'] = 'Введите наименование лота.';
+    } elseif(strlen($normalizedData['lot-name']) >= LOT_NAME_LENGTH){
+        $formErrors['lot-name'] = 'Название  не может быть длиннее 50 символов.';
     }
-    if ($normalizedData['lot-category'] <= 0) {
+    if (!in_array($normalizedData['lot-category'], array_column($categories, 'id') )) {
         $formErrors['lot-category'] = 'Выберите категорию.';
     }
-    if ($normalizedData['lot-message'] === '') {
+    if (!$normalizedData['lot-message']) {
         $formErrors['lot-message'] = 'Введите наименование лота.';
     }
-    if ($normalizedData['lot-rate'] <= 0) {
+    if (!$normalizedData['lot-rate']) {
         $formErrors['lot-rate'] = 'Введите начальную цену.';
     }
-    if ($normalizedData['lot-step'] <= 0) {
+    if (!$normalizedData['lot-step']) {
         $formErrors['lot-step'] = 'Введите шаг ставки.';
     }
-    if ($normalizedData['lot-date'] === '') {
+    if (!$normalizedData['lot-date'] ) {
         $formErrors['lot-date'] = 'Введите дату завершения торгов.';
     } elseif ((strtotime($normalizedData['lot-date']) - time()) <= SECONDS_IN_DAY) {
         $formErrors['lot-date'] = 'Введите дату больше текущей хотя бы на 1 день.';
@@ -246,13 +248,22 @@ function validatedData(array $normalizedData) : array
     if (!isset($normalizedData['lot-img'])) {
         $formErrors['lot-img'] = 'Добавьте изображение лота.';
     } elseif (is_uploaded_file($normalizedData['lot-img'])) {
-        $alowExt = ['jpeg','jpg', 'png'];
+        if ($_FILES['lot-img']['size'] > ONE_MB) {
+            $formErrors['lot-img'] = 'Размер файла не должен превышать 1 мб;';
+        }
+        $alowExt = ['jpeg', 'jpg', 'png'];
         $ext = pathinfo($_FILES['lot-img']['name'], PATHINFO_EXTENSION);
-        if(!in_array($ext,  $alowExt)) {
+        if (!in_array($ext, $alowExt)) {
             $formErrors['lot-img'] = 'Добавьте изображение лота в формате jpeg, jpg или png';
         }
     }
     return $formErrors;
+}
+
+function randomString($n): string
+{
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    return substr(str_shuffle($characters),0,$n);
 }
 
 function imageUpload(array $normalizedData) : array
@@ -260,6 +271,7 @@ function imageUpload(array $normalizedData) : array
     if (is_uploaded_file($normalizedData['lot-img'])) {
         $fileName = $_FILES['lot-img']['name'];
         $tempFileName = $_FILES['lot-img']['tmp_name'];
+        $fileName = randomString(10) .'-'. $fileName;
         $picturePath = './uploads/' . $fileName;//
         move_uploaded_file($tempFileName, $picturePath);
         $normalizedData['lot-img'] = $picturePath;

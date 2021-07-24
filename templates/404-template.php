@@ -12,6 +12,6 @@
     </nav>
     <section class="lot-item container">
         <h2> <?=$message?> </h2>
-        <p>Данной страницы не существует на сайте.</p>
+        <a href="./register.php" class="button" style="display: inline-block">Регистрация </a>
     </section>
 </main>

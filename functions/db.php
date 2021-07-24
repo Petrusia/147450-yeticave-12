@@ -23,7 +23,7 @@ author_id, category_id, category_name
     FROM lot
         INNER JOIN category ON category_id = category.id
         INNER JOIN user ON author_id = user.id
-WHERE lot_end < NOW()
+WHERE lot_end > NOW()
 ORDER BY lot_create DESC
 LIMIT 9 ";
 
@@ -52,7 +52,7 @@ function getLot(mysqli $db, int $lotId): array
  * @param mysqli $db
  * @param $lotInput
  */
-function saveLot(mysqli $db, $normalizedData)
+function saveLotData(mysqli $db, array $normalizedData, array $authUser)
 {
     $sql = "INSERT INTO lot (
                  lot_name,
