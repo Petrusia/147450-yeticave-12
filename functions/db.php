@@ -52,7 +52,7 @@ function getLot(mysqli $db, int $lotId): array
  * @param mysqli $db
  * @param $lotInput
  */
-function saveLotData(mysqli $db, array $normalizedData, array $authUser)
+function saveLotData(mysqli $db, array $submittedData, array $authUser)
 {
     $sql = "INSERT INTO lot (
                  lot_name,
@@ -69,13 +69,13 @@ function saveLotData(mysqli $db, array $normalizedData, array $authUser)
     $stmt = $db->prepare($sql);
     $stmt->bind_param(
         'ssssssss',
-        $normalizedData['lot-name'],
-        $normalizedData['lot-message'],
-        $normalizedData['lot-img'],
-        $normalizedData['lot-rate'],
-        $normalizedData['lot-date'],
-        $normalizedData['lot-step'],
-        $normalizedData['lot-category'],
+        $submittedData['lot-name'],
+        $submittedData['lot-message'],
+        $submittedData['lot-img'],
+        $submittedData['lot-rate'],
+        $submittedData['lot-date'],
+        $submittedData['lot-step'],
+        $submittedData['lot-category'],
         $authUser['id']
     );
     $stmt->execute();

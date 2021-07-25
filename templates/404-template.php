@@ -12,6 +12,5 @@
     </nav>
     <section class="lot-item container">
         <h2> <?=$message?> </h2>
-        <a href="./register.php" class="button" style="display: inline-block">Регистрация </a>
     </section>
 </main>

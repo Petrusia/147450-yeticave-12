@@ -175,7 +175,7 @@ function getLoginErrors(mysqli $db): array
 function httpError( array $categories, int $responseCode)
 {
     $error = [
-    403 => '403 - У вас нет права зайти на страницу',
+    403 => '403 - У вас нет права зайти на страницу ',
     404 => '404 - Данной страницы не существует на сайте'
     ];
 

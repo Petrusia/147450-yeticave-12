@@ -7,20 +7,18 @@ $title = 'Добавление лота';
 if (!$authUser) {
     httpError($categories, 403);
 }
-
 $formErrors = [];
-$normalizedData = [];
+$submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $submittedData = $_POST;
+    $submittedFile = $_FILES;
+    // этап 1: проверить данные запроса:
+    $formErrors = validatedLotData($submittedData, $submittedFile, $categories);
 
-    // этап 1: привести в порядок  данные запроса:
-    $normalizedData = normalizedLotData($_POST, $_FILES);
-
-    // этап 2: проверить  нормализованные данные
-    $formErrors = validatedLotData($normalizedData, $categories);
-
-    // этап 3: сохранить проверенные данные если соответствует правилам валидации
+    // этап 2: сохранить проверенные данные если соответствует правилам валидации:
     if (count($formErrors) === 0) {
-        $normalizedData = imageUpload($normalizedData, $authUser);
+        $normalizedData = normalizedLotData($submittedData);
+        $normalizedData = imageUpload($submittedFile, $normalizedData );
         saveLotData($db, $normalizedData, $authUser);
     }
 }
@@ -29,8 +27,8 @@ echo renderTemplate(
     'add-template.php', $title, $authUser, $categories, [
         'categories' => $categories,
         'formErrors' => $formErrors,
-        'normalizedData' => $normalizedData,
-        'authUser' => $authUser
+        'normalizedData' => $submittedData,
+
 
     ]
 );

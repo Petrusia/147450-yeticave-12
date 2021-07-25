@@ -3,15 +3,11 @@
 // https://www.php.net/manual/ru/language.types.declarations.php
 declare(strict_types=1);
 
-const PROJECT_ROOT = __DIR__;
-const SECONDS_IN_DAY = 86400; // Используема в  function validateDate() путь  functions/validation.php
-const ONE_MB = 1048576; //
-const LOT_NAME_LENGTH = 50; //
-
-if (!file_exists(PROJECT_ROOT . '/config.php')) {
+if (!file_exists(__DIR__ . '/config.php')) {
     $msg = 'Создайте файл config.php на основе config.sample.php и внесите туда настройки проекта';
     trigger_error($msg, E_USER_ERROR);
 }
+require __DIR__ . '/constants.php';
 $config = require PROJECT_ROOT . '/config.php';
 
 // https://github.com/ro-htmlacademy/textbook/blob/main/appendix1.md
@@ -32,3 +28,4 @@ date_default_timezone_set($config['timezone']);
 session_start();
 $authUser = $_SESSION['authUser'] ?? '';
 $categories = getCategories($db);
+
