@@ -81,7 +81,7 @@ function saveLotData(mysqli $db, array $submittedData, array $authUser)
     $stmt->execute();
 
     $id = $db->insert_id;
-    header("Location:  lot.php?lot_id={$id}");
+    header("Location: lot.php?lot_id={$id}");
     exit;
 }
 
@@ -214,6 +214,6 @@ function setSession(mysqli $db, string $email)
     $user = mysqli_fetch_assoc($res);
     session_regenerate_id(true);
     $_SESSION['authUser'] = $user;
-    header("Location:  /");
+    header("Location: / ");
     exit;
 }

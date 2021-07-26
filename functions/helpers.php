@@ -202,10 +202,13 @@ function  renderTemplate(string $name, string $title, array|string $authUser, ar
     ]);
 }
 
+/**
+ * @param array $submittedData
+ * @return array
+ */
 function normalizedLotData(array $submittedData) : array
 {
-
-    $normalizedData = [
+    return [
         // trim возвращает строку string с удалёнными из начала и конца строки пробелами.
         'lot-name' => trim($submittedData['lot-name']),
         'lot-category' => (int)($submittedData['lot-category']),
@@ -214,10 +217,15 @@ function normalizedLotData(array $submittedData) : array
         'lot-step' => (int)($submittedData['lot-step']),
         'lot-date' => (trim($submittedData['lot-date'])),
     ];
-
-    return $normalizedData;
 }
 
+/**
+ * @param string $string
+ * @param string $emptyErr
+ * @param int|null $length
+ * @param string|null $emptyLengthErr
+ * @return string|null
+ */
 function validatedText(string $string,  string $emptyErr, int $length = null, string $emptyLengthErr = null): ?string
 {
     $errorText = null;
@@ -228,6 +236,13 @@ function validatedText(string $string,  string $emptyErr, int $length = null, st
     }
     return $errorText;
 }
+
+
+/**
+ * @param string $number
+ * @param string $emptyErr
+ * @return string|null
+ */
 function validatedInt( string $number, string $emptyErr) :?string {
     $errorText = null;
     if(empty($$number) && $number <= 0 ) {
@@ -237,6 +252,12 @@ function validatedInt( string $number, string $emptyErr) :?string {
 }
 
 
+/**
+ * @param string $lotCategory
+ * @param array $categories
+ * @param string $categoryErr
+ * @return string|null
+ */
 function validatedCategory(string $lotCategory, array $categories, string $categoryErr): ?string
 {
     $errorText = null;
@@ -247,6 +268,12 @@ function validatedCategory(string $lotCategory, array $categories, string $categ
     return $errorText;
 }
 
+/**
+ * @param string $date
+ * @param string $emptyErr
+ * @param string $timeErr
+ * @return string|null
+ */
 function validatedDate(string $date, string $emptyErr, string $timeErr): ?string
 {
     $errorText = null;
@@ -258,6 +285,13 @@ function validatedDate(string $date, string $emptyErr, string $timeErr): ?string
     return $errorText;
 }
 
+/**
+ * @param array $submittedFile
+ * @param string $emptyErr
+ * @param string $extErr
+ * @param string $sizeErr
+ * @return string|null
+ */
 function validatedImage(array $submittedFile, string $emptyErr, string $extErr, string $sizeErr): ?string
 {
     $errorText = null;
@@ -272,6 +306,12 @@ function validatedImage(array $submittedFile, string $emptyErr, string $extErr, 
     return $errorText;
 }
 
+/**
+ * @param array $submittedData
+ * @param array $submittedFile
+ * @param array $categories
+ * @return array
+ */
 function validatedLotData(array $submittedData, array $submittedFile, array $categories) : array
 {
     $formErrors = [];
@@ -287,12 +327,21 @@ function validatedLotData(array $submittedData, array $submittedFile, array $cat
     return array_filter($formErrors);
 }
 
+/**
+ * @param $length
+ * @return string
+ */
 function randomString($length): string
 {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     return substr(str_shuffle($characters), 0, $length);
 }
 
+/**
+ * @param array $submittedFile
+ * @param array $submittedData
+ * @return array
+ */
 function imageUpload(array $submittedFile,array $submittedData) : array
 {
     if (is_uploaded_file($submittedFile['lot-img']['tmp_name'])) {

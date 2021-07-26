@@ -2,12 +2,13 @@
 
 // https://www.php.net/manual/ru/language.types.declarations.php
 declare(strict_types=1);
+const PROJECT_ROOT = __DIR__;
 
-if (!file_exists(__DIR__ . '/config.php')) {
+if (!file_exists( PROJECT_ROOT . '/config.php')) {
     $msg = 'Создайте файл config.php на основе config.sample.php и внесите туда настройки проекта';
     trigger_error($msg, E_USER_ERROR);
 }
-require __DIR__ . '/constants.php';
+require PROJECT_ROOT . '/constants.php';
 $config = require PROJECT_ROOT . '/config.php';
 
 // https://github.com/ro-htmlacademy/textbook/blob/main/appendix1.md
