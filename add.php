@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             LOT_LONGEST_TIME,
             LOT_LONGEST_TIME_ERR,
         ),
-        'lot-img' => validateImage($submittedFile, LOT_IMG_EXIST_ERR, LOT_IMG_EXTENTION_ERR, LOT_IMG_SIZE_ERR),
+        'lot-img' => validateImage($submittedFile, LOT_IMG_EXIST_ERR, LOT_IMG_EXTENSION_ERR, LOT_IMG_SIZE_ERR),
     ];
     $formErrors=array_filter($formErrors);
 

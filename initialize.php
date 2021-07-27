@@ -9,6 +9,7 @@ if (!file_exists( PROJECT_ROOT . '/config.php')) {
     trigger_error($msg, E_USER_ERROR);
 }
 require PROJECT_ROOT . '/constants.php';
+require PROJECT_ROOT . '/messages.php';
 $config = require PROJECT_ROOT . '/config.php';
 
 // https://github.com/ro-htmlacademy/textbook/blob/main/appendix1.md
