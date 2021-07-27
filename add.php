@@ -10,36 +10,71 @@ if (!$authUser) {
 $formErrors = [];
 $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $submittedData = $_POST;
+
     $submittedFile = $_FILES;
 
-    // этап 1: проверить данные запроса:
-    $formErrors = [
-        'lot-name' => validatedText($submittedData['lot-name'], LOT_NAME_EXIST_ERR, LOT_NAME_LENGTH, LOT_NAME_LENGTH_ERR),
-        'lot-category' => validatedCategory($submittedData['lot-category'], $categories, LOT_CATEGORY_ERR),
-        'lot-message' => validatedText($submittedData['lot-message'], LOT_MESSAGE_ERR),
-        'lot-rate' => validatedInt( $submittedData['lot-rate'],  LOT_RATE_ERR),
-        'lot-step' => validatedInt( $submittedData['lot-step'],  LOT_STEP_ERR),
-        'lot-date' => validatedDate( $submittedData['lot-date'],  LOT_DATE_EXIST_ERR, LOT_DATE_TIME_ERR),
-        'lot-img' => validatedImage( $submittedFile,  LOT_IMG_EXIST_ERR, LOT_IMG_EXT_ERR, LOT_IMG_SIZE_ERR),
+    // этап 1: принять все данные формы:
+    $submittedData = [
+        'lot-name' => trim(filter_input(INPUT_POST, 'lot-name')),
+        'lot-category' => trim(filter_input(INPUT_POST, 'lot-category')),
+        'lot-message' =>trim(filter_input(INPUT_POST, 'lot-message')),
+        'lot-rate' => trim(filter_input(INPUT_POST, 'lot-rate')),
+        'lot-step' => trim(filter_input(INPUT_POST, 'lot-step')),
+        'lot-date' => trim(filter_input(INPUT_POST, 'lot-date')),
     ];
 
+    // этап 2: проверить данные запроса:
+    $formErrors = [
+        'lot-name' => validateText(
+            $submittedData['lot-name'],
+            LOT_NAME_EXIST_ERR,
+            LOT_NAME_MIN_LENGTH,
+            LOT_NAME_MIN_LENGTH_ERR,
+            LOT_NAME_MAX_LENGTH,
+            LOT_NAME_MAX_LENGTH_ERR
+        ),
+        'lot-category' => validateCategory($submittedData['lot-category'], $categories, LOT_CATEGORY_ERR),
+        'lot-message' => validateText(
+            $submittedData['lot-message'],
+            LOT_MESSAGE_ERR,
+            LOT_MESSAGE_MIN_LENGTH,
+            LOT_MESSAGE_MIN_LENGTH_ERR,
+            LOT_MESSAGE_MAX_LENGTH,
+            LOT_MESSAGE_MAX_LENGTH_ERR
+        ),
+        'lot-rate' => validatedNumber(
+            $submittedData['lot-rate'],
+            LOT_RATE_ERR,
+            LOT_RATE_MIN_VALUE,
+            LOT_RATE_MIN_LENGTH_ERR,
+            LOT_RATE_MAX_VALUE,
+            LOT_RATE_MAX_LENGTH_ERR
+        ),
+        'lot-step' => validatedNumber(
+            $submittedData['lot-step'],
+            LOT_STEP_ERR,
+            LOT_STEP_MIN_VALUE,
+            LOT_STEP_MIN_LENGTH_ERR,
+            LOT_STEP_MAX_VALUE,
+            LOT_STEP_MAX_LENGTH_ERR
+        ),
 
-    // этап 2: сохранить проверенные данные если соответствует правилам валидации:
-    if (!array_filter($formErrors)) {
-        $normalizedData =
-            [
-                // trim возвращает строку string с удалёнными из начала и конца строки пробелами.
-                'lot-name' => trim($submittedData['lot-name']),
-                'lot-category' => (int)($submittedData['lot-category']),
-                'lot-message' => (trim($submittedData['lot-message'])),
-                'lot-rate' => (int)($submittedData['lot-rate']),
-                'lot-step' => (int)($submittedData['lot-step']),
-                'lot-date' => (trim($submittedData['lot-date'])),
-            ];
+        'lot-date' => validateDate(
+            $submittedData['lot-date'],
+            LOT_DATE_EXIST_ERR,
+            LOT_SHORTEST_TIME,
+            LOT_SHORTEST_TIME_ERR,
+            LOT_LONGEST_TIME,
+            LOT_LONGEST_TIME_ERR,
+        ),
+        'lot-img' => validateImage($submittedFile, LOT_IMG_EXIST_ERR, LOT_IMG_EXTENTION_ERR, LOT_IMG_SIZE_ERR),
+    ];
+    $formErrors=array_filter($formErrors);
 
-        $normalizedData = imageUpload($submittedFile, $normalizedData );
-        saveLotData($db, $normalizedData, $authUser);
+    // этап 3: сохранить проверенные данные если соответствует правилам валидации:
+    if (count($formErrors) === 0) {
+        $submittedData['lot-img']  = imageUpload($submittedFile);
+        saveLotData($db, $submittedData, $authUser);
     }
 }
 
@@ -47,9 +82,7 @@ echo renderTemplate(
     'add-template.php', $title, $authUser, $categories, [
         'categories' => $categories,
         'formErrors' => $formErrors,
-        'normalizedData' => $submittedData,
-
-
+        'submittedData' =>  $submittedData,
     ]
 );
 

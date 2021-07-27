@@ -1,5 +1,7 @@
 <?php
 
+use JetBrains\PhpStorm\NoReturn;
+
 /**
  * @param mysqli $db
  * @return array
@@ -34,7 +36,7 @@ LIMIT 9 ";
 /**
  * @param mysqli $db
  * @param int $lotId
- * @return array|string[]|null
+ * @return array
  */
 function getLot(mysqli $db, int $lotId): array
 {
@@ -48,11 +50,13 @@ function getLot(mysqli $db, int $lotId): array
     return  $result->fetch_assoc();
 }
 
+
 /**
  * @param mysqli $db
- * @param $lotInput
+ * @param array $normalizedData
+ * @param array $authUser
  */
-function saveLotData(mysqli $db, array $submittedData, array $authUser)
+#[NoReturn] function saveLotData(mysqli $db, array $normalizedData, array $authUser)
 {
     $sql = "INSERT INTO lot (
                  lot_name,
@@ -69,13 +73,13 @@ function saveLotData(mysqli $db, array $submittedData, array $authUser)
     $stmt = $db->prepare($sql);
     $stmt->bind_param(
         'ssssssss',
-        $submittedData['lot-name'],
-        $submittedData['lot-message'],
-        $submittedData['lot-img'],
-        $submittedData['lot-rate'],
-        $submittedData['lot-date'],
-        $submittedData['lot-step'],
-        $submittedData['lot-category'],
+        $normalizedData['lot-name'],
+        $normalizedData['lot-message'],
+        $normalizedData['lot-img'],
+        $normalizedData['lot-rate'],
+        $normalizedData['lot-date'],
+        $normalizedData['lot-step'],
+        $normalizedData['lot-category'],
         $authUser['id']
     );
     $stmt->execute();

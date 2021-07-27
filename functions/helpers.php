@@ -202,130 +202,7 @@ function  renderTemplate(string $name, string $title, array|string $authUser, ar
     ]);
 }
 
-/**
- * @param array $submittedData
- * @return array
- */
-function normalizedLotData(array $submittedData) : array
-{
-    return [
-        // trim возвращает строку string с удалёнными из начала и конца строки пробелами.
-        'lot-name' => trim($submittedData['lot-name']),
-        'lot-category' => (int)($submittedData['lot-category']),
-        'lot-message' => (trim($submittedData['lot-message'])),
-        'lot-rate' => (int)($submittedData['lot-rate']),
-        'lot-step' => (int)($submittedData['lot-step']),
-        'lot-date' => (trim($submittedData['lot-date'])),
-    ];
-}
 
-/**
- * @param string $string
- * @param string $emptyErr
- * @param int|null $length
- * @param string|null $emptyLengthErr
- * @return string|null
- */
-function validatedText(string $string,  string $emptyErr, int $length = null, string $emptyLengthErr = null): ?string
-{
-    $errorText = null;
-    if (empty($string)) {
-        $errorText = $emptyErr;
-    } elseif ($length && strlen($string) >= $length) {
-        $errorText = $emptyLengthErr;
-    }
-    return $errorText;
-}
-
-
-/**
- * @param string $number
- * @param string $emptyErr
- * @return string|null
- */
-function validatedInt( string $number, string $emptyErr) :?string {
-    $errorText = null;
-    if(empty($$number) && $number <= 0 ) {
-        $errorText = $emptyErr;
-    }
-    return $errorText;
-}
-
-
-/**
- * @param string $lotCategory
- * @param array $categories
- * @param string $categoryErr
- * @return string|null
- */
-function validatedCategory(string $lotCategory, array $categories, string $categoryErr): ?string
-{
-    $errorText = null;
-    $allLotCat = array_column($categories, 'id');
-    if(!is_int($lotCategory) && !in_array($lotCategory, $allLotCat)) {
-        $errorText = $categoryErr;
-    }
-    return $errorText;
-}
-
-/**
- * @param string $date
- * @param string $emptyErr
- * @param string $timeErr
- * @return string|null
- */
-function validatedDate(string $date, string $emptyErr, string $timeErr): ?string
-{
-    $errorText = null;
-    if (empty($date)) {
-        $errorText = $emptyErr;
-    } elseif ((strtotime($date) - time()) <= SECONDS_IN_DAY) {
-        $errorText = $timeErr;
-    }
-    return $errorText;
-}
-
-/**
- * @param array $submittedFile
- * @param string $emptyErr
- * @param string $extErr
- * @param string $sizeErr
- * @return string|null
- */
-function validatedImage(array $submittedFile, string $emptyErr, string $extErr, string $sizeErr): ?string
-{
-    $errorText = null;
-    $ext = pathinfo($submittedFile['lot-img']['name'], PATHINFO_EXTENSION);
-    if (isset($submittedFile['lot-img']['error']) && $submittedFile['lot-img']['error'] === UPLOAD_ERR_NO_FILE) {
-        $errorText = $emptyErr;
-    } elseif (!in_array($ext, ALLOWED_IMG_EXT)) {
-        $errorText =  $extErr;
-    } elseif ($submittedFile['lot-img']['size'] > FILE_SIZE)  {
-        $errorText =  $sizeErr;
-    }
-    return $errorText;
-}
-
-/**
- * @param array $submittedData
- * @param array $submittedFile
- * @param array $categories
- * @return array
- */
-function validatedLotData(array $submittedData, array $submittedFile, array $categories) : array
-{
-    $formErrors = [];
-
-    $formErrors['lot-name'] = validatedText($submittedData['lot-name'], LOT_NAME_EXIST_ERR, LOT_NAME_LENGTH, LOT_NAME_LENGTH_ERR);
-    $formErrors['lot-category'] = validatedCategory($submittedData['lot-category'], $categories, LOT_CATEGORY_ERR);
-    $formErrors['lot-message'] = validatedText($submittedData['lot-message'], LOT_MESSAGE_ERR);
-    $formErrors['lot-rate'] = validatedInt( $submittedData['lot-rate'],  LOT_RATE_ERR);
-    $formErrors['lot-step'] = validatedInt( $submittedData['lot-step'],  LOT_STEP_ERR);
-    $formErrors['lot-date'] = validatedDate( $submittedData['lot-date'],  LOT_DATE_EXIST_ERR, LOT_DATE_TIME_ERR);
-    $formErrors['lot-img'] = validatedImage( $submittedFile,  LOT_IMG_EXIST_ERR, LOT_IMG_EXT_ERR, LOT_IMG_SIZE_ERR);
-
-    return array_filter($formErrors);
-}
 
 /**
  * @param $length
@@ -339,10 +216,9 @@ function randomString($length): string
 
 /**
  * @param array $submittedFile
- * @param array $submittedData
- * @return array
+ * @return string
  */
-function imageUpload(array $submittedFile,array $submittedData) : array
+function imageUpload(array $submittedFile) : string
 {
     if (is_uploaded_file($submittedFile['lot-img']['tmp_name'])) {
         $fileName = $submittedFile['lot-img']['name'];
@@ -350,7 +226,7 @@ function imageUpload(array $submittedFile,array $submittedData) : array
         $fileName = randomString(10) .'-'. $fileName;
         $picturePath = './uploads/' . $fileName;//
         move_uploaded_file($tempFileName, $picturePath);
-        $submittedData['lot-img'] = $picturePath;
+        return $picturePath;
     }
-    return $submittedData;
 }
+
