@@ -218,15 +218,16 @@ function randomString($length): string
  * @param array $submittedFile
  * @return string
  */
-function imageUpload(array $submittedFile) : string
+function uploadFile(array $submittedFile, string $uploadPath) : string
 {
-    if (is_uploaded_file($submittedFile['lot-img']['tmp_name'])) {
-        $fileName = $submittedFile['lot-img']['name'];
-        $tempFileName = $submittedFile['lot-img']['tmp_name'];
-        $fileName = randomString(10) .'-'. $fileName;
-        $picturePath = './uploads/' . $fileName;//
-        move_uploaded_file($tempFileName, $picturePath);
-        return $picturePath;
+    if (is_uploaded_file($submittedFile['tmp_name'])) {
+        if(!is_dir($uploadPath)){
+            mkdir($uploadPath);
+        }
+        $fileName = randomString(10) .'-'. $submittedFile['name'];
+        $filePath = PROJECT_ROOT . '/'. $uploadPath . '/' . $fileName;//
+        move_uploaded_file($submittedFile['tmp_name'], $filePath);
+        return  '/'. $uploadPath  .'/'. $fileName;
     }
 }
 

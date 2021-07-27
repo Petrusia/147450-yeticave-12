@@ -36,8 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'lot-category' => validateCategory(
             $submittedData['lot-category'],
             $categories,
-            LOT_CATEGORY_ERR,
-            LOT_CATEGORY_REQUIRED
+            LOT_CATEGORY_ERR
         ),
         'lot-message' => validateText(
             $submittedData['lot-message'],
@@ -50,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ),
         'lot-rate' => validateNumber(
             $submittedData['lot-rate'],
+            NUMBER_ERR,
             LOT_RATE_ERR,
             LOT_RATE_REQUIRED,
             LOT_RATE_MIN_VALUE,
@@ -59,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ),
         'lot-step' => validateNumber(
             $submittedData['lot-step'],
+            NUMBER_ERR,
             LOT_STEP_ERR,
             LOT_STEP_REQUIRED,
             LOT_STEP_MIN_VALUE,
@@ -84,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // этап 3: сохранить проверенные данные если соответствует правилам валидации:
     if (count($formErrors) === 0) {
-        $submittedData['lot-img']  = imageUpload($submittedFile);
+        $submittedData['lot-img']  = uploadFile($submittedFile['lot-img'], IMAGE_PATH);
         saveLotData($db, $submittedData, $authUser);
     }
 }

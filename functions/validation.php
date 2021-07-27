@@ -43,6 +43,7 @@ function validateText(
  */
 function validateNumber(
     string $number,
+    string $formatErrText,
     string $emptyErrText,
     bool $required = true,
     ?int $min = null,
@@ -51,15 +52,17 @@ function validateNumber(
     string $maxErrText = ''
 ): ?string {
     $length = mb_strlen($number);
-    $errorText = null;
-    if ($required && $length === 0) {
-        $errorText = $emptyErrText;
+
+    if (!is_numeric($number)) {
+        return $formatErrText;
+    } elseif ($required && $length === 0) {
+        return $emptyErrText;
     } elseif ($min !== null && $number < $min) {
-        $errorText = $minErrText;
+        return $minErrText;
     } elseif ($max !== null && $number > $max) {
-        $errorText = $maxErrText;
+        return $maxErrText;
     }
-    return $errorText;
+    return null;
 }
 
 
@@ -74,14 +77,11 @@ function validateCategory(
     string $id,
     array $categories,
     string $emptyErrText,
-    bool $required = true,
 ): ?string
 {
     $length = mb_strlen($id);
     $allCatId = array_column($categories, 'id');
-    if ($required && $length === 0) {
-        return $emptyErrText;
-    } elseif (!is_int($id) && !in_array($id, $allCatId)) {
+    if ($length === 0 && !is_numeric($id) && !in_array($id, $allCatId)) {
             return $emptyErrText;
         }
     return null;
@@ -113,10 +113,10 @@ function validateCategory(
         if ($required && $date === '') {
             return $emptyErrText;
         }
-//        $date = trim(preg_replace('~[^\d:.]~', ' ', $date));
-//        if (date_create_from_format($date, $format) == false) {
-//            return $invalidDateErr;
-//        }
+
+        if (date_create_from_format($format, $date) == false) {
+            return $invalidDateErr;
+        }
         $timestamp = strtotime($date);
 
         if ($min !== null && $timestamp < $min) {

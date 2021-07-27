@@ -18,5 +18,7 @@ const LOT_MIN_TIME = SECONDS_IN_DAY;
 const LOT_MAX_TIME = 5 * SECONDS_IN_DAY;
 const LOT_IMG_SIZE = 1 * ONE_MB; //
 const LOT_ALLOWED_IMG_EXT = ['jpeg', 'jpg', 'png'];
+const IMAGE_PATH = 'uploads';
 const LOT_DATE_REQUIRED = true;
 const LOT_DATE_FORMAT = 'Y-m-d';
+
