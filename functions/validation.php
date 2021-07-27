@@ -2,234 +2,251 @@
 
 /**
  * @param string $string
- * @param string $emptyErr
- * @param int $minLength
- * @param string $minLengthErr
- * @param int $maxLength
- * @param string $maxLengthErr
+ * @param string $emptyErrText
+ * @param bool $required
+ * @param int|null $min
+ * @param string $minErrText
+ * @param int|null $max
+ * @param string $maxErrText
  * @return string|null
  */
 function validateText(
     string $string,
-    string $emptyErr,
-    int $minLength = 0,
-    string $minLengthErr = '',
-    int $maxLength = 0,
-    string $maxLengthErr = ''
+    string $emptyErrText,
+    bool $required = true,
+    ?int $min = null,
+    string $minErrText = '',
+    ?int $max = null,
+    string $maxErrText = '',
 ): ?string {
-    $errorText = null;
     $length = mb_strlen($string);
-    if (empty($string)) {
-        $errorText = $emptyErr;
-    } elseif ($minLength && $length <= $minLength) {
-        $errorText = $minLengthErr;
-    } elseif ($maxLength && $length >= $maxLength) {
-        $errorText = $maxLengthErr;
+    if ($required && $length === 0) {
+        return $emptyErrText;
+    } elseif ($min !== null && $length <= $min) {
+        return $minErrText;
+    } elseif ($max !== null && $length >= $max) {
+        return $maxErrText;
     }
-    return $errorText;
+    return null;
 }
 
 
 /**
  * @param string $number
- * @param string $emptyErr
- * @param int $minValue
- * @param string $minLengthErr
- * @param int $maxValue
- * @param string $maxLengthErr
+ * @param string $emptyErrText
+ * @param bool $required
+ * @param int|null $min
+ * @param string $minErrText
+ * @param int|null $max
+ * @param string $maxErrText
  * @return string|null
  */
-function validatedNumber(
+function validateNumber(
     string $number,
-    string $emptyErr,
-    int $minValue = 0,
-    string $minLengthErr = '',
-    int $maxValue = 0,
-    string $maxLengthErr = ''
+    string $emptyErrText,
+    bool $required = true,
+    ?int $min = null,
+    string $minErrText = '',
+    ?int $max = null,
+    string $maxErrText = ''
 ): ?string {
+    $length = mb_strlen($number);
     $errorText = null;
-    if (empty($number)) {
-        $errorText = $emptyErr;
-    } elseif ($minValue && $number < $minValue) {
-        $errorText = $minLengthErr;
-    } elseif ($maxValue && $number > $maxValue) {
-        $errorText = $maxLengthErr;
+    if ($required && $length === 0) {
+        $errorText = $emptyErrText;
+    } elseif ($min !== null && $number < $min) {
+        $errorText = $minErrText;
+    } elseif ($max !== null && $number > $max) {
+        $errorText = $maxErrText;
     }
     return $errorText;
 }
 
 
 /**
- * @param string $lotCategory
+ * @param string $id
  * @param array $categories
- * @param string $categoryErr
+ * @param string $emptyErrText
+ * @param bool $required
  * @return string|null
  */
-function validateCategory(string $lotCategory, array $categories, string $categoryErr): ?string
-{
-    $errorText = null;
-    $allLotCat = array_column($categories, 'id');
-    if(!is_int($lotCategory) && !in_array($lotCategory, $allLotCat)) {
-        $errorText = $categoryErr;
-    }
-    return $errorText;
-}
-
-
-/**
- * @param string $date
- * @param string $emptyErr
- * @param int $shortestTime
- * @param string $shortestTimeErr
- * @param int $longestTime
- * @param string $longestTimeErr
- * @return string|null
- */
-function validateDate(
-    string $date,
-    string $emptyErr,
-    int $shortestTime = 0,
-    string $shortestTimeErr = '',
-    int $longestTime = 0,
-    string $longestTimeErr = '',
+function validateCategory(
+    string $id,
+    array $categories,
+    string $emptyErrText,
+    bool $required = true,
 ): ?string
 {
-    $errorText = null;
-
-    $min = date("Y-m-d H:i:s", time() + $shortestTime);
-    $max = date("Y-m-d H:i:s", time() + $longestTime);
-    if (empty($date)) {
-        $errorText = $emptyErr;
-    } elseif ( $shortestTime && $date <= $min) {
-        $errorText = $shortestTimeErr .  $min;
-    }elseif ( $longestTime && $date >= $max) {
-        $errorText = $longestTimeErr . $max;
-    }
-    return $errorText;
-}
-
-/**
- * @param array $submittedFile
- * @param string $emptyErr
- * @param string $extErr
- * @param string $sizeErr
- * @return string|null
- */
-function validateImage(array $submittedFile, string $emptyErr, string $extErr, string $sizeErr): ?string
-{
-    $errorText = null;
-    $ext = pathinfo($submittedFile['lot-img']['name'], PATHINFO_EXTENSION);
-    if (isset($submittedFile['lot-img']['error']) && $submittedFile['lot-img']['error'] === UPLOAD_ERR_NO_FILE) {
-        $errorText = $emptyErr;
-    } elseif (!in_array($ext, LOT_ALLOWED_IMG_EXT)) {
-        $errorText =  $extErr;
-    } elseif ($submittedFile['lot-img']['size'] > LOT_IMG_SIZE)  {
-        $errorText =  $sizeErr;
-    }
-    return $errorText;
-}
-
-
-function validateEmail( mysqli $db, string $field, string $errMessage, string $errEmail): ?string
-{
-    $field = filter_input(INPUT_POST, $field,  FILTER_VALIDATE_EMAIL);
-    if (empty($field)) {
-        return $errMessage;
-    }
-    if (isEmailExist($db, $field)) {
-        return $errEmail;
-    }
+    $length = mb_strlen($id);
+    $allCatId = array_column($categories, 'id');
+    if ($required && $length === 0) {
+        return $emptyErrText;
+    } elseif (!is_int($id) && !in_array($id, $allCatId)) {
+            return $emptyErrText;
+        }
     return null;
 }
 
-function validatePassword(string $errMessage): ?string
-{
-    if (empty($_POST['user-password'])) {
-        return $errMessage;
-    }
-    return null;
-}
+    /**
+     * @param string $date
+     * @param string $emptyErrText
+     * @param string $invalidDateErr
+     * @param bool $required
+     * @param string $format
+     * @param int|null $min
+     * @param string $minErrText
+     * @param int|null $max
+     * @param string $maxErrText
+     * @return string|null
+     */
+    function validateDate(
+        string $date,
+        string $emptyErrText,
+        string $invalidDateErr,
+        bool $required = true,
+        string $format = 'Y-m-d',
+        ?int $min = null,
+        string $minErrText = '',
+        ?int $max = null,
+        string $maxErrText = '',
+    ): ?string {
+        if ($required && $date === '') {
+            return $emptyErrText;
+        }
+//        $date = trim(preg_replace('~[^\d:.]~', ' ', $date));
+//        if (date_create_from_format($date, $format) == false) {
+//            return $invalidDateErr;
+//        }
+        $timestamp = strtotime($date);
 
-/**
- * @return array
- */
-function getLotErrors(): array
-{
+        if ($min !== null && $timestamp < $min) {
+            return $minErrText . date("Y-m-d H:i:s", $min);
+        }
+        if ($max && $timestamp > $max) {
+            return $maxErrText . date("Y-m-d H:i:s", $max);
+        }
+        return null;
+    }
+
+    /**
+     * @param array $submittedFile
+     * @param string $emptyErrText
+     * @param string $extErrText
+     * @param string $sizeErrText
+     * @return string|null
+     */
+    function validateImage(array $submittedFile, string $emptyErrText, string $extErrText, string $sizeErrText): ?string
+    {
+        $ext = pathinfo($submittedFile['lot-img']['name'], PATHINFO_EXTENSION);
+        if (isset($submittedFile['lot-img']['error']) && $submittedFile['lot-img']['error'] === UPLOAD_ERR_NO_FILE) {
+            return $emptyErrText;
+        } elseif (!in_array($ext, LOT_ALLOWED_IMG_EXT)) {
+            return $extErrText;
+        } elseif ($submittedFile['lot-img']['size'] > LOT_IMG_SIZE) {
+            return $sizeErrText;
+        }
+        return null;
+    }
+
+
+    function validateEmail(mysqli $db, string $field, string $errMessage, string $errEmail): ?string
+    {
+        $field = filter_input(INPUT_POST, $field, FILTER_VALIDATE_EMAIL);
+        if (empty($field)) {
+            return $errMessage;
+        }
+        if (isEmailExist($db, $field)) {
+            return $errEmail;
+        }
+        return null;
+    }
+
+    function validatePassword(string $errMessage): ?string
+    {
+        if (empty($_POST['user-password'])) {
+            return $errMessage;
+        }
+        return null;
+    }
+
+
+
+    function getRegisterErrors(mysqli $db): array
+    {
         $errors = [
-            'lot-name' => validateString('lot-name', 'Введите наименование лота'),
-            'lot-category' => validateInt('lot-category', 'Выберите категорию'),
-            'lot-message' => validateString('lot-message', 'Напишите описание лота'),
-            'lot-rate' => validateFloat('lot-rate', 'Введите начальную цену'),
-            'lot-step' => validateInt('lot-step', 'Введите шаг ставки'),
-            'lot-date' => validateDate('lot-date', 'Введите дату завершения торгов'),
-            'lot-img' => validateImage('lot-img', 'Добавьте изображение лота')
+            'user-email' => validateEmail(
+                $db,
+                'user-email',
+                'Введите e-mail',
+                'Пользователь с этим email уже зарегистрирован'
+            ),
+            'user-password' => validatePassword('Введите пароль'),
+            'user-name' => validateString('user-name', 'Введите имя'),
+            'user-message' => validateString('user-message', 'Напишите как с вами связаться')
         ];
         return array_filter($errors);
-}
-
-function getRegisterErrors(mysqli $db ): array
-{
-    $errors = [
-        'user-email' => validateEmail($db, 'user-email', 'Введите e-mail', 'Пользователь с этим email уже зарегистрирован'),
-        'user-password' => validatePassword( 'Введите пароль'),
-        'user-name' => validateString('user-name', 'Введите имя'),
-        'user-message' => validateString('user-message', 'Напишите как с вами связаться')
-    ];
-    return array_filter($errors);
-}
-
-
-function verifyEmail( mysqli $db, string $email, string $errMessage, string $errEmail): ?string
-{
-    $email = filter_input(INPUT_POST, $email, FILTER_VALIDATE_EMAIL);
-    if (empty($email)) {
-        return $errMessage;
-    }
-    if (isEmailExist($db, $email)) {
-        return null;
-    } else {
-    return $errEmail;
-    }
-}
-
-function verifyPassword(mysqli $db, string $errMessage, string $errPassword ): ?string
-{
-    if (empty($_POST['user-password'])) {
-        return $errMessage;
     }
 
-    $password = (getPassword($db, $_POST['user-email']));
 
-    if (password_verify($_POST['user-password'], $password['password'])){
-        return null;
-    }  else {
-        return $errPassword;
+    function verifyEmail(mysqli $db, string $email, string $errMessage, string $errEmail): ?string
+    {
+        $email = filter_input(INPUT_POST, $email, FILTER_VALIDATE_EMAIL);
+        if (empty($email)) {
+            return $errMessage;
+        }
+        if (isEmailExist($db, $email)) {
+            return null;
+        } else {
+            return $errEmail;
+        }
     }
-}
 
-function getLoginErrors(mysqli $db): array
-{
-    $errors = [
-        'user-email' => verifyEmail($db, 'user-email', 'Введите e-mail', 'Пользователь с этим email не зарегистрирован'),
-        'user-password' => verifyPassword($db, 'Введите пароль', 'Вы ввели неверный пароль')
-       ];
-    return array_filter($errors);
-}
+    function verifyPassword(mysqli $db, string $errMessage, string $errPassword): ?string
+    {
+        if (empty($_POST['user-password'])) {
+            return $errMessage;
+        }
+
+        $password = (getPassword($db, $_POST['user-email']));
+
+        if (password_verify($_POST['user-password'], $password['password'])) {
+            return null;
+        } else {
+            return $errPassword;
+        }
+    }
+
+    function getLoginErrors(mysqli $db): array
+    {
+        $errors = [
+            'user-email' => verifyEmail(
+                $db,
+                'user-email',
+                'Введите e-mail',
+                'Пользователь с этим email не зарегистрирован'
+            ),
+            'user-password' => verifyPassword($db, 'Введите пароль', 'Вы ввели неверный пароль')
+        ];
+        return array_filter($errors);
+    }
 
 // для залогиненных пользователей надо закрыть страницу регистрации.
-function httpError( array $categories, int $responseCode)
-{
-    $error = [
-    403 => '403 - У вас нет права зайти на страницу ',
-    404 => '404 - Данной страницы не существует на сайте'
-    ];
+    function httpError(array $categories, int $responseCode)
+    {
+        $error = [
+            403 => '403 - У вас нет права зайти на страницу ',
+            404 => '404 - Данной страницы не существует на сайте'
+        ];
 
-    $title =  $error[$responseCode];
+        $title = $error[$responseCode];
 
-    http_response_code($responseCode);
-    echo renderTemplate('404-template.php', $title, $authUser = false, $categories, [
-            'categories' => $categories,
-            'message' => $title
-        ]);
+        http_response_code($responseCode);
+        echo renderTemplate('404-template.php', $title, $authUser = false, $categories,
+            [
+                'categories' => $categories,
+                'message' => $title
+            ]
+        );
         exit;
+
 }

@@ -10,9 +10,8 @@ if (!$authUser) {
 $formErrors = [];
 $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
     $submittedFile = $_FILES;
-
+    var_dump($_POST);
     // этап 1: принять все данные формы:
     $submittedData = [
         'lot-name' => trim(filter_input(INPUT_POST, 'lot-name')),
@@ -28,31 +27,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'lot-name' => validateText(
             $submittedData['lot-name'],
             LOT_NAME_EXIST_ERR,
+            LOT_NAME_REQUIRED,
             LOT_NAME_MIN_LENGTH,
             LOT_NAME_MIN_LENGTH_ERR,
             LOT_NAME_MAX_LENGTH,
             LOT_NAME_MAX_LENGTH_ERR
         ),
-        'lot-category' => validateCategory($submittedData['lot-category'], $categories, LOT_CATEGORY_ERR),
+        'lot-category' => validateCategory(
+            $submittedData['lot-category'],
+            $categories,
+            LOT_CATEGORY_ERR,
+            LOT_CATEGORY_REQUIRED
+        ),
         'lot-message' => validateText(
             $submittedData['lot-message'],
             LOT_MESSAGE_ERR,
+            LOT_CATEGORY_REQUIRED,
             LOT_MESSAGE_MIN_LENGTH,
             LOT_MESSAGE_MIN_LENGTH_ERR,
             LOT_MESSAGE_MAX_LENGTH,
             LOT_MESSAGE_MAX_LENGTH_ERR
         ),
-        'lot-rate' => validatedNumber(
+        'lot-rate' => validateNumber(
             $submittedData['lot-rate'],
             LOT_RATE_ERR,
+            LOT_RATE_REQUIRED,
             LOT_RATE_MIN_VALUE,
             LOT_RATE_MIN_LENGTH_ERR,
             LOT_RATE_MAX_VALUE,
             LOT_RATE_MAX_LENGTH_ERR
         ),
-        'lot-step' => validatedNumber(
+        'lot-step' => validateNumber(
             $submittedData['lot-step'],
             LOT_STEP_ERR,
+            LOT_STEP_REQUIRED,
             LOT_STEP_MIN_VALUE,
             LOT_STEP_MIN_LENGTH_ERR,
             LOT_STEP_MAX_VALUE,
@@ -62,10 +70,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'lot-date' => validateDate(
             $submittedData['lot-date'],
             LOT_DATE_EXIST_ERR,
-            LOT_SHORTEST_TIME,
-            LOT_SHORTEST_TIME_ERR,
-            LOT_LONGEST_TIME,
-            LOT_LONGEST_TIME_ERR,
+            LOT_DATE_FORMAT_ERR,
+            LOT_DATE_REQUIRED,
+            LOT_DATE_FORMAT,
+            time() + LOT_MIN_TIME,
+            LOT_MIN_TIME_ERR,
+            time() + LOT_MAX_TIME,
+            LOT_MAX_TIME_ERR,
         ),
         'lot-img' => validateImage($submittedFile, LOT_IMG_EXIST_ERR, LOT_IMG_EXTENSION_ERR, LOT_IMG_SIZE_ERR),
     ];
