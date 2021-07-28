@@ -7,11 +7,21 @@ $title = 'Добавление лота';
 if (!$authUser) {
     httpError($categories, 403);
 }
+
+
 $formErrors = [];
 $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    if ($_SESSION['token'] !== $_POST['token']) {
+        httpError($categories, 403);
+    } elseif (time() >= $_SESSION['token-expire']) {
+        httpError($categories, 403);
+    }
+    unset($_SESSION['token']);
+    unset($_SESSION['token-expire']);
+
     $submittedFile = $_FILES;
-    var_dump($_POST);
     // этап 1: принять все данные формы:
     $submittedData = [
         'lot-name' => trim(filter_input(INPUT_POST, 'lot-name')),
@@ -97,4 +107,5 @@ echo renderTemplate(
         'submittedData' =>  $submittedData,
     ]
 );
+
 

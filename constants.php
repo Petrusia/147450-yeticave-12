@@ -21,4 +21,5 @@ const LOT_ALLOWED_IMG_EXT = ['jpeg', 'jpg', 'png'];
 const IMAGE_PATH = 'uploads';
 const LOT_DATE_REQUIRED = true;
 const LOT_DATE_FORMAT = 'Y-m-d';
+const TOKEN_EXPIRE = 3600;
 
