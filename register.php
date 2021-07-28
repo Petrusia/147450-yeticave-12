@@ -12,12 +12,12 @@ if ($authUser) {
 $formErrors = [];
 $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-//
-//    if ($_SESSION['token'] !== $_POST['token']) {
-//        httpError($categories, 403);
-//    } elseif (time() >= $_SESSION['token-expire']) {
-//        httpError($categories, 403);
-//    }
+
+    if ($_SESSION['token'] !== $_POST['token']) {
+        httpError($categories, 403);
+    } elseif (time() >= $_SESSION['token-expire']) {
+        httpError($categories, 403);
+    }
 
 
 
