@@ -8,7 +8,6 @@ if (!$authUser) {
     httpError($categories, 403);
 }
 
-
 $formErrors = [];
 $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -18,8 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } elseif (time() >= $_SESSION['token-expire']) {
         httpError($categories, 403);
     }
-    unset($_SESSION['token']);
-    unset($_SESSION['token-expire']);
 
     $submittedFile = $_FILES;
     // этап 1: принять все данные формы:

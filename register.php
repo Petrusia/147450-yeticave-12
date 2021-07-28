@@ -1,45 +1,87 @@
 <?php
-require 'initialize.php';
+
+require __DIR__ . '/initialize.php';
+
 $title = 'Регистрация';
-
-
-
 // 8. По такому же принципу для залогиненных пользователей
 // надо закрыть страницу регистрации.
+if ($authUser) {
+    httpError($categories, 403);
+}
 
-$categories = getCategories($db);
-$registerInput = [];
-$errors =[];
+$formErrors = [];
+$submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $registerInput = getRegisterInput();
-    $errors = getRegisterErrors($db);
-    if (empty($errors)) {
-        registerUser($db, $registerInput);
+//
+//    if ($_SESSION['token'] !== $_POST['token']) {
+//        httpError($categories, 403);
+//    } elseif (time() >= $_SESSION['token-expire']) {
+//        httpError($categories, 403);
+//    }
+
+
+
+    // этап 1: принять все данные формы:
+    $submittedData = [
+        'user-email' => trim(filter_input(INPUT_POST, 'user-email')),
+        'user-password' => trim(filter_input(INPUT_POST, 'user-password')),
+        'user-name' =>trim(filter_input(INPUT_POST, 'user-name')),
+        'user-message' => trim(filter_input(INPUT_POST, 'user-message')),
+    ];
+
+    // этап 2: проверить данные запроса:
+    $formErrors = [
+        'user-email' => validateEmail(
+            $submittedData['user-email'],
+            $db,
+            EMPTY_EMAIL_ERR,
+            REGISTER_EXIST_EMAIL_ERR,
+        ),
+        'user-password' => validateText(
+            $submittedData['user-password'],
+            REGISTER_PASSWORD_EXIST_ERR,
+            true,
+            REGISTER_PASSWORD_MIN_LENGTH,
+            REGISTER_PASSWORD_MIN_LENGTH_ERR,
+            REGISTER_PASSWORD_MAX_LENGTH,
+            REGISTER_PASSWORD_MAX_LENGTH_ERR
+        ),
+        'user-name' => validateText(
+            $submittedData['user-name'],
+            REGISTER_NAME_EXIST_ERR,
+            true,
+            REGISTER_NAME_MIN_LENGTH,
+            REGISTER_NAME_MIN_LENGTH_ERR,
+            REGISTER_NAME_MAX_LENGTH,
+            REGISTER_NAME_MAX_LENGTH_ERR
+        ),
+        'user-message' => validateText(
+            $submittedData['user-message'],
+            REGISTER_MESSAGE_EXIST_ERR,
+            true,
+            REGISTER_MESSAGE_MIN_LENGTH,
+            REGISTER_MESSAGE_MIN_LENGTH_ERR,
+            REGISTER_MESSAGE_MAX_LENGTH,
+            REGISTER_MESSAGE_MAX_LENGTH_ERR
+        ),
+    ];
+    //var_dump( mb_strlen($submittedData['user-name'])); exit();
+    $formErrors=array_filter($formErrors);
+
+    if (count($formErrors) === 0) {
+        $submittedData['user-password'] = password_hash($submittedData['user-password'], PASSWORD_DEFAULT);
+        saveUser($db, $submittedData);
     }
+
 
 }
 
 
-$main = include_template(
-    'register-template.php',
-    [
-        'categories' => $categories,
-        'errors' => $errors,
-        'registerInput' => $registerInput
-    ]
+echo renderTemplate(
+    'register-template.php', $title, $authUser, $categories, [
+                          'categories' => $categories,
+                          'formErrors' => $formErrors,
+                          'submittedData' =>  $submittedData,
+                      ]
 );
 
-
-$layout = include_template(
-    'layout-template.php',
-    [
-        'isIndex' => $isIndex,
-        'main' => $main,
-        'categories' => $categories,
-        'isAuth' => $isAuth,
-        'authUser' => $authUser,
-        'title' => $title
-
-    ]
-);
-print ($layout);

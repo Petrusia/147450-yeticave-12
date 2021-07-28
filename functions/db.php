@@ -36,27 +36,23 @@ LIMIT 9 ";
 /**
  * @param mysqli $db
  * @param int $lotId
- * @return array
+ * @return null|array
  */
-function getLot(mysqli $db, int $lotId): array
+function getLot(mysqli $db, int $lotId): ?array
 {
     $sql = "SELECT * FROM lot
         INNER JOIN category ON category_id = category.id
         WHERE lot.id = ?";
-    $stmt = $db->prepare($sql);
-    $stmt->bind_param('s', $lotId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    return  $result->fetch_assoc();
+        return getFetchAssoc($db, $sql, $lotId);
 }
 
 
 /**
  * @param mysqli $db
- * @param array $normalizedData
+ * @param array $submittedData
  * @param array $authUser
  */
-#[NoReturn] function saveLotData(mysqli $db, array $normalizedData, array $authUser)
+#[NoReturn] function saveLotData(mysqli $db, array $submittedData, array $authUser)
 {
     $sql = "INSERT INTO lot (
                  lot_name,
@@ -73,13 +69,13 @@ function getLot(mysqli $db, int $lotId): array
     $stmt = $db->prepare($sql);
     $stmt->bind_param(
         'ssssssss',
-        $normalizedData['lot-name'],
-        $normalizedData['lot-message'],
-        $normalizedData['lot-img'],
-        $normalizedData['lot-rate'],
-        $normalizedData['lot-date'],
-        $normalizedData['lot-step'],
-        $normalizedData['lot-category'],
+        $submittedData['lot-name'],
+        $submittedData['lot-message'],
+        $submittedData['lot-img'],
+        $submittedData['lot-rate'],
+        $submittedData['lot-date'],
+        $submittedData['lot-step'],
+        $submittedData['lot-category'],
         $authUser['id']
     );
     $stmt->execute();
@@ -91,88 +87,46 @@ function getLot(mysqli $db, int $lotId): array
 
 
 /**
- * @return array
- */
-function getLotInput(): array
-{
-    return [
-        'lot-name' => $_POST['lot-name'],
-        'lot-category' => (int) $_POST['lot-category'],
-        'lot-message' => $_POST['lot-message'],
-        'lot-rate' => (float) $_POST['lot-rate'],
-        'lot-step' => (int) $_POST['lot-step'],
-        'lot-date' => $_POST['lot-date'],
-        'lot-img' => ''
-    ];
-}
-
-/**
- * @return string
- */
-function getImage(): string
-{
-    $imageName = $_FILES['lot-img']['name'];
-    $tempImageName = $_FILES['lot-img']['tmp_name'];
-    $imageDir = PROJECT_ROOT . '/uploads/';
-    $imageUrl = '/uploads/' . $imageName;
-    move_uploaded_file($tempImageName, $imageDir . $imageName);
-    return $imageUrl;
-}
-
-/**
- * @return array
- */
-function getRegisterInput(): array
-{
-    return [
-        'user-email' => $_POST['user-email'],
-        'user-password' => password_hash($_POST['user-password'], PASSWORD_DEFAULT),
-        'user-name' => $_POST['user-name'],
-        'user-message' => $_POST['user-message']
-    ];
-}
-
-/**
  * @param mysqli $db
  * @param string $email
- * @return bool
+ * @return null|array
  */
-function isEmailExist(mysqli $db, string $email):bool
+function getUserId(mysqli $db, string $email): ?array
 {
-    $sql = "SELECT count(id) FROM user WHERE email = ?";
-    $stmt = mysqli_prepare($db, $sql);
-    mysqli_stmt_bind_param($stmt, 's', $email);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    $result = mysqli_fetch_row($result);
-    return $result[0];
+    $sql = "SELECT id FROM user WHERE email = ?";
+    return getFetchAssoc($db, $sql, $email);
+}
+
+function getFetchAssoc(mysqli $db, string $sqlQuery, string $where): ?array
+{
+    $stmt = $db->prepare($sqlQuery); // подготавливаем запрос, получаем stmt
+    $stmt->bind_param("s", $where); //
+    $stmt->execute(); // выполняем запрос
+    $result = $stmt->get_result(); // получаем result
+    return $result->fetch_assoc();
 }
 
 /**
  * @param mysqli $db
- * @param $registerInput
+ * @param $submittedData
  */
-function registerUser(mysqli $db, $registerInput)
+function saveUser(mysqli $db, $submittedData)
 {
-    $sqlQuery = "INSERT INTO user (
+    $sql = "INSERT INTO user (
                  reg_date,
                   email,
                  username,
                  password,
                  contact_info
                  )  VALUES (NOW(),?,?,?,?)";
-    $stmt =  mysqli_prepare($db, $sqlQuery);
-    mysqli_stmt_bind_param($stmt, 'ssss',
-                           $registerInput['user-email'],
-                           $registerInput['user-name'],
-                           $registerInput['user-password'],
-                           $registerInput['user-message']
+    $stmt = $db->prepare($sql);
+    $stmt->bind_param( 'ssss',
+                           $submittedData['user-email'],
+                           $submittedData['user-name'],
+                           $submittedData['user-password'],
+                           $submittedData['user-message']
     );
-    $sqlQueryResult = mysqli_stmt_execute($stmt);
-    if (!$sqlQueryResult) {
-        echo mysqli_error($db);
-    }
-    $id = mysqli_insert_id($db);
+    $stmt->execute();
     header("Location:  login.php");
     exit;
 }

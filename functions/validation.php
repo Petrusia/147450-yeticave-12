@@ -22,9 +22,9 @@ function validateText(
     $length = mb_strlen($string);
     if ($required && $length === 0) {
         return $emptyErrText;
-    } elseif ($min !== null && $length <= $min) {
+    } elseif ($min !== null && $length < $min) {
         return $minErrText;
-    } elseif ($max !== null && $length >= $max) {
+    } elseif ($max !== null && $length > $max) {
         return $maxErrText;
     }
     return null;
@@ -149,14 +149,19 @@ function validateCategory(
     }
 
 
-    function validateEmail(mysqli $db, string $field, string $errMessage, string $errEmail): ?string
+    function validateEmail(
+        string $email,
+        mysqli $db,
+        string $emptyErrText,
+        string $emailExistErrText): ?string
     {
-        $field = filter_input(INPUT_POST, $field, FILTER_VALIDATE_EMAIL);
-        if (empty($field)) {
-            return $errMessage;
-        }
-        if (isEmailExist($db, $field)) {
-            return $errEmail;
+        $email = filter_var( $email, FILTER_VALIDATE_EMAIL);
+        $user = getUserId($db, $email);
+
+        if ($email === false || $email === null ) {
+            return $emptyErrText;
+        } elseIf ($user !== null) {
+            return $emailExistErrText;
         }
         return null;
     }
@@ -194,7 +199,7 @@ function validateCategory(
         if (empty($email)) {
             return $errMessage;
         }
-        if (isEmailExist($db, $email)) {
+        if (getEmail($db, $email)) {
             return null;
         } else {
             return $errEmail;
