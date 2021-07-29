@@ -23,15 +23,17 @@ const LOT_IMG_SIZE_ERR = 'Размер файла должен быть не б�
 const NUMBER_ERR = 'Введите число';
 
 const EMPTY_EMAIL_ERR = 'Введите e-mail';
-const REGISTER_EXIST_EMAIL_ERR = 'Пользователь с этим email уже зарегистрирован';
-const REGISTER_INVALID_EMAIL_ERR = 'Некорректный емейл. Введите правильный email адрес.';
-const REGISTER_PASSWORD_EXIST_ERR = 'Введите пароль';
+const EXIST_EMAIL_ERR = "Пользователь с этим email уже зарегистрирован.";
+const NO_EXIST_EMAIL_ERR = 'Пользователь с этим email ещё не зарегистрирован.';
+const INVALID_EMAIL_ERR = 'Некорректный емейл. Введите правильный email адрес.';
+const NO_PASSWORD_ERR = 'Введите пароль.';
+const NO_EXIST_PASSWORD_ERR = 'Вы ввели неверный пароль.';
 const REGISTER_PASSWORD_MIN_LENGTH_ERR = 'Пароль должен быть не меньше, чем  ' . REGISTER_PASSWORD_MIN_LENGTH . ' символов.';
 const REGISTER_PASSWORD_MAX_LENGTH_ERR = 'Пароль должен быть не больше, чем ' . REGISTER_PASSWORD_MAX_LENGTH . ' символов.';
 const REGISTER_NAME_EXIST_ERR = 'Введите имя';
 const REGISTER_NAME_MIN_LENGTH_ERR = 'Имя должно быть не меньше, чем  ' . REGISTER_NAME_MIN_LENGTH . ' символов.';
 const REGISTER_NAME_MAX_LENGTH_ERR = 'Имя должно быть не больше, чем ' . REGISTER_NAME_MAX_LENGTH . ' символов.';
-const REGISTER_MESSAGE_EXIST_ERR = 'Напишите как с вами связаться';
+const REGISTER_MESSAGE_EXIST_ERR = 'Напишите как с вами связаться.';
 const REGISTER_MESSAGE_MIN_LENGTH_ERR = 'Сообщение должно  должен быть не меньше, чем  ' . REGISTER_MESSAGE_MIN_LENGTH . ' символов.';
 const REGISTER_MESSAGE_MAX_LENGTH_ERR = 'Сообщение должно  быть не больше, чем ' . REGISTER_MESSAGE_MAX_LENGTH . ' символов.';
 

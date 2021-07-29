@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
-require('initialize.php');
+require __DIR__ . '/initialize.php';
 
-
-$categories = getCategories($db);
 $lotId = filter_input(INPUT_GET, 'lot_id', FILTER_SANITIZE_NUMBER_INT);
 
 if (!$lotId) {
@@ -14,18 +12,19 @@ if (!$lotId) {
             'categories' => $categories,
         ]
     );
-} else {
-    $lot = getLot($db, $lotId);
-
-    $main = include_template(
-        'lot-template.php',
-        [
-            'categories' => $categories,
-            'lot' => $lot,
-            'isAuth'=>  $isAuth ?? null
-        ]
-    );
 }
+
+$lot = getLot($db, $lotId);
+
+$main = include_template(
+    'lot-template.php',
+    [
+        'categories' => $categories,
+        'lot' => $lot,
+        'isAuth' => $isAuth ?? null
+    ]
+);
+
 
 $layout = include_template(
     'layout-template.php',

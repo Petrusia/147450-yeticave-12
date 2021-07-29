@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 /**
  * @param string $string
  * @param string $emptyErrText
@@ -152,15 +152,37 @@ function validateCategory(
     }
 
 
-    function isUserEmailExists (string $email, mysqli $db, string $emailExistErrText): ?string
-    {
-        $user = getUserByEmail($db, $email);
+function isUserEmailExists(
+    string $email,
+    mysqli $db,
+    string $emailExistErrText = '',
+    string $emailNoExistErrText = ''
+): ?string {
+    $user = getUserByEmail($db, $email);
 
-        If ($user !== null) {
-            return $emailExistErrText;
-        }
-        return null;
-    };
+    if ($user !== null) {
+        return $emailExistErrText;
+    }
+    if ($user == null) {
+        return $emailNoExistErrText;
+    }
+    return null;
+}
+
+function isUserPasswordExists (
+    string $email,
+    string $password,
+    mysqli $db,
+    string $PasswordNoExistErrText): ?string
+{
+    $user = getUserByEmail($db, $email);
+    $passwordNoExist = !password_verify($password, $user['password']);
+
+    if ($passwordNoExist) {
+        return $PasswordNoExistErrText;
+    }
+    return null;
+}
 
     function validateEmail(
         string $email,
@@ -171,69 +193,16 @@ function validateCategory(
     {
         $emptyEmail = mb_strlen($email) === 0;
         $invalidEmail = filter_var( $email, FILTER_VALIDATE_EMAIL) === false;
-        if ($emptyEmail && $invalidEmail) {
-            return $emailFormatErrText;
-        } elseif ($required && $emptyEmail) {
+        if ($required && $emptyEmail) {
             return  $emptyErrText;
         }
-        return null;
-    }
-
-    function validatePassword(string $errMessage): ?string
-    {
-        if (empty($_POST['user-password'])) {
-            return $errMessage;
+        if ($required && $invalidEmail) {
+            return $emailFormatErrText;
         }
         return null;
     }
 
 
-
-
-
-    function verifyEmail(mysqli $db, string $email, string $errMessage, string $errEmail): ?string
-    {
-        $email = filter_input(INPUT_POST, $email, FILTER_VALIDATE_EMAIL);
-        if (empty($email)) {
-            return $errMessage;
-        }
-        if (isEmailExist($db, $email)) {
-            return null;
-        } else {
-            return $errEmail;
-        }
-    }
-
-    function verifyPassword(mysqli $db, string $errMessage, string $errPassword): ?string
-    {
-        if (empty($_POST['user-password'])) {
-            return $errMessage;
-        }
-
-        $password = (getPassword($db, $_POST['user-email']));
-
-        if (password_verify($_POST['user-password'], $password['password'])) {
-            return null;
-        } else {
-            return $errPassword;
-        }
-    }
-
-    function getLoginErrors(mysqli $db): array
-    {
-        $errors = [
-            'user-email' => verifyEmail(
-                $db,
-                'user-email',
-                'Введите e-mail',
-                'Пользователь с этим email не зарегистрирован'
-            ),
-            'user-password' => verifyPassword($db, 'Введите пароль', 'Вы ввели неверный пароль')
-        ];
-        return array_filter($errors);
-    }
-
-// для залогиненных пользователей надо закрыть страницу регистрации.
     function httpError(array $categories, int $responseCode, string $errMessage = null)
     {
         $error = [

@@ -27,17 +27,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // этап 2: проверить данные запроса:
     $formErrors = [
         'user-email' => validateEmail(
-            $submittedData['user-email'],
-            EMPTY_EMAIL_ERR,
-            REGISTER_INVALID_EMAIL_ERR,
-            true
+                $submittedData['user-email'],
+                EMPTY_EMAIL_ERR,
+                INVALID_EMAIL_ERR,
+                true
         ) ?? isUserEmailExists(
-            $submittedData['user-email'],
-            $db,
-            REGISTER_EXIST_EMAIL_ERR),
+                $submittedData['user-email'],
+                $db,
+                EXIST_EMAIL_ERR),
         'user-password' => validateText(
             $submittedData['user-password'],
-            REGISTER_PASSWORD_EXIST_ERR,
+            NO_PASSWORD_ERR,
             true,
             REGISTER_PASSWORD_MIN_LENGTH,
             REGISTER_PASSWORD_MIN_LENGTH_ERR,
