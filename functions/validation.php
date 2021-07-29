@@ -147,19 +147,6 @@ function validateCategory(
         return null;
     }
 
-    function filterEmail(
-        string $email,
-        string $emptyErrText,
-        string $emailFormatErrText
-    ): ?string {
-        $email = filter_var( $email, FILTER_VALIDATE_EMAIL);
-        if ($email === null) {
-            return $emptyErrText;
-        } elseIf ($email === false) {
-            return $emailFormatErrText;
-        }
-        return null;
-    }
 
     function isUserEmailExists (string $email, mysqli $db, string $emailExistErrText): ?string
     {
@@ -181,12 +168,11 @@ function validateCategory(
         $length = mb_strlen($email);
         $email = filter_var( $email, FILTER_VALIDATE_EMAIL);
 
-        if ($length > 0 && $email === false && $required) {
+        if ($length > 0 && $email === false) {
             return $emailFormatErrText;
-        } elseif ($email === false && $required) {
+        } elseif ($required) {
             return  $emptyErrText;
         }
-
         return null;
     }
 
