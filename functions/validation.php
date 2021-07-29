@@ -166,11 +166,11 @@ function validateCategory(
     ): ?string
     {
         $length = mb_strlen($email);
-        $email = filter_var( $email, FILTER_VALIDATE_EMAIL);
-
-        if ($length > 0 && $email === false) {
+        $emptyEmail = mb_strlen($email) === 0;
+        $invalidEmail = filter_var( $email, FILTER_VALIDATE_EMAIL) === false;
+        if ($length > 0 && $invalidEmail) {
             return $emailFormatErrText;
-        } elseif ($required) {
+        } elseif ($required && $emptyEmail) {
             return  $emptyErrText;
         }
         return null;

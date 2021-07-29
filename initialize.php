@@ -1,7 +1,4 @@
 <?php
-
-// https://www.php.net/manual/ru/language.types.declarations.php
-declare(strict_types=1);
 const PROJECT_ROOT = __DIR__;
 
 if (!file_exists( PROJECT_ROOT . '/config.php')) {
