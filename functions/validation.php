@@ -171,12 +171,17 @@ function isUserEmailExists(
 
 function isUserPasswordExists (
     string $email,
+    string $errors,
     string $password,
     mysqli $db,
     string $PasswordNoExistErrText): ?string
 {
+    if(isset($errors)) {
+        return $PasswordNoExistErrText;
+    }
     $user = getUserByEmail($db, $email);
-    $passwordNoExist = !password_verify($password, $user['password']);
+    var_dump($user);
+    $passwordNoExist = password_verify($password, $user['password']);
 
     if ($passwordNoExist) {
         return $PasswordNoExistErrText;

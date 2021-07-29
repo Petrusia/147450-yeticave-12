@@ -23,29 +23,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     ];
 
     // этап 2: проверить данные запроса:
-    $formErrors = [
-        'user-email' => validateEmail(
-                $submittedData['user-email'],
-                EMPTY_EMAIL_ERR,
-                INVALID_EMAIL_ERR,
-                true
-            ) ?? isUserEmailExists(
-                $submittedData['user-email'],
-                $db,
-                '',
-                NO_EXIST_EMAIL_ERR
-            ),
-        'user-password' => validateText(
-                $submittedData['user-password'],
-                NO_PASSWORD_ERR,
-                true
-            ) ?? isUserPasswordExists(
-                $submittedData['user-email'],
-                $submittedData['user-password'],
-                $db,
-                NO_EXIST_PASSWORD_ERR
-            ),
-    ];
+    $formErrors['user-email'] =
+        validateEmail(
+            $submittedData['user-email'],
+            EMPTY_EMAIL_ERR,
+            INVALID_EMAIL_ERR,
+            true
+        ) ?? isUserEmailExists(
+            $submittedData['user-email'],
+            $db,
+            '',
+            NO_EXIST_EMAIL_ERR
+        );
+    $formErrors['user-password'] = validateText(
+            $submittedData['user-password'],
+            NO_PASSWORD_ERR,
+            true
+        ) ?? isUserPasswordExists(
+            $submittedData['user-email'],
+            $submittedData['user-password'],
+            $formErrors['user-email'],
+            $db,
+            NO_EXIST_PASSWORD_ERR
+        );
+
 
     $formErrors=array_filter($formErrors);
 
