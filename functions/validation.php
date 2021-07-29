@@ -137,11 +137,15 @@ function validateCategory(
     function validateImage(array $submittedFile, string $emptyErrText, string $extErrText, string $sizeErrText): ?string
     {
         $ext = pathinfo($submittedFile['lot-img']['name'], PATHINFO_EXTENSION);
-        if (isset($submittedFile['lot-img']['error']) && $submittedFile['lot-img']['error'] === UPLOAD_ERR_NO_FILE) {
+        $uploadFileError = isset($submittedFile['lot-img']['error']) && $submittedFile['lot-img']['error'] === UPLOAD_ERR_NO_FILE;
+        $notAllowedFileExtension = !in_array($ext, LOT_ALLOWED_IMG_EXT);
+        $notAllowedFileSize = $submittedFile['lot-img']['size'] > LOT_IMG_SIZE;
+
+        if ($uploadFileError) {
             return $emptyErrText;
-        } elseif (!in_array($ext, LOT_ALLOWED_IMG_EXT)) {
+        } elseif ($notAllowedFileExtension) {
             return $extErrText;
-        } elseif ($submittedFile['lot-img']['size'] > LOT_IMG_SIZE) {
+        } elseif ($notAllowedFileSize) {
             return $sizeErrText;
         }
         return null;
@@ -165,10 +169,9 @@ function validateCategory(
         bool $required = true,
     ): ?string
     {
-        $length = mb_strlen($email);
         $emptyEmail = mb_strlen($email) === 0;
         $invalidEmail = filter_var( $email, FILTER_VALIDATE_EMAIL) === false;
-        if ($length > 0 && $invalidEmail) {
+        if ($emptyEmail && $invalidEmail) {
             return $emailFormatErrText;
         } elseif ($required && $emptyEmail) {
             return  $emptyErrText;
@@ -186,21 +189,6 @@ function validateCategory(
 
 
 
-    function getRegisterErrors(mysqli $db): array
-    {
-        $errors = [
-            'user-email' => validateEmail(
-                $db,
-                'user-email',
-                'Введите e-mail',
-                'Пользователь с этим email уже зарегистрирован'
-            ),
-            'user-password' => validatePassword('Введите пароль'),
-            'user-name' => validateString('user-name', 'Введите имя'),
-            'user-message' => validateString('user-message', 'Напишите как с вами связаться')
-        ];
-        return array_filter($errors);
-    }
 
 
     function verifyEmail(mysqli $db, string $email, string $errMessage, string $errEmail): ?string
