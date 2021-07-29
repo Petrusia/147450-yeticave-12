@@ -11,7 +11,9 @@ if ($authUser) {
 $formErrors = [];
 $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    var_dump($_SESSION['token']);
+    if ($_SESSION['token'] !== $_POST['token']) {
+        httpError($categories, 403);
+    }
 
 
     // этап 1: принять все данные формы:
@@ -27,7 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'user-email' => validateEmail(
             $submittedData['user-email'],
             EMPTY_EMAIL_ERR,
-            REGISTER_INVALID_EMAIL_ERR
+            REGISTER_INVALID_EMAIL_ERR,
+            true
         ) ?? isUserEmailExists(
             $submittedData['user-email'],
             $db,

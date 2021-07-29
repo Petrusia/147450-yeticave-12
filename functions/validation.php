@@ -174,15 +174,16 @@ function validateCategory(
     function validateEmail(
         string $email,
         string $emptyErrText,
-        string $emailFormatErrText
+        string $emailFormatErrText,
+        bool $required = true,
     ): ?string
     {
         $length = mb_strlen($email);
         $email = filter_var( $email, FILTER_VALIDATE_EMAIL);
 
-        if ($length > 0 && $email === false) {
+        if ($length > 0 && $email === false && $required) {
             return $emailFormatErrText;
-        } elseif ($email === false) {
+        } elseif ($email === false && $required) {
             return  $emptyErrText;
         }
 
@@ -262,9 +263,8 @@ function validateCategory(
     function httpError(array $categories, int $responseCode, string $errMessage = null)
     {
         $error = [
-            403 => '403 - У вас нет права зайти на страницу ',
+            403 => $errMessage ?? '403 - У вас нет права зайти на страницу ',
             404 => '404 - Данной страницы не существует на сайте',
-            405 => $errMessage,
         ];
 
         $title = $error[$responseCode];
