@@ -26,11 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $formErrors = [
         'user-email' => validateEmail(
             $submittedData['user-email'],
-            $db,
             EMPTY_EMAIL_ERR,
-            REGISTER_EXIST_EMAIL_ERR,
             REGISTER_INVALID_EMAIL_ERR
-        ),
+        ) ?? isUserEmailExists(
+            $submittedData['user-email'],
+            $db,
+            REGISTER_EXIST_EMAIL_ERR),
         'user-password' => validateText(
             $submittedData['user-password'],
             REGISTER_PASSWORD_EXIST_ERR,

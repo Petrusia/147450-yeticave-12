@@ -29,9 +29,9 @@ date_default_timezone_set($config['timezone']);
 //А вот режим вывода ошибок я бы задал как раз повыше.
 session_start();
 
-
-$_SESSION['token'] = bin2hex(random_bytes(32));
-var_dump($_SESSION['token']);
+if(!isset($_SESSION['token'])){
+    $_SESSION['token'] = bin2hex(random_bytes(32));
+}
 
 $authUser = $_SESSION['authUser'] ?? '';
 $categories = getCategories($db);

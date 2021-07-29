@@ -161,15 +161,19 @@ function validateCategory(
         return null;
     }
 
-    function isUserEmailExists (mysqli $db, string $email, string $emailExistErrText){
+    function isUserEmailExists (string $email, mysqli $db, string $emailExistErrText): ?string
+    {
         $user = getUserByEmail($db, $email);
+
+        If ($user !== null) {
+            return $emailExistErrText;
+        }
+        return null;
     };
 
     function validateEmail(
         string $email,
-        mysqli $db,
         string $emptyErrText,
-        string $emailExistErrText,
         string $emailFormatErrText
     ): ?string
     {
@@ -182,11 +186,6 @@ function validateCategory(
             return  $emptyErrText;
         }
 
-        $user = getUserByEmail($db, $email);
-
-        If ($user !== null) {
-            return $emailExistErrText;
-        }
         return null;
     }
 
