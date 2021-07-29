@@ -24,6 +24,7 @@ const NUMBER_ERR = 'Введите число';
 
 const EMPTY_EMAIL_ERR = 'Введите e-mail';
 const REGISTER_EXIST_EMAIL_ERR = 'Пользователь с этим email уже зарегистрирован';
+const REGISTER_INVALID_EMAIL_ERR = 'Некорректный емейл. Введите правильный email адрес.';
 const REGISTER_PASSWORD_EXIST_ERR = 'Введите пароль';
 const REGISTER_PASSWORD_MIN_LENGTH_ERR = 'Пароль должен быть не меньше, чем  ' . REGISTER_PASSWORD_MIN_LENGTH . ' символов.';
 const REGISTER_PASSWORD_MAX_LENGTH_ERR = 'Пароль должен быть не больше, чем ' . REGISTER_PASSWORD_MAX_LENGTH . ' символов.';
@@ -33,3 +34,5 @@ const REGISTER_NAME_MAX_LENGTH_ERR = 'Имя должно быть не боль
 const REGISTER_MESSAGE_EXIST_ERR = 'Напишите как с вами связаться';
 const REGISTER_MESSAGE_MIN_LENGTH_ERR = 'Сообщение должно  должен быть не меньше, чем  ' . REGISTER_MESSAGE_MIN_LENGTH . ' символов.';
 const REGISTER_MESSAGE_MAX_LENGTH_ERR = 'Сообщение должно  быть не больше, чем ' . REGISTER_MESSAGE_MAX_LENGTH . ' символов.';
+
+const HEADER_USER_REGISTER_ERR = 'Вы уже зарегистрированы на сайте.';

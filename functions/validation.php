@@ -70,7 +70,6 @@ function validateNumber(
  * @param string $id
  * @param array $categories
  * @param string $emptyErrText
- * @param bool $required
  * @return string|null
  */
 function validateCategory(
@@ -148,19 +147,44 @@ function validateCategory(
         return null;
     }
 
+    function filterEmail(
+        string $email,
+        string $emptyErrText,
+        string $emailFormatErrText
+    ): ?string {
+        $email = filter_var( $email, FILTER_VALIDATE_EMAIL);
+        if ($email === null) {
+            return $emptyErrText;
+        } elseIf ($email === false) {
+            return $emailFormatErrText;
+        }
+        return null;
+    }
+
+    function isUserEmailExists (mysqli $db, string $email, string $emailExistErrText){
+        $user = getUserByEmail($db, $email);
+    };
 
     function validateEmail(
         string $email,
         mysqli $db,
         string $emptyErrText,
-        string $emailExistErrText): ?string
+        string $emailExistErrText,
+        string $emailFormatErrText
+    ): ?string
     {
+        $length = mb_strlen($email);
         $email = filter_var( $email, FILTER_VALIDATE_EMAIL);
-        $user = getUserId($db, $email);
 
-        if ($email === false || $email === null ) {
-            return $emptyErrText;
-        } elseIf ($user !== null) {
+        if ($length > 0 && $email === false) {
+            return $emailFormatErrText;
+        } elseif ($email === false) {
+            return  $emptyErrText;
+        }
+
+        $user = getUserByEmail($db, $email);
+
+        If ($user !== null) {
             return $emailExistErrText;
         }
         return null;
@@ -199,7 +223,7 @@ function validateCategory(
         if (empty($email)) {
             return $errMessage;
         }
-        if (getEmail($db, $email)) {
+        if (isEmailExist($db, $email)) {
             return null;
         } else {
             return $errEmail;
@@ -236,11 +260,12 @@ function validateCategory(
     }
 
 // для залогиненных пользователей надо закрыть страницу регистрации.
-    function httpError(array $categories, int $responseCode)
+    function httpError(array $categories, int $responseCode, string $errMessage = null)
     {
         $error = [
             403 => '403 - У вас нет права зайти на страницу ',
-            404 => '404 - Данной страницы не существует на сайте'
+            404 => '404 - Данной страницы не существует на сайте',
+            405 => $errMessage,
         ];
 
         $title = $error[$responseCode];

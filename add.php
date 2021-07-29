@@ -1,7 +1,7 @@
 <?php
 
 require __DIR__ . '/initialize.php';
-
+$_SESSION['token'] = bin2hex(random_bytes(32));
 $title = 'Добавление лота';
 
 if (!$authUser) {
@@ -12,11 +12,11 @@ $formErrors = [];
 $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    var_dump($_SESSION['token'] ,$_POST['token']); exit;
     if ($_SESSION['token'] !== $_POST['token']) {
         httpError($categories, 403);
-    } elseif (time() >= $_SESSION['token-expire']) {
-        httpError($categories, 403);
     }
+
 
     $submittedFile = $_FILES;
     // этап 1: принять все данные формы:
@@ -93,7 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // этап 3: сохранить проверенные данные если соответствует правилам валидации:
     if (count($formErrors) === 0) {
         $submittedData['lot-img']  = uploadFile($submittedFile['lot-img'], IMAGE_PATH);
-        saveLotData($db, $submittedData, $authUser);
+        $id = saveLotData($db, $submittedData, $authUser);
+        header("Location: lot.php?lot_id={$id}");
+        exit;
     }
 }
 

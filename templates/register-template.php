@@ -35,7 +35,9 @@
             <span class="form__error"><?= $formErrors['user-message'] ?? '' ?></span>
         </div>
         <input type="hidden" name="token" value="<?= $_SESSION['token'] ?? '' ?>">
-        <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
+        <span class="form__error form__error--bottom">
+            <?= !empty($formErrors) ? 'Пожалуйста, исправьте ошибки в форме.' : '' ?>
+        </span>
         <button type="submit" class="button">Зарегистрироваться</button>
         <a class="text-link" href="login.php">Уже есть аккаунт</a>
     </form>

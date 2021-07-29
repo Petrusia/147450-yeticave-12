@@ -43,7 +43,7 @@ function getLot(mysqli $db, int $lotId): ?array
     $sql = "SELECT * FROM lot
         INNER JOIN category ON category_id = category.id
         WHERE lot.id = ?";
-        return getFetchAssoc($db, $sql, $lotId);
+        return dbFetchAssoc($db, $sql, $lotId);
 }
 
 
@@ -52,7 +52,7 @@ function getLot(mysqli $db, int $lotId): ?array
  * @param array $submittedData
  * @param array $authUser
  */
-#[NoReturn] function saveLotData(mysqli $db, array $submittedData, array $authUser)
+function saveLotData(mysqli $db, array $submittedData, array $authUser): int|string
 {
     $sql = "INSERT INTO lot (
                  lot_name,
@@ -79,10 +79,7 @@ function getLot(mysqli $db, int $lotId): ?array
         $authUser['id']
     );
     $stmt->execute();
-
-    $id = $db->insert_id;
-    header("Location: lot.php?lot_id={$id}");
-    exit;
+    return $db->insert_id;
 }
 
 
@@ -91,13 +88,13 @@ function getLot(mysqli $db, int $lotId): ?array
  * @param string $email
  * @return null|array
  */
-function getUserId(mysqli $db, string $email): ?array
+function getUserByEmail(mysqli $db, string $email): ?array
 {
-    $sql = "SELECT id FROM user WHERE email = ?";
-    return getFetchAssoc($db, $sql, $email);
+    $sql = "SELECT * FROM user WHERE email = ?";
+    return dbFetchAssoc($db, $sql, $email);
 }
 
-function getFetchAssoc(mysqli $db, string $sqlQuery, string $where): ?array
+function dbFetchAssoc(mysqli $db, string $sqlQuery, string $where): ?array
 {
     $stmt = $db->prepare($sqlQuery); // подготавливаем запрос, получаем stmt
     $stmt->bind_param("s", $where); //
@@ -127,8 +124,6 @@ function saveUser(mysqli $db, $submittedData)
                            $submittedData['user-message']
     );
     $stmt->execute();
-    header("Location:  login.php");
-    exit;
 }
 
 /**
@@ -157,7 +152,16 @@ function getLoginInput(): array
     ];
 }
 
-
+function isEmailExist(mysqli $db, string $email):bool
+{
+    $sql = "SELECT count(id) FROM user WHERE email = ?";
+    $stmt = mysqli_prepare($db, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $email);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $result = mysqli_fetch_row($result);
+    return $result[0];
+}
 /**
  * @param mysqli $db
  * @param string $email

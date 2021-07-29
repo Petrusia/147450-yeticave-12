@@ -3,22 +3,15 @@
 require __DIR__ . '/initialize.php';
 
 $title = 'Регистрация';
-// 8. По такому же принципу для залогиненных пользователей
-// надо закрыть страницу регистрации.
+
 if ($authUser) {
-    httpError($categories, 403);
+    httpError($categories, 403, HEADER_USER_REGISTER_ERR);
 }
 
 $formErrors = [];
 $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-    if ($_SESSION['token'] !== $_POST['token']) {
-        httpError($categories, 403);
-    } elseif (time() >= $_SESSION['token-expire']) {
-        httpError($categories, 403);
-    }
-
+    var_dump($_SESSION['token']);
 
 
     // этап 1: принять все данные формы:
@@ -36,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $db,
             EMPTY_EMAIL_ERR,
             REGISTER_EXIST_EMAIL_ERR,
+            REGISTER_INVALID_EMAIL_ERR
         ),
         'user-password' => validateText(
             $submittedData['user-password'],
@@ -65,17 +59,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             REGISTER_MESSAGE_MAX_LENGTH_ERR
         ),
     ];
-    //var_dump( mb_strlen($submittedData['user-name'])); exit();
     $formErrors=array_filter($formErrors);
 
+    // этап 3: сохранить проверенные данные если соответствует правилам валидации:
     if (count($formErrors) === 0) {
         $submittedData['user-password'] = password_hash($submittedData['user-password'], PASSWORD_DEFAULT);
         saveUser($db, $submittedData);
+        header("Location: login.php");
+        exit;
     }
-
-
 }
-
 
 echo renderTemplate(
     'register-template.php', $title, $authUser, $categories, [

@@ -73,7 +73,8 @@
         </div>
         <input type="hidden" name="token" value="<?= $_SESSION['token'] ?? '' ?>">
         <span class="form__error form__error--bottom">
-            <?= !empty($formErrors) ? 'Пожалуйста, исправьте ошибки в форме.' : '' ?></span>
+            <?= !empty($formErrors) ? 'Пожалуйста, исправьте ошибки в форме.' : '' ?>
+        </span>
         <button type="submit" class="button">Добавить лот</button>
     </form>
 </main>

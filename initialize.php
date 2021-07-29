@@ -29,8 +29,9 @@ date_default_timezone_set($config['timezone']);
 //А вот режим вывода ошибок я бы задал как раз повыше.
 session_start();
 
+
 $_SESSION['token'] = bin2hex(random_bytes(32));
-$_SESSION['token-expire'] = time() + TOKEN_EXPIRE;
+var_dump($_SESSION['token']);
 
 $authUser = $_SESSION['authUser'] ?? '';
 $categories = getCategories($db);
