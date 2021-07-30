@@ -51,6 +51,7 @@ function getLot(mysqli $db, String $lotId): ?array
  * @param mysqli $db
  * @param array $submittedData
  * @param array $authUser
+ * @return int|string
  */
 function saveLotData(mysqli $db, array $submittedData, array $authUser): int|string
 {
@@ -124,58 +125,4 @@ function saveUser(mysqli $db, $submittedData)
                            $submittedData['user-message']
     );
     $stmt->execute();
-}
-
-/**
- * @param mysqli $db
- * @param string $email
- * @return array|false|string[]|null
- */
-function getPassword(mysqli $db, string $email)
-{
-    $sql = "SELECT password FROM user WHERE email = ?";
-    $stmt = mysqli_prepare($db, $sql);
-    mysqli_stmt_bind_param($stmt, 's', $email);
-    mysqli_stmt_execute($stmt);
-    $res = mysqli_stmt_get_result($stmt);
-    return mysqli_fetch_assoc($res);
-}
-
-/**
- * @return array
- */
-function getLoginInput(): array
-{
-    return [
-        'user-email' => $_POST['user-email'],
-        'user-password' => $_POST['user-password'],
-    ];
-}
-
-function isEmailExist(mysqli $db, string $email):bool
-{
-    $sql = "SELECT count(id) FROM user WHERE email = ?";
-    $stmt = mysqli_prepare($db, $sql);
-    mysqli_stmt_bind_param($stmt, 's', $email);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    $result = mysqli_fetch_row($result);
-    return $result[0];
-}
-/**
- * @param mysqli $db
- * @param string $email
- */
-function setSession(mysqli $db, string $email)
-{
-    $sql = "SELECT id, username, email FROM user WHERE email = ?";
-    $stmt = mysqli_prepare($db, $sql);
-    mysqli_stmt_bind_param($stmt, 's', $email);
-    mysqli_stmt_execute($stmt);
-    $res = mysqli_stmt_get_result($stmt);
-    $user = mysqli_fetch_assoc($res);
-    session_regenerate_id(true);
-    $_SESSION['authUser'] = $user;
-    header("Location: / ");
-    exit;
 }

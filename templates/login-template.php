@@ -21,8 +21,7 @@
         </div>
         <div class="form__item <?= isset($formErrors['user-password']) ? 'form__item--invalid' : '' ?>">
             <label for="user-password">Пароль <sup>*</sup></label>
-            <input id="user-password" type="password" name="user-password" placeholder="Введите пароль"
-                   value= "<?= esc($submittedData['user-password'] ?? '') ?>">
+            <input id="user-password" type="password" name="user-password" placeholder="Введите пароль">
             <span class="form__error"> <?= esc($formErrors['user-password'] ?? '') ?></span>
         </div>
         <input type="hidden" name="token" value="<?= $_SESSION['token'] ?? '' ?>">

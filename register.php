@@ -31,10 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 EMPTY_EMAIL_ERR,
                 INVALID_EMAIL_ERR,
                 true
-        ) ?? isUserEmailExists(
+            ) ?? isUserEmailExists(
                 $submittedData['user-email'],
                 $db,
-                EXIST_EMAIL_ERR),
+                EXIST_EMAIL_ERR
+            ),
         'user-password' => validateText(
             $submittedData['user-password'],
             NO_PASSWORD_ERR,
@@ -63,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             REGISTER_MESSAGE_MAX_LENGTH_ERR
         ),
     ];
-    $formErrors=array_filter($formErrors);
+    $formErrors = array_filter($formErrors);
 
     // этап 3: сохранить проверенные данные если соответствует правилам валидации:
     if (count($formErrors) === 0) {
@@ -76,9 +77,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 echo renderTemplate(
     'register-template.php', $title, $authUser, $categories, [
-                          'categories' => $categories,
-                          'formErrors' => $formErrors,
-                          'submittedData' =>  $submittedData,
-                      ]
+        'categories' => $categories,
+        'formErrors' => $formErrors,
+        'submittedData' =>  $submittedData,
+        ]
 );
 

@@ -1,5 +1,9 @@
 <?php
+
 declare(strict_types=1);
+
+use JetBrains\PhpStorm\NoReturn;
+
 /**
  * @param string $string
  * @param string $emptyErrText
@@ -11,7 +15,7 @@ declare(strict_types=1);
  * @return string|null
  */
 function validateText(
-    ?string $string,
+    string $string,
     string $emptyErrText,
     bool $required = true,
     ?int $min = null,
@@ -19,7 +23,7 @@ function validateText(
     ?int $max = null,
     string $maxErrText = '',
 ): ?string {
-    $length = $string ? mb_strlen($string) : 0;
+    $length = mb_strlen($string);
     if ($required && $length === 0) {
         return $emptyErrText;
     } elseif ($min !== null && $length < $min) {
@@ -33,6 +37,7 @@ function validateText(
 
 /**
  * @param string $number
+ * @param string $formatErrText
  * @param string $emptyErrText
  * @param bool $required
  * @param int|null $min
@@ -76,164 +81,153 @@ function validateCategory(
     string $id,
     array $categories,
     string $emptyErrText,
-): ?string
-{
+): ?string {
     $length = mb_strlen($id);
     $allCatId = array_column($categories, 'id');
     if ($length === 0 && !is_numeric($id) && !in_array($id, $allCatId)) {
-            return $emptyErrText;
-        }
+        return $emptyErrText;
+    }
     return null;
 }
 
-    /**
-     * @param string $date
-     * @param string $emptyErrText
-     * @param string $invalidDateErr
-     * @param bool $required
-     * @param string $format
-     * @param int|null $min
-     * @param string $minErrText
-     * @param int|null $max
-     * @param string $maxErrText
-     * @return string|null
-     */
-    function validateDate(
-        string $date,
-        string $emptyErrText,
-        string $invalidDateErr,
-        bool $required = true,
-        string $format = 'Y-m-d',
-        ?int $min = null,
-        string $minErrText = '',
-        ?int $max = null,
-        string $maxErrText = '',
-    ): ?string {
-        if ($required && $date === '') {
-            return $emptyErrText;
-        }
-
-        if (date_create_from_format($format, $date) == false) {
-            return $invalidDateErr;
-        }
-        $timestamp = strtotime($date);
-
-        if ($min !== null && $timestamp < $min) {
-            return $minErrText . date("Y-m-d H:i:s", $min);
-        }
-        if ($max && $timestamp > $max) {
-            return $maxErrText . date("Y-m-d H:i:s", $max);
-        }
-        return null;
+/**
+ * @param string $date
+ * @param string $emptyErrText
+ * @param string $invalidDateErr
+ * @param bool $required
+ * @param string $format
+ * @param int|null $min
+ * @param string $minErrText
+ * @param int|null $max
+ * @param string $maxErrText
+ * @return string|null
+ */
+function validateDate(
+    string $date,
+    string $emptyErrText,
+    string $invalidDateErr,
+    bool $required = true,
+    string $format = 'Y-m-d',
+    ?int $min = null,
+    string $minErrText = '',
+    ?int $max = null,
+    string $maxErrText = '',
+): ?string {
+    if ($required && $date === '') {
+        return $emptyErrText;
     }
 
-    /**
-     * @param array $submittedFile
-     * @param string $emptyErrText
-     * @param string $extErrText
-     * @param string $sizeErrText
-     * @return string|null
-     */
-    function validateImage(array $submittedFile, string $emptyErrText, string $extErrText, string $sizeErrText): ?string
-    {
-        $ext = pathinfo($submittedFile['lot-img']['name'], PATHINFO_EXTENSION);
-        $uploadFileError = isset($submittedFile['lot-img']['error']) && $submittedFile['lot-img']['error'] === UPLOAD_ERR_NO_FILE;
-        $notAllowedFileExtension = !in_array($ext, LOT_ALLOWED_IMG_EXT);
-        $notAllowedFileSize = $submittedFile['lot-img']['size'] > LOT_IMG_SIZE;
-
-        if ($uploadFileError) {
-            return $emptyErrText;
-        } elseif ($notAllowedFileExtension) {
-            return $extErrText;
-        } elseif ($notAllowedFileSize) {
-            return $sizeErrText;
-        }
-        return null;
+    if (date_create_from_format($format, $date) == false) {
+        return $invalidDateErr;
     }
+    $timestamp = strtotime($date);
+
+    if ($min !== null && $timestamp < $min) {
+        return $minErrText . date("Y-m-d H:i:s", $min);
+    }
+    if ($max && $timestamp > $max) {
+        return $maxErrText . date("Y-m-d H:i:s", $max);
+    }
+    return null;
+}
+
+/**
+ * @param array $submittedFile
+ * @param string $emptyErrText
+ * @param string $extErrText
+ * @param string $sizeErrText
+ * @return string|null
+ */
+function validateImage(array $submittedFile, string $emptyErrText, string $extErrText, string $sizeErrText): ?string
+{
+    $ext = pathinfo($submittedFile['lot-img']['name'], PATHINFO_EXTENSION);
+    $uploadFileError = isset($submittedFile['lot-img']['error']) && $submittedFile['lot-img']['error'] === UPLOAD_ERR_NO_FILE;
+    $notAllowedFileExtension = !in_array($ext, LOT_ALLOWED_IMG_EXT);
+    $notAllowedFileSize = $submittedFile['lot-img']['size'] > LOT_IMG_SIZE;
+
+    if ($uploadFileError) {
+        return $emptyErrText;
+    } elseif ($notAllowedFileExtension) {
+        return $extErrText;
+    } elseif ($notAllowedFileSize) {
+        return $sizeErrText;
+    }
+    return null;
+}
 
 
 function isUserEmailExists(
     string $email,
     mysqli $db,
-    string $emailExistErrText = '',
-    string $emailNoExistErrText = ''
+    string $emailExistErrText = ''
 ): ?string {
     $user = getUserByEmail($db, $email);
 
     if ($user !== null) {
         return $emailExistErrText;
     }
-    if ($user == null) {
-        return $emailNoExistErrText;
-    }
     return null;
 }
 
-function isUserPasswordExists (
+/**
+ * @param string $email
+ * @param string $emptyErrText
+ * @param string $emailFormatErrText
+ * @param bool $required
+ * @return string|null
+ */
+function validateEmail(
     string $email,
-    string $errors,
-    ?string $password,
-    mysqli $db,
-    string $PasswordNoExistErrText): ?string
-{
-    if(isset($errors)) {
-        return $PasswordNoExistErrText;
+    string $emptyErrText,
+    string $emailFormatErrText,
+    bool $required = true,
+): ?string {
+    $emptyEmail = mb_strlen($email) === 0;
+    $invalidEmail = filter_var($email, FILTER_VALIDATE_EMAIL) === false;
+    if ($required && $emptyEmail) {
+        return $emptyErrText;
     }
-    $user = getUserByEmail($db, $email);
-    var_dump($user);
-    $passwordNoExist = password_verify($password, $user['password']);
-
-    if ($passwordNoExist) {
-        return $PasswordNoExistErrText;
+    if ($required && $invalidEmail) {
+        return $emailFormatErrText;
     }
     return null;
 }
 
-    function validateEmail(
-        string $email,
-        string $emptyErrText,
-        string $emailFormatErrText,
-        bool $required = true,
-    ): ?string
-    {
-        $emptyEmail = mb_strlen($email) === 0;
-        $invalidEmail = filter_var( $email, FILTER_VALIDATE_EMAIL) === false;
-        if ($required && $emptyEmail) {
-            return  $emptyErrText;
-        }
-        if ($required && $invalidEmail) {
-            return $emailFormatErrText;
-        }
-        return null;
-    }
 
+/**
+ * @param array $categories
+ * @param int $responseCode
+ * @param string|null $errMessage
+ */
+#[NoReturn] function httpError(array $categories, int $responseCode, string $errMessage = null)
+{
+    $error = [
+        403 => $errMessage ?? '403 - У вас нет права зайти на страницу ',
+        404 => '404 - Данной страницы не существует на сайте',
+    ];
 
-    function httpError(array $categories, int $responseCode, string $errMessage = null)
-    {
-        $error = [
-            403 => $errMessage ?? '403 - У вас нет права зайти на страницу ',
-            404 => '404 - Данной страницы не существует на сайте',
-        ];
+    $title = $error[$responseCode];
 
-        $title = $error[$responseCode];
-
-        http_response_code($responseCode);
-        echo renderTemplate('404-template.php', $title, $authUser = '', $categories,
-            [
-                'categories' => $categories,
-                'message' => $title
-            ]
-        );
-        exit;
-
+    http_response_code($responseCode);
+    echo renderTemplate('404-template.php', $title, '', $categories, [
+        'categories' => $categories,
+        'message' => $title,
+        ]
+    );
+    exit;
 }
 
+/**
+ * @param $user
+ * @param $password
+ * @return array|null
+ */
 function validateUserAuth($user, $password): ?array
 {
-    if ($user === false) {
+    if ($user === null) {
         return ['user-email' => YC_MSG_INVALID_EMAIL];
     }
-    if ($user !==null && !password_verify($password, $user['password'])) {
+    if (!password_verify($password, $user['password'])) {
         return ['user-password' => YC_MSG_INVALID_PASSWORD];
     }
     return null;

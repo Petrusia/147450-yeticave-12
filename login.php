@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 require __DIR__ . '/initialize.php';
 $title = 'Вход';
@@ -35,10 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         NO_PASSWORD_ERR,
         true
     );
-
-
     $formErrors = array_filter($formErrors);
-    var_dump($formErrors);
+
     // этап 3: сохранить проверенные данные если соответствует правилам валидации:
     if (count($formErrors) === 0) {
         $user = getUserByEmail($db, $submittedData['user-email']);
@@ -53,8 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 echo renderTemplate(
     'login-template.php', $title, $authUser, $categories, [
-                               'categories' => $categories,
-                               'formErrors' => $formErrors,
-                               'submittedData' =>  $submittedData,
-                           ]
+        'categories' => $categories,
+        'formErrors' => $formErrors,
+        'submittedData' => $submittedData,
+        ]
 );
