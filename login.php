@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // этап 1: принять все данные формы:
     $submittedData = [
         'user-email' => trim(filter_input(INPUT_POST, 'user-email')),
-        'user-password' => trim(filter_input(INPUT_POST, 'user-password')),
+        'user-password' => filter_input(INPUT_POST, 'user-password'),
     ];
 
     // этап 2: проверить данные запроса:
@@ -29,37 +29,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             EMPTY_EMAIL_ERR,
             INVALID_EMAIL_ERR,
             true
-        ) ?? isUserEmailExists(
-            $submittedData['user-email'],
-            $db,
-            '',
-            NO_EXIST_EMAIL_ERR
         );
     $formErrors['user-password'] = validateText(
-            $submittedData['user-password'],
-            NO_PASSWORD_ERR,
-            true
-        ) ?? isUserPasswordExists(
-            $submittedData['user-email'],
-            $submittedData['user-password'],
-            $formErrors['user-email'],
-            $db,
-            NO_EXIST_PASSWORD_ERR
-        );
+        $submittedData['user-password'],
+        NO_PASSWORD_ERR,
+        true
+    );
 
 
-    $formErrors=array_filter($formErrors);
-
+    $formErrors = array_filter($formErrors);
+    var_dump($formErrors);
     // этап 3: сохранить проверенные данные если соответствует правилам валидации:
-  if (count($formErrors) === 0) {
-      $user = getUserByEmail($db, $submittedData['user-email']);
-      session_regenerate_id(true);
-      $_SESSION['authUser'] = $user;
-      header("Location: / ");
-      exit;
-   }
+    if (count($formErrors) === 0) {
+        $user = getUserByEmail($db, $submittedData['user-email']);
+        $formErrors = validateUserAuth($user, $submittedData['user-password']);
+        if ($formErrors === null) {
+            session_regenerate_id(true);
+            $_SESSION['authUser'] = $user;
+            header("Location: / ");
+            exit;
+        }
+    }
 }
-
 echo renderTemplate(
     'login-template.php', $title, $authUser, $categories, [
                                'categories' => $categories,

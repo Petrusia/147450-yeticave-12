@@ -11,7 +11,7 @@ declare(strict_types=1);
  * @return string|null
  */
 function validateText(
-    string $string,
+    ?string $string,
     string $emptyErrText,
     bool $required = true,
     ?int $min = null,
@@ -19,7 +19,7 @@ function validateText(
     ?int $max = null,
     string $maxErrText = '',
 ): ?string {
-    $length = mb_strlen($string);
+    $length = $string ? mb_strlen($string) : 0;
     if ($required && $length === 0) {
         return $emptyErrText;
     } elseif ($min !== null && $length < $min) {
@@ -172,7 +172,7 @@ function isUserEmailExists(
 function isUserPasswordExists (
     string $email,
     string $errors,
-    string $password,
+    ?string $password,
     mysqli $db,
     string $PasswordNoExistErrText): ?string
 {
@@ -218,7 +218,7 @@ function isUserPasswordExists (
         $title = $error[$responseCode];
 
         http_response_code($responseCode);
-        echo renderTemplate('404-template.php', $title, $authUser = false, $categories,
+        echo renderTemplate('404-template.php', $title, $authUser = '', $categories,
             [
                 'categories' => $categories,
                 'message' => $title
@@ -226,4 +226,15 @@ function isUserPasswordExists (
         );
         exit;
 
+}
+
+function validateUserAuth($user, $password): ?array
+{
+    if ($user === false) {
+        return ['user-email' => YC_MSG_INVALID_EMAIL];
+    }
+    if ($user !==null && !password_verify($password, $user['password'])) {
+        return ['user-password' => YC_MSG_INVALID_PASSWORD];
+    }
+    return null;
 }
