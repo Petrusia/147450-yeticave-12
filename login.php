@@ -6,16 +6,17 @@ $title = 'Вход';
 
 
 if ($authUser) {
-    httpError($categories, 403, HEADER_USER_REGISTER_ERR);
+    httpError($categories, HEADER_USER_REGISTER_ERR,403 );
 }
 
 $formErrors = [];
 $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_SESSION['token'] !== $_POST['token']) {
-        httpError($categories, 403);
+        httpError($categories,'', 403);
     }
 
+$formErrors = [];
 
     // этап 1: принять все данные формы:
     $submittedData = [
@@ -24,18 +25,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     ];
 
     // этап 2: проверить данные запроса:
-    $formErrors['user-email'] =
-        validateEmail(
+    $formErrors = [
+        'user-email' => validateEmail(
             $submittedData['user-email'],
             EMPTY_EMAIL_ERR,
             INVALID_EMAIL_ERR,
             true
-        );
-    $formErrors['user-password'] = validateText(
-        $submittedData['user-password'],
-        NO_PASSWORD_ERR,
-        true
-    );
+        ),
+        'user-password' => validateText(
+            $submittedData['user-password'],
+            NO_PASSWORD_ERR,
+            true
+        ),
+    ];
     $formErrors = array_filter($formErrors);
 
     // этап 3: сохранить проверенные данные если соответствует правилам валидации:

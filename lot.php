@@ -2,40 +2,19 @@
 declare(strict_types=1);
 require __DIR__ . '/initialize.php';
 
-$lotId = filter_input(INPUT_GET, 'lot_id', FILTER_SANITIZE_NUMBER_INT);
 
-if (!$lotId) {
-    http_response_code(404);
-    $main = include_template(
-        '404-template.php',
-        [
-            'categories' => $categories,
-        ]
-    );
+$lotId = filter_input(INPUT_GET, 'lot_id', FILTER_VALIDATE_INT);
+
+if (!$lotId ) {
+    httpError($categories, '', 404);
 }
 
-$lot = getLot($db, $lotId);
+$lot = getLotById($db, $lotId);
+$title = $lot['lot_name'];
 
-$main = include_template(
-    'lot-template.php',
-    [
+echo renderTemplate(
+    'lot-template.php', $title, $authUser, $categories, [
         'categories' => $categories,
         'lot' => $lot,
-        'isAuth' => $isAuth ?? null
-    ]
+       ]
 );
-
-
-$layout = include_template(
-    'layout-template.php',
-    [
-        'isIndex' => $isIndex,
-        'main' => $main,
-        'categories' => $categories,
-        'isAuth' => $isAuth ?? null,
-        'authUser' => $authUser ?? null,
-        'title' => $lot['lot_name']
-
-    ]
-);
-print ($layout);

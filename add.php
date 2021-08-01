@@ -5,7 +5,7 @@ require __DIR__ . '/initialize.php';
 $title = 'Добавление лота';
 
 if (!$authUser) {
-    httpError($categories, 403);
+    httpError($categories,'', 403);
 }
 
 $formErrors = [];
@@ -13,7 +13,7 @@ $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($_SESSION['token'] !== $_POST['token']) {
-        httpError($categories, 403);
+        httpError($categories,'', 403);
     }
 
 

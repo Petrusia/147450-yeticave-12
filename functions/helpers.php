@@ -1,5 +1,5 @@
 <?php
-
+use JetBrains\PhpStorm\NoReturn;
 /**
  * Проверяет переданную дату на соответствие формату 'ГГГГ-ММ-ДД'
  *
@@ -202,6 +202,29 @@ function  renderTemplate(string $name, string $title, array|string $authUser, ar
     ]);
 }
 
+
+/**
+ * @param array $categories
+ * @param int $responseCode
+ * @param string $errMessage
+ */
+#[NoReturn] function httpError(array $categories, string $errMessage, int $responseCode )
+{
+    $error = [
+        403 => $errMessage ?: '403 - У вас нет права зайти на страницу ',
+        404 => '404 - Данной страницы не существует на сайте',
+    ];
+
+    $title = $error[$responseCode];
+
+    http_response_code($responseCode);
+    echo renderTemplate('404-template.php', $title, '', $categories, [
+        'categories' => $categories,
+        'message' => $title,
+         ]
+    );
+    exit;
+}
 
 
 /**

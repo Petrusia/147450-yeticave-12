@@ -194,28 +194,6 @@ function validateEmail(
 }
 
 
-/**
- * @param array $categories
- * @param int $responseCode
- * @param string|null $errMessage
- */
-#[NoReturn] function httpError(array $categories, int $responseCode, string $errMessage = null)
-{
-    $error = [
-        403 => $errMessage ?? '403 - У вас нет права зайти на страницу ',
-        404 => '404 - Данной страницы не существует на сайте',
-    ];
-
-    $title = $error[$responseCode];
-
-    http_response_code($responseCode);
-    echo renderTemplate('404-template.php', $title, '', $categories, [
-        'categories' => $categories,
-        'message' => $title,
-        ]
-    );
-    exit;
-}
 
 /**
  * @param $user

@@ -35,10 +35,10 @@ LIMIT 9 ";
 
 /**
  * @param mysqli $db
- * @param string $lotId
- * @return null|array
+ * @param int $lotId
+ * @return array
  */
-function getLot(mysqli $db, String $lotId): ?array
+function getLotById(mysqli $db, int $lotId): array
 {
     $sql = "SELECT * FROM lot
         INNER JOIN category ON category_id = category.id
