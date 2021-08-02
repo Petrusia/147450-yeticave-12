@@ -6,14 +6,14 @@ $title = 'Вход';
 
 
 if ($authUser) {
-    httpError($categories, HEADER_USER_REGISTER_ERR,403 );
+    httpError($categories,403,HEADER_USER_REGISTER_ERR );
 }
 
 $formErrors = [];
 $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_SESSION['token'] !== $_POST['token']) {
-        httpError($categories,'', 403);
+        httpError($categories,403 );
     }
 
 $formErrors = [];
@@ -23,7 +23,7 @@ $formErrors = [];
         'user-email' => trim(filter_input(INPUT_POST, 'user-email')),
         'user-password' => filter_input(INPUT_POST, 'user-password'),
     ];
-
+var_dump($submittedData);
     // этап 2: проверить данные запроса:
     $formErrors = [
         'user-email' => validateEmail(
@@ -43,6 +43,7 @@ $formErrors = [];
     // этап 3: сохранить проверенные данные если соответствует правилам валидации:
     if (count($formErrors) === 0) {
         $user = getUserByEmail($db, $submittedData['user-email']);
+        var_dump($user);
         $formErrors = validateUserAuth($user, $submittedData['user-password']);
         if ($formErrors === null) {
             session_regenerate_id(true);

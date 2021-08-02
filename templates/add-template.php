@@ -28,8 +28,8 @@
                 <select id="category" name="lot-category">
                     <option value="">Выберите категорию</option>
                     <?php foreach ($categories as $category): ?>
-                        <option value="<?= esc($category['id']);?>"
-                                <?php if ((isset($submittedData['lot-category'])) && ($category['id'] == $submittedData['lot-category'])) : ?>
+                        <option value="<?= esc($category['category_id']);?>"
+                                <?php if ((isset($submittedData['lot-category'])) && ($category['category_id'] == $submittedData['lot-category'])) : ?>
                                     selected
                                 <?php endif; ?>
                         ><?= esc($category['category_name']); ?></option>

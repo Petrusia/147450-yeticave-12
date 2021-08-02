@@ -6,8 +6,10 @@ $isIndex = true; //Используем в  main-header__logo в  layout-templat
 $title = 'Главная страница';
 $lots = getLots($db);
 
+
 echo renderTemplate('index-template.php', $title, $authUser, $categories, [
     'categories' => $categories,
-    'lots' => $lots
+    'lots' => $lots,
+    'db' => $db,
 ], $isIndex);
 

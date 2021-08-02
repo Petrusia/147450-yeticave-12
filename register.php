@@ -5,14 +5,14 @@ require __DIR__ . '/initialize.php';
 $title = 'Регистрация';
 
 if ($authUser) {
-    httpError($categories, HEADER_USER_REGISTER_ERR, 403,);
+    httpError($categories,  403, HEADER_USER_REGISTER_ERR);
 }
 
 $formErrors = [];
 $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_SESSION['token'] !== $_POST['token']) {
-        httpError($categories,'', 403);
+        httpError($categories, 403);
     }
 
 

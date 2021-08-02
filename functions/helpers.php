@@ -168,7 +168,7 @@ function getDateDiff(string $expire_at): array
 function getPrice(int $price): string
 {
     $price = ceil($price);
-    return number_format($price, 0, '', ' ') . ' ₽';
+    return number_format($price, 0, '', ' ');
 }
 
 
@@ -208,19 +208,21 @@ function  renderTemplate(string $name, string $title, array|string $authUser, ar
  * @param int $responseCode
  * @param string $errMessage
  */
-#[NoReturn] function httpError(array $categories, string $errMessage, int $responseCode )
+#[NoReturn] function httpError(array $categories, int $responseCode, string $errMessage = '' )
 {
     $error = [
-        403 => $errMessage ?: '403 - У вас нет права зайти на страницу ',
+        403 => '403 - У вас нет права зайти на страницу ',
         404 => '404 - Данной страницы не существует на сайте',
     ];
 
-    $title = $error[$responseCode];
+        $title = $error[$responseCode];
+        $message = $errMessage;
 
     http_response_code($responseCode);
     echo renderTemplate('404-template.php', $title, '', $categories, [
         'categories' => $categories,
-        'message' => $title,
+        'title' => $title,
+        'message'=> $message,
          ]
     );
     exit;

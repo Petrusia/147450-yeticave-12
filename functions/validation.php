@@ -83,7 +83,7 @@ function validateCategory(
     string $emptyErrText,
 ): ?string {
     $length = mb_strlen($id);
-    $allCatId = array_column($categories, 'id');
+    $allCatId = array_column($categories, 'category_id');
     if ($length === 0 && !is_numeric($id) && !in_array($id, $allCatId)) {
         return $emptyErrText;
     }
@@ -205,7 +205,7 @@ function validateUserAuth($user, $password): ?array
     if ($user === null) {
         return ['user-email' => YC_MSG_INVALID_EMAIL];
     }
-    if (!password_verify($password, $user['password'])) {
+    if (!password_verify($password, $user['user_password'])) {
         return ['user-password' => YC_MSG_INVALID_PASSWORD];
     }
     return null;

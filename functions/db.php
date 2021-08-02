@@ -19,12 +19,13 @@ function getCategories(mysqli $db): array
  */
 function getLots(mysqli $db): array
 {
-    $sqlQuery = "SELECT  lot.id, lot_name, lot_desc, lot_img, lot_price, lot_create, lot_end, bet_step,
-author_id, category_id, category_name
+    $sqlQuery = "SELECT  lot.lot_id, lot_name, lot_desc, lot_img, lot_price, lot_create, lot_end, lot_bet_step,
+lot_author_id, lot_category_id, category_name
 
-    FROM lot
-        INNER JOIN category ON category_id = category.id
-        INNER JOIN user ON author_id = user.id
+     FROM lot
+        INNER JOIN category ON lot_category_id = category.category_id
+        INNER JOIN user ON lot_author_id = user.user_id
+
 WHERE lot_end > NOW()
 ORDER BY lot_create DESC
 LIMIT 9 ";
@@ -38,12 +39,25 @@ LIMIT 9 ";
  * @param int $lotId
  * @return array
  */
-function getLotById(mysqli $db, int $lotId): array
+function getLotById(mysqli $db, int $lotId): ?array
 {
     $sql = "SELECT * FROM lot
-        INNER JOIN category ON category_id = category.id
-        WHERE lot.id = ?";
+        INNER JOIN category ON category_id = lot_category_id
+        WHERE lot_id = ?";
         return dbFetchAssoc($db, $sql, $lotId);
+}
+
+function getBetsByLotId(mysqli $db, int $lotId): ?array
+{
+    $sql = "SELECT * FROM bet
+        INNER JOIN user ON bet_author_id = user.user_id
+        WHERE bet_lot_id = ?
+        ORDER BY bet_price DESC ";
+    $stmt = $db->prepare($sql); // подготавливаем запрос, получаем stmt
+    $stmt->bind_param("s", $lotId); //
+    $stmt->execute(); // выполняем запрос
+    $result = $stmt->get_result(); // получаем result
+    return $result->fetch_all(MYSQLI_ASSOC);
 }
 
 
@@ -61,11 +75,10 @@ function saveLotData(mysqli $db, array $submittedData, array $authUser): int|str
                  lot_img,
                  lot_price,
                  lot_end,
-                 bet_step,
-                 category_id,
-                 author_id,
-                 lot_create
-                 )  VALUES (?,?,?,?,?,?,?,?,NOW())";
+                 lot_bet_step,
+                 lot_category_id,
+                 lot_author_id
+                 )  VALUES (?,?,?,?,?,?,?,?)";
 
     $stmt = $db->prepare($sql);
     $stmt->bind_param(
@@ -91,7 +104,7 @@ function saveLotData(mysqli $db, array $submittedData, array $authUser): int|str
  */
 function getUserByEmail(mysqli $db, string $email): ?array
 {
-    $sql = "SELECT * FROM user WHERE email = ?";
+    $sql = "SELECT * FROM user WHERE user_email = ?";
     return dbFetchAssoc($db, $sql, $email);
 }
 
@@ -111,11 +124,11 @@ function dbFetchAssoc(mysqli $db, string $sqlQuery, string $where): ?array
 function saveUser(mysqli $db, $submittedData)
 {
     $sql = "INSERT INTO user (
-                 reg_date,
-                  email,
-                 username,
-                 password,
-                 contact_info
+                 user_registered,
+                  user_email,
+                 user_name,
+                 user_password,
+                 user_contact
                  )  VALUES (NOW(),?,?,?,?)";
     $stmt = $db->prepare($sql);
     $stmt->bind_param( 'ssss',
