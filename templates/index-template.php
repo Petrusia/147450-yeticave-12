@@ -21,12 +21,16 @@
         <ul class="lots__list">
             <!--заполните этот список из массива с товарами-->
             <?php foreach ($lots as $lot) :?>
-                <?php
-
-                $data = getDateDiff($lot['lot_end']);
-                $bets = getBetsByLotId($db, $lot['lot_id']);
-                $currentPrice = $bets[0]['bet_price'] ?? $lot['lot_price'];
-                $betsQuantity = count($bets);
+                <?php $data = getDateDiff($lot['lot_end']);
+                $betData = [];
+                foreach ($bets as $bet) {
+                    if ($lot['lot_id'] === $bet['bet_lot_id']) {
+                        $betData[]= $bet;
+                    }
+                }
+                $betData = array_reverse($betData);
+                $currentPrice = $betData[0]['bet_price'] ?? $lot['lot_price'];
+                $betsQuantity = count($betData);
                 ?>
                 <li class="lots__item lot">
                     <div class="lot__image">
@@ -46,7 +50,7 @@
                                 <?php else : ?>
                                     <span class="lot__amount">Стартовая цена</span>
                                 <?php endif; ?>
-                                <span class="lot__cost"><?= esc(getPrice($currentPrice)) ?><b class="rub">р</b></span>
+                                <span class="lot__cost"><?= esc(getPrice($currentPrice)) ?></span>
                             </div>
                             <div class="lot__timer timer <?= ($data['hours'] <= 0) ? 'timer--finishing' : ''; ?>">
                                 <?= esc($data['hours']) . ':' . esc($data['minutes']) ?>

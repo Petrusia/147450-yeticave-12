@@ -35,7 +35,7 @@
                             <span class="lot-item__cost"><?= esc(getPrice($currentPrice)) ?></span>
                         </div>
                         <div class="lot-item__min-cost">
-                            Мин. ставка <span><?= esc(getPrice($minBetStep)) ?> р</span>
+                            Мин. ставка <span><?= esc(getPrice($minBetStep)) ?></span>
                         </div>
                     </div>
                     <?php if($authUser) : ?>
@@ -57,7 +57,7 @@
                             <?php foreach ($bets as $bet): ?>
                                 <tr class="history__item">
                                     <td class="history__name"><?= esc($bet['user_name']); ?></td>
-                                    <td class="history__price"><?= esc(getPrice($bet['bet_price'])); ?>  р</td>
+                                    <td class="history__price"><?= esc(getPrice($bet['bet_price'])); ?></td>
                                     <td class="history__time"><?= esc(date('d.m.y в H:i', strtotime($bet['bet_date']))); ?></td>
                                 </tr>
                             <?php endforeach; ?>

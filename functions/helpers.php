@@ -168,7 +168,7 @@ function getDateDiff(string $expire_at): array
 function getPrice(int $price): string
 {
     $price = ceil($price);
-    return number_format($price, 0, '', ' ');
+    return number_format($price, 0, '', ' ') . ' ₽';
 }
 
 
