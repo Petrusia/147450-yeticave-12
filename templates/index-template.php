@@ -21,17 +21,8 @@
         <ul class="lots__list">
             <!--заполните этот список из массива с товарами-->
             <?php foreach ($lots as $lot) :?>
-                <?php $data = getDateDiff($lot['lot_end']);
-                $betData = [];
-                foreach ($bets as $bet) {
-                    if ($lot['lot_id'] === $bet['bet_lot_id']) {
-                        $betData[]= $bet;
-                    }
-                }
-                $betData = array_reverse($betData);
-                $currentPrice = $betData[0]['bet_price'] ?? $lot['lot_price'];
-                $betsQuantity = count($betData);
-                ?>
+                <?php $data = getDateDiff($lot['lot_end']); ?>
+
                 <li class="lots__item lot">
                     <div class="lot__image">
                         <img src="<?=esc($lot['lot_img']) ?>" width="350" height="260" alt="">
@@ -45,12 +36,12 @@
                         </h3>
                         <div class="lot__state">
                             <div class="lot__rate">
-                                <?php if ($betsQuantity > 0) : ?>
-                                <span class="lot__amount"><?= $betsQuantity .' '. get_noun_plural_form($betsQuantity, 'ставка', 'ставки', 'ставок');                             ?></span>
+                                <?php if ($lot['count_bets'] > 0) : ?>
+                                <span class="lot__amount"><?= $lot['count_bets'] .' '. get_noun_plural_form($lot['count_bets'], 'ставка', 'ставки', 'ставок');?></span>
                                 <?php else : ?>
                                     <span class="lot__amount">Стартовая цена</span>
                                 <?php endif; ?>
-                                <span class="lot__cost"><?= esc(getPrice($currentPrice)) ?></span>
+                                <span class="lot__cost"><?= esc(getPrice($lot['lot_price'])) ?></span>
                             </div>
                             <div class="lot__timer timer <?= ($data['hours'] <= 0) ? 'timer--finishing' : ''; ?>">
                                 <?= esc($data['hours']) . ':' . esc($data['minutes']) ?>

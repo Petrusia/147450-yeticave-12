@@ -35,13 +35,9 @@ LIMIT 9 ";
 }
 function getBets(mysqli $db): array
 {
-    $sqlQuery = "SELECT  bet.bet_id, bet_price, bet_author_id, bet_lot_id
+    $sqlQuery = "SELECT  bet.bet_id, bet_price, bet_lot_id
 
-     FROM bet
-        INNER JOIN user ON bet_author_id = user.user_id
-        INNER JOIN lot ON bet_lot_id = lot.lot_id
-
-ORDER BY bet_date DESC";
+    FROM bet ORDER BY bet_date DESC";
 
     $result = $db->query($sqlQuery);
     return $result->fetch_all(MYSQLI_ASSOC);
@@ -60,7 +56,7 @@ function getLotById(mysqli $db, int $lotId): ?array
         return dbFetchAssoc($db, $sql, $lotId);
 }
 
-function getBetsByLotId(mysqli $db, int $lotId): ?array
+function getBetsByLotId(mysqli $db,  $lotId): ?array
 {
     $sql = "SELECT * FROM bet
         INNER JOIN user ON bet_author_id = user.user_id

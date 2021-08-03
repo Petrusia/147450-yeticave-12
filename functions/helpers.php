@@ -256,3 +256,12 @@ function uploadFile(array $submittedFile, string $uploadPath) : string
     }
 }
 
+function allLots($lot, $bets)
+{
+    foreach ($bets as $bet) {
+        if ($lot['lot_id'] === $bet['bet_lot_id'] && $lot['lot_price'] < $bet['bet_price']) {
+            $lot['lot_price'] = $bet['bet_price'];
+        }
+        return 10000;
+    }
+}
