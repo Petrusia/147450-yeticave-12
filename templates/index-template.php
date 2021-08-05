@@ -36,8 +36,8 @@
                         </h3>
                         <div class="lot__state">
                             <div class="lot__rate">
-                                <?php if ($lot['count_bets'] > 0) : ?>
-                                <span class="lot__amount"><?= $lot['count_bets'] .' '. get_noun_plural_form($lot['count_bets'], 'ставка', 'ставки', 'ставок');?></span>
+                                <?php if ($lot['bet_count'] > 0) : ?>
+                                <span class="lot__amount"><?= $lot['bet_count'] .' '. get_noun_plural_form($lot['bet_count'], 'ставка', 'ставки', 'ставок');?></span>
                                 <?php else : ?>
                                     <span class="lot__amount">Стартовая цена</span>
                                 <?php endif; ?>

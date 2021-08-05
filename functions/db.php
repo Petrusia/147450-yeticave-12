@@ -19,14 +19,23 @@ function getCategories(mysqli $db): array
  */
 function getLots(mysqli $db): array
 {
-    $sqlQuery = "SELECT  lot.lot_id, lot_name, lot_desc, lot_img, lot_price, lot_create, lot_end, lot_bet_step,
-lot_author_id, lot_category_id, category_name
+    $sqlQuery = "SELECT  lot.lot_id,
+        lot_name,
+        lot_img,
+        lot_create,
+        lot_end,
+        lot_category_id,
+        category_name,
+        bet_price,
+        COALESCE( MAX(bet_price), lot_price) AS lot_price,
+        COUNT(bet.bet_id) bet_count
 
-     FROM lot
-        INNER JOIN category ON lot_category_id = category.category_id
-        INNER JOIN user ON lot_author_id = user.user_id
-
+FROM lot
+         left  join category ON lot_category_id = category.category_id
+         left  join user ON lot_author_id = user.user_id
+         left  join bet ON lot.lot_id = bet.bet_lot_id
 WHERE lot_end > NOW()
+group by lot.lot_id
 ORDER BY lot_create DESC
 LIMIT 9 ";
 

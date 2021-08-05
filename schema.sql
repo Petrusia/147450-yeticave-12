@@ -14,7 +14,7 @@ CREATE TABLE category
 CREATE TABLE user
 (
   user_id       INT AUTO_INCREMENT PRIMARY KEY,
-  user_registered      DATETIME DEFAULT CURRENT_TIMESTAMP,
+  user_registered      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   user_email    VARCHAR(128) NOT NULL UNIQUE,
   user_name     VARCHAR(128) NOT NULL,
   user_password VARCHAR(128) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE lot
   lot_desc    TEXT NOT NULL,
   lot_img     VARCHAR(255),
   lot_price   INT UNSIGNED NOT NULL,
-  lot_create  DATETIME DEFAULT CURRENT_TIMESTAMP,
+  lot_create  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   lot_end     DATE,
   lot_bet_step    INT UNSIGNED NOT NULL,
   lot_author_id   INT,
@@ -48,7 +48,7 @@ CREATE TABLE lot
 CREATE TABLE bet
 (
   bet_id    INT AUTO_INCREMENT PRIMARY KEY,
-  bet_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+  bet_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   bet_price INT UNSIGNED NOT NULL,
   bet_author_id   INT,
   bet_lot_id    INT,
