@@ -1,202 +1,212 @@
 <?php
 
+declare(strict_types=1);
+
+use JetBrains\PhpStorm\NoReturn;
 
 /**
- * @param int $price
- * @return string
- */
-function getPrice(int $price): string
-{
-    if ($price > 0 && $price < 1000) {
-        return $price . ' ₽';
-    }
-    if ($price >= 1000) {
-        return number_format($price, 0, '', ' ') . ' ₽';
-    }
-}
-
-/**
- * @param string $field
- * @param string $errMessage
+ * @param string $string
+ * @param string $emptyErrText
+ * @param bool $required
+ * @param int|null $min
+ * @param string $minErrText
+ * @param int|null $max
+ * @param string $maxErrText
  * @return string|null
  */
-function validateString(string $field, string $errMessage): ?string
-{
-    $field = filter_input(INPUT_POST, $field, FILTER_SANITIZE_SPECIAL_CHARS);
-    if ($field) {
-        return null;
-    }
-    return $errMessage;
-}
-
-/**
- * @param string $field
- * @param string $errMessage
- * @return string|null
- */
-function validateInt(string $field, string $errMessage): ?string
-{
-    $field = filter_input(INPUT_POST, $field,  FILTER_VALIDATE_INT);
-    if ($field && $field > 0 ) {
-        return null;
-    }
-    return  $errMessage;
-}
-
-/**
- * @param string $field
- * @param string $errMessage
- * @return string|null
- */
-function validateFloat(string $field, string $errMessage): ?string
-{
-    $field = filter_input(INPUT_POST, $field,  FILTER_VALIDATE_FLOAT);
-    if ($field && $field > 0 ) {
-        return null;
-    }
-    return $errMessage;
-}
-
-/**
- * @param string $field
- * @param string $errMessage
- * @return string|null
- */
-function validateDate(string $field, string $errMessage): ?string
-{
-    $field = $_POST[$field];
-    if (empty( $field)) {
-        return $errMessage;
-    }
-
-    $currentDate = time();
-    $endDate = strtotime($field);
-    $period = $endDate - $currentDate;
-
-    if ($period <= DAY) {
-        return $errMessage;
+function validateText(
+    string $string,
+    string $emptyErrText,
+    bool $required = true,
+    ?int $min = null,
+    string $minErrText = '',
+    ?int $max = null,
+    string $maxErrText = '',
+): ?string {
+    $length = mb_strlen($string);
+    if ($required && $length === 0) {
+        return $emptyErrText;
+    } elseif ($min !== null && $length < $min) {
+        return $minErrText;
+    } elseif ($max !== null && $length > $max) {
+        return $maxErrText;
     }
     return null;
 }
 
 
 /**
- * @param string $field
- * @param string $errMessage
+ * @param string $number
+ * @param string $formatErrText
+ * @param string $emptyErrText
+ * @param bool $required
+ * @param int|null $min
+ * @param string $minErrText
+ * @param int|null $max
+ * @param string $maxErrText
  * @return string|null
  */
-function validateImage(string $field, string $errMessage): ?string
-{
-    if ($_FILES[$field]['error'] > 0 ) {
-        return $errMessage;
-    }
-    $mimetype = mime_content_type($_FILES[$field]['tmp_name']);
-    if (!(in_array($mimetype, ['image/jpeg', 'image/png']))) {
-        return $errMessage;
+function validateNumber(
+    string $number,
+    string $formatErrText,
+    string $emptyErrText,
+    bool $required = true,
+    ?int $min = null,
+    string $minErrText = '',
+    ?int $max = null,
+    string $maxErrText = ''
+): ?string {
+    $length = mb_strlen($number);
+
+    if (!is_numeric($number)) {
+        return $formatErrText;
+    } elseif ($required && $length === 0) {
+        return $emptyErrText;
+    } elseif ($min !== null && $number < $min) {
+        return $minErrText;
+    } elseif ($max !== null && $number > $max) {
+        return $maxErrText;
     }
     return null;
 }
 
-function validateEmail( mysqli $db, string $field, string $errMessage, string $errEmail): ?string
-{
-    $field = filter_input(INPUT_POST, $field,  FILTER_VALIDATE_EMAIL);
-    if (empty($field)) {
-        return $errMessage;
-    }
-    if (isEmailExist($db, $field)) {
-        return $errEmail;
-    }
-    return null;
-}
 
-function validatePassword(string $errMessage): ?string
-{
-    if (empty($_POST['user-password'])) {
-        return $errMessage;
+/**
+ * @param string $id
+ * @param array $categories
+ * @param string $emptyErrText
+ * @return string|null
+ */
+function validateCategory(
+    string $id,
+    array $categories,
+    string $emptyErrText,
+): ?string {
+    $length = mb_strlen($id);
+    $allCatId = array_column($categories, 'category_id');
+    if ($length === 0 && !is_numeric($id) && !in_array($id, $allCatId)) {
+        return $emptyErrText;
     }
     return null;
 }
 
 /**
- * @return array
+ * @param string $date
+ * @param string $emptyErrText
+ * @param string $invalidDateErr
+ * @param bool $required
+ * @param string $format
+ * @param int|null $min
+ * @param string $minErrText
+ * @param int|null $max
+ * @param string $maxErrText
+ * @return string|null
  */
-function getLotErrors(): array
-{
-        $errors = [
-            'lot-name' => validateString('lot-name', 'Введите наименование лота'),
-            'lot-category' => validateInt('lot-category', 'Выберите категорию'),
-            'lot-message' => validateString('lot-message', 'Напишите описание лота'),
-            'lot-rate' => validateFloat('lot-rate', 'Введите начальную цену'),
-            'lot-step' => validateInt('lot-step', 'Введите шаг ставки'),
-            'lot-date' => validateDate('lot-date', 'Введите дату завершения торгов'),
-            'lot-img' => validateImage('lot-img', 'Добавьте изображение лота')
-        ];
-        return array_filter($errors);
-}
-
-function getRegisterErrors(mysqli $db ): array
-{
-    $errors = [
-        'user-email' => validateEmail($db, 'user-email', 'Введите e-mail', 'Пользователь с этим email уже зарегистрирован'),
-        'user-password' => validatePassword( 'Введите пароль'),
-        'user-name' => validateString('user-name', 'Введите имя'),
-        'user-message' => validateString('user-message', 'Напишите как с вами связаться')
-    ];
-    return array_filter($errors);
-}
-
-function isAuth(): bool
-{
-    if(isset($_SESSION['userName'])){
-        return true;
-    }
-    return false;
-}
-
-
-function verifyEmail( mysqli $db, string $email, string $errMessage, string $errEmail): ?string
-{
-    $email = filter_input(INPUT_POST, $email, FILTER_VALIDATE_EMAIL);
-    if (empty($email)) {
-        return $errMessage;
-    }
-    if (isEmailExist($db, $email)) {
-        return null;
-    } else {
-    return $errEmail;
-    }
-}
-
-function verifyPassword(mysqli $db, string $errMessage, string $errPassword ): ?string
-{
-    if (empty($_POST['user-password'])) {
-        return $errMessage;
+function validateDate(
+    string $date,
+    string $emptyErrText,
+    string $invalidDateErr,
+    bool $required = true,
+    string $format = 'Y-m-d',
+    ?int $min = null,
+    string $minErrText = '',
+    ?int $max = null,
+    string $maxErrText = '',
+): ?string {
+    if ($required && $date === '') {
+        return $emptyErrText;
     }
 
-    $password = (getPassword($db, $_POST['user-email']));
-
-    if (password_verify($_POST['user-password'], $password['password'])){
-        return null;
-    }  else {
-        return $errPassword;
+    if (date_create_from_format($format, $date) == false) {
+        return $invalidDateErr;
     }
+    $timestamp = strtotime($date);
+
+    if ($min !== null && $timestamp < $min) {
+        return $minErrText . date("Y-m-d H:i:s", $min);
+    }
+    if ($max && $timestamp > $max) {
+        return $maxErrText . date("Y-m-d H:i:s", $max);
+    }
+    return null;
 }
 
-function getLoginErrors(mysqli $db): array
+/**
+ * @param array $submittedFile
+ * @param string $emptyErrText
+ * @param string $extErrText
+ * @param string $sizeErrText
+ * @return string|null
+ */
+function validateImage(array $submittedFile, string $emptyErrText, string $extErrText, string $sizeErrText): ?string
 {
-    $errors = [
-        'user-email' => verifyEmail($db, 'user-email', 'Введите e-mail', 'Пользователь с этим email не зарегистрирован'),
-        'user-password' => verifyPassword($db, 'Введите пароль', 'Вы ввели неверный пароль')
-       ];
-    return array_filter($errors);
+    $ext = pathinfo($submittedFile['lot-img']['name'], PATHINFO_EXTENSION);
+    $uploadFileError = isset($submittedFile['lot-img']['error']) && $submittedFile['lot-img']['error'] === UPLOAD_ERR_NO_FILE;
+    $notAllowedFileExtension = !in_array($ext, LOT_ALLOWED_IMG_EXT);
+    $notAllowedFileSize = $submittedFile['lot-img']['size'] > LOT_IMG_SIZE;
+
+    if ($uploadFileError) {
+        return $emptyErrText;
+    } elseif ($notAllowedFileExtension) {
+        return $extErrText;
+    } elseif ($notAllowedFileSize) {
+        return $sizeErrText;
+    }
+    return null;
 }
 
-// для залогиненных пользователей надо закрыть страницу регистрации.
-function closePage(bool $isAuth, $location = '/')
-{
-    if ($isAuth) {
-        http_response_code(403);
-        header("Location: {$location}");
-        exit;
+
+function isUserEmailExists(
+    string $email,
+    mysqli $db,
+    string $emailExistErrText = ''
+): ?string {
+    $user = getUserByEmail($db, $email);
+
+    if ($user !== null) {
+        return $emailExistErrText;
     }
+    return null;
+}
+
+/**
+ * @param string $email
+ * @param string $emptyErrText
+ * @param string $emailFormatErrText
+ * @param bool $required
+ * @return string|null
+ */
+function validateEmail(
+    string $email,
+    string $emptyErrText,
+    string $emailFormatErrText,
+    bool $required = true,
+): ?string {
+    $emptyEmail = mb_strlen($email) === 0;
+    $invalidEmail = filter_var($email, FILTER_VALIDATE_EMAIL) === false;
+    if ($required && $emptyEmail) {
+        return $emptyErrText;
+    }
+    if ($required && $invalidEmail) {
+        return $emailFormatErrText;
+    }
+    return null;
+}
+
+
+
+/**
+ * @param $user
+ * @param $password
+ * @return array|null
+ */
+function validateUserAuth($user, $password): ?array
+{
+    if ($user === null) {
+        return ['user-email' => YC_MSG_INVALID_EMAIL];
+    }
+    if (!password_verify($password, $user['user_password'])) {
+        return ['user-password' => YC_MSG_INVALID_PASSWORD];
+    }
+    return null;
 }

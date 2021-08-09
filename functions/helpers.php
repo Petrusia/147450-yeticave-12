@@ -1,4 +1,5 @@
 <?php
+use JetBrains\PhpStorm\NoReturn;
 /**
  * Проверяет переданную дату на соответствие формату 'ГГГГ-ММ-ДД'
  *
@@ -13,7 +14,8 @@
  *
  * @return bool true при совпадении с форматом 'ГГГГ-ММ-ДД', иначе false
  */
-function is_date_valid(string $date) : bool {
+function is_date_valid(string $date): bool
+{
     $format_to_check = 'Y-m-d';
     $dateTimeObj = date_create_from_format($format_to_check, $date);
 
@@ -29,7 +31,8 @@ function is_date_valid(string $date) : bool {
  *
  * @return mysqli_stmt Подготовленное выражение
  */
-function db_get_prepare_stmt($link, $sql, $data = []) {
+function db_get_prepare_stmt($link, $sql, $data = [])
+{
     $stmt = mysqli_prepare($link, $sql);
 
     if ($stmt === false) {
@@ -46,12 +49,14 @@ function db_get_prepare_stmt($link, $sql, $data = []) {
 
             if (is_int($value)) {
                 $type = 'i';
-            }
-            else if (is_string($value)) {
-                $type = 's';
-            }
-            else if (is_double($value)) {
-                $type = 'd';
+            } else {
+                if (is_string($value)) {
+                    $type = 's';
+                } else {
+                    if (is_double($value)) {
+                        $type = 'd';
+                    }
+                }
             }
 
             if ($type) {
@@ -96,9 +101,9 @@ function db_get_prepare_stmt($link, $sql, $data = []) {
  *
  * @return string Рассчитанная форма множественнго числа
  */
-function get_noun_plural_form (int $number, string $one, string $two, string $many): string
+function get_noun_plural_form(int $number, string $one, string $two, string $many): string
 {
-    $number = (int) $number;
+    $number = (int)$number;
     $mod10 = $number % 10;
     $mod100 = $number % 100;
 
@@ -126,21 +131,128 @@ function get_noun_plural_form (int $number, string $one, string $two, string $ma
  * @param array $data Ассоциативный массив с данными для шаблона
  * @return string Итоговый HTML
  */
-function include_template($name, array $data = []) {
-    $name = 'templates/' . $name;
-    $result = '';
-
-    if (!is_readable($name)) {
-        return $result;
-    }
-
+function include_template(string $name, array $data = []): string
+{
+    $name = PROJECT_ROOT . '/templates/' . $name;
     ob_start();
     extract($data);
     require $name;
-
-    $result = ob_get_clean();
-
-    return $result;
+    return ob_get_clean();
 }
 
+
+/**
+ * @param string $expire_at
+ * @return array
+ */
+function getDateDiff(string $expire_at): array
+{
+    $period = strtotime($expire_at) - time();
+    $hours = floor($period / 3600);
+    $minutes = 60 - date('i');
+
+    $hours = str_pad($hours, 2, "0", STR_PAD_LEFT);
+    $minutes = str_pad($minutes, 2, "0", STR_PAD_LEFT);
+
+    return [
+        'hours' => $hours,
+        'minutes' => $minutes
+    ];
+}
+
+
+/**
+ * @param int $price
+ * @return string
+ */
+function getPrice(int $price): string
+{
+    $price = ceil($price);
+    return number_format($price, 0, '', ' ') . ' ₽';
+}
+
+
+
+
+/**
+ * Преобразует специальные символы в HTML-сущности
+ * @param string $str
+ * @return string
+ */
+function esc(string $str): string
+{
+    return htmlspecialchars($str, ENT_QUOTES);
+}
+
+
+/**
+ * @param string $name
+ * @param array $data
+ * @return string
+ */
+function  renderTemplate(string $name, string $title, array|string $authUser, array $categories,  array $data = [], bool $isIndex = false): string
+{
+    $main = include_template($name, $data);
+    return include_template('layout-template.php', [
+        'title' => $title,
+        'isIndex' => $isIndex,
+        'authUser' => $authUser,
+        'categories' => $categories,
+        'main' => $main,
+    ]);
+}
+
+
+/**
+ * @param array $categories
+ * @param int $responseCode
+ * @param string $errMessage
+ */
+#[NoReturn] function httpError(array $categories, int $responseCode, string $errMessage = '' )
+{
+    $error = [
+        403 => '403 - У вас нет права зайти на страницу ',
+        404 => '404 - Данной страницы не существует на сайте',
+    ];
+
+        $title = $error[$responseCode];
+        $message = $errMessage;
+
+    http_response_code($responseCode);
+    echo renderTemplate('404-template.php', $title, '', $categories, [
+        'categories' => $categories,
+        'title' => $title,
+        'message'=> $message,
+         ]
+    );
+    exit;
+}
+
+
+/**
+ * @param $length
+ * @return string
+ */
+function randomString($length): string
+{
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    return substr(str_shuffle($characters), 0, $length);
+}
+
+/**
+ * @param array $submittedFile
+ * @return string
+ */
+function uploadFile(array $submittedFile, string $uploadPath) : string
+{
+    if (is_uploaded_file($submittedFile['tmp_name'])) {
+        if(!is_dir($uploadPath)){
+            mkdir($uploadPath);
+        }
+        $fileName = randomString(10) .'-'. $submittedFile['name'];
+        $filePath = PROJECT_ROOT . '/'. $uploadPath . '/' . $fileName;//
+        move_uploaded_file($submittedFile['tmp_name'], $filePath);
+        return  '/'. $uploadPath  .'/'. $fileName;
+    }
+}
 

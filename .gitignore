@@ -1,5 +1,5 @@
 .DS_Store
-.idea
+../.idea
 *.ai
 *.log
 *.pdf
@@ -9,4 +9,6 @@ Thumbs.db
 vendor
 uploads/*
 !uploads/.gitkeep
-docker/mysql
+docker/*
+docker-compose.yml
+config.php

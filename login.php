@@ -1,47 +1,60 @@
 <?php
 
-require_once('functions/initialize.php');
+declare(strict_types=1);
+require __DIR__ . '/initialize.php';
 $title = 'Вход';
-session_start();
-$isAuth = isAuth();
 
-// 8. По такому же принципу для залогиненных пользователей
-// надо закрыть страницу регистрации.
-closePage($isAuth);
 
-$db = getDb();
-$categories = getCategories($db);
-$loginInput = [];
-$errors = [];
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $loginInput = getLoginInput();
-    $errors = getLoginErrors($db);
-    if (empty($errors)) {
-        setSession($db, $loginInput['user-email']);
-    }
+if ($authUser) {
+    httpError($categories,403,HEADER_USER_REGISTER_ERR );
 }
 
+$formErrors = [];
+$submittedData = [];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($_SESSION['token'] !== $_POST['token']) {
+        httpError($categories,403 );
+    }
 
-$main = include_template(
-    'login-template.php',
-    [
+
+    // этап 1: принять все данные формы:
+    $submittedData = [
+        'user-email' => trim(filter_input(INPUT_POST, 'user-email')),
+        'user-password' => filter_input(INPUT_POST, 'user-password'),
+    ];
+
+    // этап 2: проверить данные запроса:
+    $formErrors = [
+        'user-email' => validateEmail(
+            $submittedData['user-email'],
+            EMPTY_EMAIL_ERR,
+            INVALID_EMAIL_ERR,
+            true
+        ),
+        'user-password' => validateText(
+            $submittedData['user-password'],
+            NO_PASSWORD_ERR,
+            true
+        ),
+    ];
+    $formErrors = array_filter($formErrors);
+
+    // этап 3: сохранить проверенные данные если соответствует правилам валидации:
+    if (count($formErrors) === 0) {
+        $user = getUserByEmail($db, $submittedData['user-email']);
+        $formErrors = validateUserAuth($user, $submittedData['user-password']);
+        if ($formErrors === null) {
+            session_regenerate_id(true);
+            $_SESSION['authUser'] = $user;
+            header("Location: / ");
+            exit;
+        }
+    }
+}
+echo renderTemplate(
+    'login-template.php', $title, $authUser, $categories, [
         'categories' => $categories,
-        'errors' => $errors,
-        'loginInput' => $loginInput
-    ]
+        'formErrors' => $formErrors,
+        'submittedData' => $submittedData,
+        ]
 );
-
-
-$layout = include_template(
-    'layout-template.php',
-    [
-        'scriptName' => $scriptName,
-        'main' => $main,
-        'categories' => $categories,
-        'isAuth' => $isAuth,
-        'userName' => $userName,
-        'title' => $title
-
-    ]
-);
-print ($layout);

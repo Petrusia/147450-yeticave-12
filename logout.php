@@ -2,5 +2,5 @@
 
 session_start();
 
-unset($_SESSION['userName']);
+unset($_SESSION['authUser']);
 header("Location: /");

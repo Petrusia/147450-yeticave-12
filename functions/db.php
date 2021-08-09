@@ -1,18 +1,6 @@
 <?php
 
-/**
- * @return mysqli
- */
-function getDb(): mysqli
-{
-    $dbConnection = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-    mysqli_set_charset($dbConnection, "utf8");
-    if (mysqli_connect_error()) {
-        echo mysqli_connect_error();
-        exit;
-    }
-    return $dbConnection;
-}
+use JetBrains\PhpStorm\NoReturn;
 
 /**
  * @param mysqli $db
@@ -21,12 +9,8 @@ function getDb(): mysqli
 function getCategories(mysqli $db): array
 {
     $sqlQuery = "SELECT * FROM category";
-    $sqlQueryResult = mysqli_query($db, $sqlQuery);
-
-    if (!$sqlQueryResult) {
-        echo mysqli_error($db);
-    }
-    return mysqli_fetch_all($sqlQueryResult, MYSQLI_ASSOC);
+    $result = $db->query( $sqlQuery);
+    return $result->fetch_all(MYSQLI_ASSOC);
 }
 
 /**
@@ -35,204 +19,131 @@ function getCategories(mysqli $db): array
  */
 function getLots(mysqli $db): array
 {
-    $sqlQuery = "SELECT  lot.id, lot_name, lot_desc, lot_img, lot_price, lot_create, lot_end, bet_step,
-author_id, category_id
+    $sqlQuery = "SELECT  lot.lot_id,
+        lot_name,
+        lot_img,
+        lot_create,
+        lot_end,
+        lot_category_id,
+        category_name,
+        COALESCE( MAX(bet_price), lot_price) AS lot_price,
+        COUNT(bet.bet_id) bet_count
 
-    FROM lot
-        INNER JOIN category ON category_id = category.id
-        INNER JOIN user ON author_id = user.id  ORDER BY lot_create DESC ";
+FROM lot
+         left  join category ON lot_category_id = category.category_id
+         left  join user ON lot_author_id = user.user_id
+         left  join bet ON lot.lot_id = bet.bet_lot_id
+WHERE lot_end > NOW()
+group by lot.lot_id
+ORDER BY lot_create DESC
+LIMIT 9 ";
 
-
-    $sqlQueryResult = mysqli_query($db, $sqlQuery);
-
-    if (!$sqlQueryResult) {
-        echo mysqli_error($db);
-    }
-    return mysqli_fetch_all($sqlQueryResult, MYSQLI_ASSOC);
+    $result = $db->query($sqlQuery);
+    return $result->fetch_all(MYSQLI_ASSOC);
 }
 
 /**
  * @param mysqli $db
  * @param int $lotId
- * @return array|false|string[]|null
+ * @return array
  */
-function getLot(mysqli $db, int $lotId)
+function getLotById(mysqli $db, int $lotId): ?array
 {
     $sql = "SELECT * FROM lot
-        INNER JOIN category ON category_id = category.id
-        WHERE lot.id = ?";
-    $stmt = mysqli_prepare($db, $sql);
-    mysqli_stmt_bind_param($stmt, 'i', $lotId);
-    mysqli_stmt_execute($stmt);
-    $res = mysqli_stmt_get_result($stmt);
-    return mysqli_fetch_assoc($res);
+        INNER JOIN category ON category_id = lot_category_id
+        WHERE lot_id = ?";
+        return dbFetchAssoc($db, $sql, $lotId);
 }
+
+function getBetsByLotId(mysqli $db,  $lotId): ?array
+{
+    $sql = "SELECT * FROM bet
+        INNER JOIN user ON bet_author_id = user.user_id
+        WHERE bet_lot_id = ?
+        ORDER BY bet_price DESC ";
+    $stmt = $db->prepare($sql); // подготавливаем запрос, получаем stmt
+    $stmt->bind_param("s", $lotId); //
+    $stmt->execute(); // выполняем запрос
+    $result = $stmt->get_result(); // получаем result
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
 
 /**
  * @param mysqli $db
- * @param $lotInput
+ * @param array $submittedData
+ * @param array $authUser
+ * @return int|string
  */
-function saveLot(mysqli $db, $lotInput)
+function saveLotData(mysqli $db, array $submittedData, array $authUser): int|string
 {
-    $sqlQuery = "INSERT INTO lot (
+    $sql = "INSERT INTO lot (
                  lot_name,
                  lot_desc,
                  lot_img,
                  lot_price,
                  lot_end,
-                 bet_step,
-                 category_id,
-                 lot_create,
-                 author_id
-                 )  VALUES (?,?,?,?,?,?,?,NOW(),1)";
-    $stmt =  mysqli_prepare($db, $sqlQuery);
-    mysqli_stmt_bind_param($stmt, 'sssdsii',
-                           $lotInput['lot-name'],
-                           $lotInput['lot-message'],
-                            $lotInput['lot-img'],
-                           $lotInput['lot-rate'],
-                           $lotInput['lot-date'],
-                           $lotInput['lot-step'],
-                           $lotInput['lot-category']
+                 lot_bet_step,
+                 lot_category_id,
+                 lot_author_id
+                 )  VALUES (?,?,?,?,?,?,?,?)";
+
+    $stmt = $db->prepare($sql);
+    $stmt->bind_param(
+        'ssssssss',
+        $submittedData['lot-name'],
+        $submittedData['lot-message'],
+        $submittedData['lot-img'],
+        $submittedData['lot-rate'],
+        $submittedData['lot-date'],
+        $submittedData['lot-step'],
+        $submittedData['lot-category'],
+        $authUser['id']
     );
-    $sqlQueryResult = mysqli_stmt_execute($stmt);
-    if (!$sqlQueryResult) {
-        echo mysqli_error($db);
-    }
-    $id = mysqli_insert_id($db);
-    header("Location:  lot.php?lot_id={$id}");
-    exit;
+    $stmt->execute();
+    return $db->insert_id;
 }
 
-
-/**
- * @return array
- */
-function getLotInput(): array
-{
-    return [
-        'lot-name' => $_POST['lot-name'],
-        'lot-category' => (int) $_POST['lot-category'],
-        'lot-message' => $_POST['lot-message'],
-        'lot-rate' => (float) $_POST['lot-rate'],
-        'lot-step' => (int) $_POST['lot-step'],
-        'lot-date' => $_POST['lot-date'],
-        'lot-img' => ''
-    ];
-}
-
-/**
- * @return string
- */
-function getImage(): string
-{
-    $imageName = $_FILES['lot-img']['name'];
-    $tempImageName = $_FILES['lot-img']['tmp_name'];
-    $imageDir = PROJECT_ROOT . '/uploads/';
-    $imageUrl = '/uploads/' . $imageName;
-    move_uploaded_file($tempImageName, $imageDir . $imageName);
-    return $imageUrl;
-}
-
-/**
- * @return array
- */
-function getRegisterInput(): array
-{
-    return [
-        'user-email' => $_POST['user-email'],
-        'user-password' => password_hash($_POST['user-password'], PASSWORD_DEFAULT),
-        'user-name' => $_POST['user-name'],
-        'user-message' => $_POST['user-message']
-    ];
-}
 
 /**
  * @param mysqli $db
  * @param string $email
- * @return bool
+ * @return null|array
  */
-function isEmailExist(mysqli $db, string $email):bool
+function getUserByEmail(mysqli $db, string $email): ?array
 {
-    $sql = "SELECT count(id) FROM user WHERE email = ?";
-    $stmt = mysqli_prepare($db, $sql);
-    mysqli_stmt_bind_param($stmt, 's', $email);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    $result = mysqli_fetch_row($result);
-    return $result[0];
+    $sql = "SELECT * FROM user WHERE user_email = ?";
+    return dbFetchAssoc($db, $sql, $email);
+}
+
+function dbFetchAssoc(mysqli $db, string $sqlQuery, string $where): ?array
+{
+    $stmt = $db->prepare($sqlQuery); // подготавливаем запрос, получаем stmt
+    $stmt->bind_param("s", $where); //
+    $stmt->execute(); // выполняем запрос
+    $result = $stmt->get_result(); // получаем result
+    return $result->fetch_assoc();
 }
 
 /**
  * @param mysqli $db
- * @param $registerInput
+ * @param $submittedData
  */
-function registerUser(mysqli $db, $registerInput)
+function saveUser(mysqli $db, $submittedData)
 {
-    $sqlQuery = "INSERT INTO user (
-                 reg_date,
-                  email,
-                 username,
-                 password,
-                 contact_info
+    $sql = "INSERT INTO user (
+                 user_registered,
+                  user_email,
+                 user_name,
+                 user_password,
+                 user_contact
                  )  VALUES (NOW(),?,?,?,?)";
-    $stmt =  mysqli_prepare($db, $sqlQuery);
-    mysqli_stmt_bind_param($stmt, 'ssss',
-                           $registerInput['user-email'],
-                           $registerInput['user-name'],
-                           $registerInput['user-password'],
-                           $registerInput['user-message']
+    $stmt = $db->prepare($sql);
+    $stmt->bind_param( 'ssss',
+                           $submittedData['user-email'],
+                           $submittedData['user-name'],
+                           $submittedData['user-password'],
+                           $submittedData['user-message']
     );
-    $sqlQueryResult = mysqli_stmt_execute($stmt);
-    if (!$sqlQueryResult) {
-        echo mysqli_error($db);
-    }
-    $id = mysqli_insert_id($db);
-    header("Location:  login.php");
-    exit;
-}
-
-/**
- * @param mysqli $db
- * @param string $email
- * @return array|false|string[]|null
- */
-function getPassword(mysqli $db, string $email)
-{
-    $sql = "SELECT password FROM user WHERE email = ?";
-    $stmt = mysqli_prepare($db, $sql);
-    mysqli_stmt_bind_param($stmt, 's', $email);
-    mysqli_stmt_execute($stmt);
-    $res = mysqli_stmt_get_result($stmt);
-    return mysqli_fetch_assoc($res);
-}
-
-/**
- * @return array
- */
-function getLoginInput(): array
-{
-    return [
-        'user-email' => $_POST['user-email'],
-        'user-password' => $_POST['user-password'],
-    ];
-}
-
-
-/**
- * @param mysqli $db
- * @param string $email
- */
-function setSession(mysqli $db, string $email)
-{
-    $sql = "SELECT username, email FROM user WHERE email = ?";
-    $stmt = mysqli_prepare($db, $sql);
-    mysqli_stmt_bind_param($stmt, 's', $email);
-    mysqli_stmt_execute($stmt);
-    $res = mysqli_stmt_get_result($stmt);
-    $user = mysqli_fetch_assoc($res);
-    session_regenerate_id(true);
-    $_SESSION['userName'] = $user['username'];
-    header("Location:  /");
-    exit;
+    $stmt->execute();
 }

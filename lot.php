@@ -1,45 +1,34 @@
 <?php
+declare(strict_types=1);
+require __DIR__ . '/initialize.php';
 
-require_once('functions/initialize.php');
-session_start();
-$isAuth = isAuth();
-$userName = $_SESSION['userName'];
+// Проверяйте существование параметра запроса с ID лота.
+$lotId = filter_input(INPUT_GET, 'lot_id', FILTER_VALIDATE_INT);
 
-$db = getDb();
-$categories = getCategories($db);
-$lotId = filter_input(INPUT_GET, 'lot_id', FILTER_SANITIZE_NUMBER_INT);
-
-if (!$lotId) {
-    http_response_code(404);
-    $main = include_template(
-        '404-template.php',
-        [
-            'categories' => $categories,
-        ]
-    );
-} else {
-    $lot = getLot($db, $lotId);
-
-    $main = include_template(
-        'lot-template.php',
-        [
-            'categories' => $categories,
-            'lot' => $lot,
-            'isAuth'=>  $isAuth
-        ]
-    );
+// Если параметр запроса отсутствует, то вместо содержимого страницы возвращать код ответа 404.
+if (!$lotId ) {
+    httpError($categories,  404);
 }
+// Сформируйте и выполните SQL-запрос на чтение записи из таблицы с лотами,
+// где ID лота равен полученному из параметра запроса.
+$lot = getLotById($db, $lotId);
+// Если по этому ID не нашли ни одной записи, то вместо содержимого страницы возвращать код ответа 404.
+if (!$lot) {
+    httpError($categories, 404);
+}
+$title = $lot['lot_name'];
+$bets = getBetsByLotId($db, $lotId);
+$currentPrice = $bets[0]['bet_price'] ?? $lot['lot_price'];
+$minBetStep = $currentPrice + $lot['lot_bet_step'];
 
-$layout = include_template(
-    'layout-template.php',
-    [
-        'scriptName' => $scriptName,
-        'main' => $main,
+
+echo renderTemplate(
+    'lot-template.php', $title, $authUser, $categories, [
+        'authUser' => $authUser,
         'categories' => $categories,
-        'isAuth' => $isAuth,
-        'userName' => $userName,
-        'title' => $lot['lot_name']
-
-    ]
+        'lot' => $lot,
+        'bets' => $bets,
+        'currentPrice' => $currentPrice,
+        'minBetStep' => $minBetStep,
+       ]
 );
-print ($layout);
