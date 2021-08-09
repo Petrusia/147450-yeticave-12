@@ -153,14 +153,14 @@ FROM category;
 SELECT lot_name, lot_price, lot_img, bet_price, category_name
 FROM lot
          INNER JOIN bet ON lot.lot_id = bet.bet_id
-         INNER JOIN category ON lot.category_id = category.id
-WHERE lot.lot_create< lot.lot_end;
+         INNER JOIN category ON lot_category_id = category_id
+WHERE lot_create < lot_end;
 
 UPDATE lot
 SET lot_name = '2019 Rossignol District Snowboard'
 WHERE lot_id = '1';
 
-SELECT lot.id, lot_name, bet_id, bet_date, bet_price
+SELECT lot.lot_id, lot_name, bet_id, bet_date, bet_price
 FROM lot
          INNER JOIN bet ON lot.lot_id = bet.bet_id
 WHERE lot_id = 1

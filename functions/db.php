@@ -41,15 +41,6 @@ LIMIT 9 ";
     $result = $db->query($sqlQuery);
     return $result->fetch_all(MYSQLI_ASSOC);
 }
-function getBets(mysqli $db): array
-{
-    $sqlQuery = "SELECT  bet.bet_id, bet_price, bet_lot_id
-
-    FROM bet ORDER BY bet_date DESC";
-
-    $result = $db->query($sqlQuery);
-    return $result->fetch_all(MYSQLI_ASSOC);
-}
 
 /**
  * @param mysqli $db
