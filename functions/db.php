@@ -26,7 +26,6 @@ function getLots(mysqli $db): array
         lot_end,
         lot_category_id,
         category_name,
-        bet_price,
         COALESCE( MAX(bet_price), lot_price) AS lot_price,
         COUNT(bet.bet_id) bet_count
 

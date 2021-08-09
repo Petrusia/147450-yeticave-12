@@ -10,7 +10,6 @@ CREATE TABLE category
   category_alias VARCHAR(128) NOT NULL UNIQUE
 );
 
-
 CREATE TABLE user
 (
   user_id       INT AUTO_INCREMENT PRIMARY KEY,
@@ -18,11 +17,8 @@ CREATE TABLE user
   user_email    VARCHAR(128) NOT NULL UNIQUE,
   user_name     VARCHAR(128) NOT NULL,
   user_password VARCHAR(128) NOT NULL,
-  user_contact  TEXT,
-  lot_id        INT,
-  bet_id        INT
+  user_contact  VARCHAR(500)
 );
-
 
 CREATE TABLE lot
 (
@@ -34,34 +30,19 @@ CREATE TABLE lot
   lot_create  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   lot_end     DATE,
   lot_bet_step    INT UNSIGNED NOT NULL,
-  lot_author_id   INT,
-  lot_winner_id   INT,
-  lot_category_id INT,
-
-  FOREIGN KEY (lot_author_id) REFERENCES user (user_id),
-  FOREIGN KEY (lot_winner_id) REFERENCES user (user_id),
-  FOREIGN KEY (lot_category_id) REFERENCES category (category_id)
-
+  lot_author_id   INT UNSIGNED,
+  lot_winner_id   INT UNSIGNED,
+  lot_category_id INT UNSIGNED
 );
-
 
 CREATE TABLE bet
 (
   bet_id    INT AUTO_INCREMENT PRIMARY KEY,
   bet_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   bet_price INT UNSIGNED NOT NULL,
-  bet_author_id   INT,
-  bet_lot_id    INT,
-  FOREIGN KEY (bet_author_id) REFERENCES user (user_id),
-  FOREIGN KEY (bet_lot_id) REFERENCES lot (lot_id)
+  bet_author_id   INT UNSIGNED,
+  bet_lot_id    INT UNSIGNED
 );
 
-
-ALTER TABLE user
-  ADD FOREIGN KEY (lot_id) REFERENCES lot (lot_id);
-ALTER TABLE user
-  ADD FOREIGN KEY (bet_id) REFERENCES bet (bet_id);
-
-CREATE INDEX lot_name ON lot (lot_name);
-CREATE INDEX lot_price ON lot (lot_price);
-
+CREATE INDEX lot_end ON lot (lot_end);
+CREATE FULLTEXT INDEX search_by_lot ON lot(lot_name, lot_desc);
