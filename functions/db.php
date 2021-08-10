@@ -1,26 +1,45 @@
 <?php
 
-use JetBrains\PhpStorm\NoReturn;
-
 /**
  * @param mysqli $db
  * @return array
  */
 function getCategories(mysqli $db): array
 {
-    $sqlQuery = "SELECT * FROM category";
-    $result = $db->query( $sqlQuery);
+    $sql = "SELECT * FROM category";
+    $result = $db->query( $sql);
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
-/**
- * @param mysqli $db
- * @return array
- */
+
+function getLotsCount(
+    mysqli $db,
+    string $searchQuery,
+    string $searchBy
+): mixed {
+
+        $sql = "SELECT
+        COUNT(lot_id) as count
+        FROM lot
+        JOIN category ON lot_category_id = category_id
+        WHERE lot_end > NOW() ";
+        $sql .= $searchBy;
+
+
+    $stmt = $db->prepare($sql); // подготавливаем запрос, получаем stmt
+    $stmt->bind_param("s", $searchQuery); //
+    $stmt->execute(); // выполняем запрос
+    $result = $stmt->get_result(); // получаем result
+    return $result->fetch_assoc()['count'];
+
+}
+
+
 function getLots(mysqli $db): array
 {
-    $sqlQuery = "SELECT  lot.lot_id,
+    $sql = "SELECT  lot.lot_id,
         lot_name,
+        lot_desc,
         lot_img,
         lot_create,
         lot_end,
@@ -30,17 +49,58 @@ function getLots(mysqli $db): array
         COUNT(bet.bet_id) bet_count
 
 FROM lot
-         left  join category ON lot_category_id = category.category_id
-         left  join user ON lot_author_id = user.user_id
-         left  join bet ON lot.lot_id = bet.bet_lot_id
-WHERE lot_end > NOW()
-group by lot.lot_id
-ORDER BY lot_create DESC
-LIMIT 9 ";
+         left  join category ON lot_category_id = category_id
+         left  join user ON lot_author_id = user_id
+         left  join bet ON lot_id = bet_lot_id
 
-    $result = $db->query($sqlQuery);
+WHERE lot_end > NOW()
+GROUP BY lot.lot_id
+ORDER BY lot_create DESC
+LIMIT 9  ";
+
+    $result = $db->query($sql);
     return $result->fetch_all(MYSQLI_ASSOC);
 }
+
+
+function getPages(
+    mysqli $db,
+    string $searchQuery,
+    int $limit,
+    int $offset,
+    string $searchBy
+): array {
+    $sql = "SELECT  lot.lot_id,
+        lot_name,
+        lot_desc,
+        lot_img,
+        lot_create,
+        lot_end,
+        lot_category_id,
+        category_name,
+        COALESCE( MAX(bet_price), lot_price) AS lot_price,
+        COUNT(bet.bet_id) bet_count
+
+FROM lot
+         left  join category ON lot_category_id = category_id
+         left  join user ON lot_author_id = user_id
+         left  join bet ON lot_id = bet_lot_id
+WHERE lot_end > NOW()";
+    $sql .= $searchBy;
+    $sql .= "GROUP BY lot.lot_id
+ORDER BY lot_create DESC
+LIMIT ?
+OFFSET ?
+";
+
+    $stmt = $db->prepare($sql); // подготавливаем запрос, получаем stmt
+    $stmt->bind_param("sss", $searchQuery, $limit, $offset); //
+    $stmt->execute(); // выполняем запрос
+    $result = $stmt->get_result(); // получаем result
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
+
 
 /**
  * @param mysqli $db
@@ -58,7 +118,7 @@ function getLotById(mysqli $db, int $lotId): ?array
 function getBetsByLotId(mysqli $db,  $lotId): ?array
 {
     $sql = "SELECT * FROM bet
-        INNER JOIN user ON bet_author_id = user.user_id
+        INNER JOIN user ON bet_author_id = user_id
         WHERE bet_lot_id = ?
         ORDER BY bet_price DESC ";
     $stmt = $db->prepare($sql); // подготавливаем запрос, получаем stmt
