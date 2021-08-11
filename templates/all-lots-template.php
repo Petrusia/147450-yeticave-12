@@ -4,7 +4,7 @@
             <?php
             foreach ($categories as $category) : ?>
                 <li class="nav__item <?= esc($category['category_name'] == $searchQuery ? 'nav__item--current' : ''); ?>">
-                    <a href="all-lots.php?category=<?= esc($category['category_name']) ?>"><?= esc($category['category_name']) ?></a>
+                    <a href="/all-lots.php?category=<?= esc($category['category_name']) ?>"><?= esc($category['category_name']) ?></a>
                 </li>
             <?php
             endforeach; ?>
@@ -29,7 +29,7 @@
                         <div class="lot__info">
                             <span class="lot__category"><?= esc($lot['category_name']) ?></span>
                             <h3 class="lot__title">
-                                <a class="text-link" href="lot.php?lot_id=<?= esc($lot['lot_id']) ?>">
+                                <a class="text-link" href="/lot.php?lot_id=<?= esc($lot['lot_id']) ?>">
                                     <?= esc($lot['lot_name']) ?>
                                 </a>
                             </h3>
@@ -57,7 +57,7 @@
 
                 <li class="pagination-item pagination-item-prev">
                     <?php if ($currentPage > 1): ?>
-                        <a href="all-lots.php?category=<?= esc($searchQuery) ?>&page=<?= esc($currentPage - 1) ?>">Назад</a>
+                        <a href="/all-lots.php?category=<?= esc($searchQuery) ?>&page=<?= esc($currentPage - 1) ?>">Назад</a>
                     <?php else: ?>
                         <a class="disabled">Назад</a>
                     <?php endif; ?>
@@ -65,13 +65,13 @@
 
                 <?php foreach ($lotsPagesRange as $lotsPage): ?>
                     <li class="pagination-item <?= $lotsPage == $currentPage ? 'pagination-item-active' : ''  ?>">
-                    <a href="all-lots.php?category=<?= esc($searchQuery) ?>&page=<?= esc($lotsPage) ?>"><?= esc($lotsPage) ?></a>
+                    <a href="/all-lots.php?category=<?= esc($searchQuery) ?>&page=<?= esc($lotsPage) ?>"><?= esc($lotsPage) ?></a>
                     </li>
                 <?php endforeach; ?>
 
                 <li class="pagination-item pagination-item-next">
                     <?php if ($currentPage < $lotsPagesCount) : ?>
-                        <a href="all-lots.php?category=<?= esc($searchQuery) ?>&page=<?= esc($currentPage + 1) ?>">Вперед</a>
+                        <a href="/all-lots.php?category=<?= esc($searchQuery) ?>&page=<?= esc($currentPage + 1) ?>">Вперед</a>
                     <?php else: ?>
                         <a class="disabled">Вперед</a>
                     <?php endif; ?>

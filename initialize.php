@@ -18,7 +18,6 @@ require PROJECT_ROOT . '/functions/db.php';
 require PROJECT_ROOT . '/functions/validation.php';
 require PROJECT_ROOT . '/functions/db_connect.php';
 
-date_default_timezone_set($config['timezone']);
 
 // из-за того что session_start(); стоит в самом низу, у некоторых может сильно подгореть. не ведитесь!
 //у вас всё абсолютно нормально
@@ -32,4 +31,3 @@ if(!isset($_SESSION['token'])){
 
 $authUser = $_SESSION['authUser'] ?? '';
 $categories = getCategories($db);
-

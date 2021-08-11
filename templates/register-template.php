@@ -5,7 +5,7 @@
             <?php
             foreach ($categories as $category) : ?>
                 <li class="nav__item">
-                    <a href="all-lots.php?category=<?= esc($category['category_name']) ?>"><?= esc($category['category_name']) ?></a>
+                    <a href="/all-lots.php?category=<?= esc($category['category_name']) ?>"><?= esc($category['category_name']) ?></a>
                 </li>
             <?php
             endforeach; ?>
@@ -44,7 +44,7 @@
             <?= count($formErrors) > 0 ? 'Пожалуйста, исправьте ошибки в форме.' : '' ?>
         </span>
         <button type="submit" class="button">Зарегистрироваться</button>
-        <a class="text-link" href="login.php">Уже есть аккаунт</a>
+        <a class="text-link" href="/login.php">Уже есть аккаунт</a>
     </form>
 </main>
 

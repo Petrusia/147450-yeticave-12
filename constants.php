@@ -30,6 +30,4 @@ const REGISTER_MESSAGE_MIN_LENGTH = 30;
 const REGISTER_MESSAGE_MAX_LENGTH = 500;
 const LOTS_PER_PAGE = 9;
 
-const SEARCH_BY_QUERY_STRING = ' AND MATCH(lot_name, lot_desc) AGAINST(?)';
-const SEARCH_BY_CATEGORY = ' AND category_name = ? ';
 
