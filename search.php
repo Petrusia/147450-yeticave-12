@@ -4,17 +4,23 @@ require __DIR__ . '/initialize.php';
 
 $title = 'Результаты поиска';
 
-$searchQuery = trim($_GET['search'] ?? '');
-$currentPage = $_GET['page'] ?? 1;
-$lotsCount = getLotsCount($db, $searchQuery, SEARCH_BY_QUERY_STRING );
+$searchQuery = esc(trim($_GET['search'] ?? ''));
+$currentPage = intval($_GET['page'] ?? 1);
+
+$sql = "SELECT
+        COUNT(lot_id) as count
+        FROM lot
+        WHERE lot_end > NOW()
+        AND MATCH(lot_name, lot_desc) AGAINST(?)";
+$result = dbFetchAssoc($db, $sql, $searchQuery);
+
+$lotsCount = $result['count'];
 $lotsPerPage = LOTS_PER_PAGE;
 $lotsPagesCount = ceil($lotsCount / $lotsPerPage);
-for ($i = 1; $i <= $lotsPagesCount; ++$i) {
-    $lotsPagesRange[] = $i;
-}
+$lotsPagesRange = range(1, $lotsPagesCount) ?? 1;
 $offset =  $lotsPerPage  * ($currentPage - 1);
 
-$lots = getPages($db, $searchQuery, $lotsPerPage, $offset, SEARCH_BY_QUERY_STRING);
+$lots = getLots($db, $searchQuery, $lotsPerPage, $offset);
 
 echo renderTemplate('search-template.php', $title, $authUser, $categories, [
     'categories' => $categories,

@@ -38,3 +38,4 @@ const REGISTER_MESSAGE_MIN_LENGTH_ERR = 'Сообщение должно  дол
 const REGISTER_MESSAGE_MAX_LENGTH_ERR = 'Сообщение должно  быть не больше, чем ' . REGISTER_MESSAGE_MAX_LENGTH . ' символов.';
 
 const HEADER_USER_REGISTER_ERR = 'Вы уже зарегистрированы на сайте.';
+const HEADER_CATEGORY_ERR = 'Да нет такой категории .... пока. ';

@@ -4,18 +4,33 @@ require __DIR__ . '/initialize.php';
 
 $title = 'Все лоты';
 
-$searchQuery = trim($_GET['category'] ?? '');
-$currentPage = $_GET['page'] ?? 1;
-$lotsCount = getLotsCount($db, $searchQuery, SEARCH_BY_CATEGORY);
+$searchQuery = esc(trim($_GET['category'] ?? ''));
+$currentPage = intval( $_GET['page'] ?? 1);
+
+foreach ($categories  as  $category) {
+    $categoryName[] = $category["category_name"];
+ }
+if(!in_array($searchQuery, $categoryName)) {
+    httpError($categories,404,HEADER_CATEGORY_ERR );
+}
+
+
+        $sql = "SELECT
+        COUNT(lot_id) as count
+        FROM lot
+        JOIN category ON lot_category_id = category_id
+        WHERE lot_end > NOW()
+        AND category_name = ? ";
+$result = dbFetchAssoc($db, $sql, $searchQuery);
+
+$lotsCount = $result['count'];
 $lotsPerPage = LOTS_PER_PAGE;
 $lotsPagesCount = ceil($lotsCount / $lotsPerPage);
-for ($i = 1; $i <= $lotsPagesCount; ++$i) {
-    $lotsPagesRange[] = $i;
-}
+$lotsPagesRange = range(1, $lotsPagesCount) ?? 1;
 $offset =  $lotsPerPage  * ($currentPage - 1);
 
 
-$lots = getPages($db, $searchQuery, $lotsPerPage, $offset, SEARCH_BY_CATEGORY);
+$lots = getLots($db, $searchQuery, $lotsPerPage, $offset);
 
 echo renderTemplate('all-lots-template.php', $title, $authUser, $categories,  [
     'categories' => $categories,
