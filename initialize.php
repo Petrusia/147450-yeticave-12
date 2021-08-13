@@ -23,11 +23,17 @@ require PROJECT_ROOT . '/functions/db_connect.php';
 //у вас всё абсолютно нормально
 //Сессию нельзя стартовать до любого вывода, а в ininialize по определению не должно быть никакого вывода, так что стартовать можно где угодно
 //А вот режим вывода ошибок я бы задал как раз повыше.
+$categories = getCategories($db);
+
+$uri = "$_SERVER[REQUEST_URI]";
+$file = substr(parse_url($uri, PHP_URL_PATH), 1);
+if(!file_exists($file) && $file !==''){
+    httpError($categories,404);
+}
+
 session_start();
 
 if(!isset($_SESSION['token'])){
     $_SESSION['token'] = bin2hex(random_bytes(32));
 }
-
 $authUser = $_SESSION['authUser'] ?? '';
-$categories = getCategories($db);

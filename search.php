@@ -17,6 +17,11 @@ $result = dbFetchAssoc($db, $sql, $searchQuery);
 $lotsCount = $result['count'];
 $lotsPerPage = LOTS_PER_PAGE;
 $lotsPagesCount = ceil($lotsCount / $lotsPerPage);
+
+if($currentPage < 1 || $currentPage > $lotsPagesCount) {
+    httpError($categories,404,HEADER_PAGE_NUMBER_ERR );
+}
+
 $lotsPagesRange = range(1, $lotsPagesCount);
 $offset =  $lotsPerPage  * ($currentPage - 1);
 
