@@ -26,11 +26,10 @@ $result = dbFetchAssoc($db, $sql, $searchQuery);
 $lotsCount = $result['count'];
 $lotsPerPage = LOTS_PER_PAGE;
 $lotsPagesCount = ceil($lotsCount / $lotsPerPage);
-$lotsPagesRange = range(1, $lotsPagesCount) ?? 1;
+$lotsPagesRange = range(1, $lotsPagesCount);
 $offset =  $lotsPerPage  * ($currentPage - 1);
 
-
-$lots = getLots($db, $searchQuery, $lotsPerPage, $offset);
+$lots = getLots($db, $searchQuery, $lotsPerPage, $offset, $categoryName );
 
 echo renderTemplate('all-lots-template.php', $title, $authUser, $categories,  [
     'categories' => $categories,

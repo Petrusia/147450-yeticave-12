@@ -208,6 +208,7 @@ function  renderTemplate(string $name, string $title, array|string $authUser, ar
  * @param array $categories
  * @param int $responseCode
  * @param string $errMessage
+ * @var $message
  */
 #[NoReturn] function httpError(array $categories, int $responseCode, string $errMessage = '' )
 {

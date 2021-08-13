@@ -25,6 +25,7 @@ function getLots(
     string $searchQuery = '',
     int $limit = 9,
     int $offset = 0,
+    array $categoryName = null ,
 ): array {
     $sql = "SELECT  lot.lot_id,
         lot_name,
@@ -43,11 +44,10 @@ FROM lot
          left  join bet ON lot_id = bet_lot_id
 WHERE lot_end > NOW()";
 
-    if($_GET['search'] ?? null ) {
-        $sql .= " AND MATCH(lot_name, lot_desc) AGAINST(?) ";
-    }
-    if($_GET['category'] ?? null ) {
+    if(isset($categoryName)) {
         $sql .= " AND category_name = ? ";
+    } elseif($searchQuery) {
+        $sql .= " AND MATCH(lot_name, lot_desc) AGAINST(?) ";
     }
 
     $sql .= "GROUP BY lot.lot_id
@@ -57,7 +57,7 @@ OFFSET ?
 ";
 
     $stmt = $db->prepare($sql); // подготавливаем запрос, получаем stmt
-    if($searchQuery === '') {
+    if($searchQuery === '' && $categoryName === null ) {
         $stmt->bind_param("ss",  $limit, $offset);
     } else {
         $stmt->bind_param("sss", $searchQuery, $limit, $offset); //

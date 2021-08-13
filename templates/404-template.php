@@ -11,7 +11,7 @@
         </ul>
     </nav>
     <section class="lot-item container">
-        <h2> <?=$title?> </h2>
-        <h3> <?=$message?> </h3>
+        <h2> <?=esc($title)?> </h2>
+        <h3> <?=esc($message)?> </h3>
     </section>
 </main>
