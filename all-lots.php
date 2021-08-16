@@ -3,16 +3,15 @@ declare(strict_types=1);
 require __DIR__ . '/initialize.php';
 
 $title = 'Все лоты';
-$categoryPage = true;
 
-$searchQuery = esc(trim($_GET['category'] ?? ''));
+$categoryQuery = esc(trim($_GET['category'] ?? ''));
 $currentPage = intval( $_GET['page'] ?? 1);
 
 foreach ($categories  as  $category) {
     $categoryName[] = $category["category_name"];
  }
-var_dump(in_array($searchQuery, $categories));
-if(!in_array($searchQuery, $categoryName)) {
+
+if(!in_array($categoryQuery, $categoryName)) {
     httpError($categories,404,HEADER_CATEGORY_ERR );
 }
 
@@ -23,7 +22,7 @@ if(!in_array($searchQuery, $categoryName)) {
         JOIN category ON lot_category_id = category_id
         WHERE lot_end > NOW()
         AND category_name = ? ";
-$result = dbFetchAssoc($db, $sql, $searchQuery);
+$result = dbFetchAssoc($db, $sql, [$categoryQuery]);
 
 $lotsCount = $result['count'];
 $lotsPerPage = LOTS_PER_PAGE;
@@ -37,15 +36,15 @@ $lotsPagesRange = range(1, $lotsPagesCount);
 $offset =  $lotsPerPage  * ($currentPage - 1);
 
 
-$lots = getLots($db, $searchQuery, $lotsPerPage, $offset, $categoryPage);
+$lots = getLots($db,'', $categoryQuery, $lotsPerPage, $offset);
 
 echo renderTemplate('all-lots-template.php', $title, $authUser, $categories,  [
     'categories' => $categories,
     'lots' => $lots,
-    'searchQuery' => $searchQuery,
+    'searchQuery' => $categoryQuery,
     'lotsPagesCount' => $lotsPagesCount,
     'currentPage' => $currentPage,
     'lotsPagesRange' => $lotsPagesRange
-], $searchQuery);
+], $categoryQuery);
 
 

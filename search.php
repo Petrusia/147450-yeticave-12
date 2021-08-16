@@ -12,7 +12,7 @@ $sql = "SELECT
         FROM lot
         WHERE lot_end > NOW()
         AND MATCH(lot_name, lot_desc) AGAINST(?)";
-$result = dbFetchAssoc($db, $sql, $searchQuery);
+$result = dbFetchAssoc($db, $sql, [$searchQuery]);
 
 $lotsCount = $result['count'];
 $lotsPerPage = LOTS_PER_PAGE;
@@ -25,7 +25,7 @@ if($currentPage < 1 || $currentPage > $lotsPagesCount) {
 $lotsPagesRange = range(1, $lotsPagesCount);
 $offset =  $lotsPerPage  * ($currentPage - 1);
 
-$lots = getLots($db, $searchQuery, $lotsPerPage, $offset);
+$lots = getLots($db, $searchQuery,'', $lotsPerPage, $offset);
 
 echo renderTemplate('search-template.php', $title, $authUser, $categories, [
     'categories' => $categories,
