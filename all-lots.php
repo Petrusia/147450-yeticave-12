@@ -17,15 +17,13 @@ if(!in_array($categoryQuery, $categoryName)) {
 
 $lotsCount  = getLotsCount($db, '', $categoryQuery);
 $lotsPerPage = LOTS_PER_PAGE;
-$lotsPagesCount = ceil($lotsCount / $lotsPerPage);
+$lotsPagesCount = ceil($lotsCount / $lotsPerPage) ?: 1;
+$lotsPagesRange = range(1, $lotsPagesCount);
+$offset =  $lotsPerPage  * ($currentPage - 1);
 
 if($currentPage < 1 || $currentPage > $lotsPagesCount) {
     httpError($categories,404,HEADER_PAGE_NUMBER_ERR, $authUser );
 }
-
-$lotsPagesRange = range(1, $lotsPagesCount);
-$offset =  $lotsPerPage  * ($currentPage - 1);
-
 
 $lots = getLots($db,'', $categoryQuery, $lotsPerPage, $offset);
 
