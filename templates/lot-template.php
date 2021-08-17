@@ -38,7 +38,7 @@
                             Мин. ставка <span><?= esc(getPrice($minBetStep)) ?></span>
                         </div>
                     </div>
-                    <?php if($authUser) : ?>
+                    <?php if($showBetForm) : ?>
                     <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post" autocomplete="off">
                         <p class="lot-item__form-item form__item form__item--invalid">
                             <label for="cost">Ваша ставка</label>

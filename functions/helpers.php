@@ -210,7 +210,7 @@ function  renderTemplate(string $name, string $title, array|string $authUser, ar
  * @param string $errMessage
  * @var $message
  */
-#[NoReturn] function httpError(array $categories, int $responseCode, string $errMessage = '' )
+#[NoReturn] function httpError(array $categories, int $responseCode,  string $errMessage = '', $authUser ='' )
 {
     $error = [
         403 => '403 - У вас нет права зайти на страницу ',
@@ -221,7 +221,7 @@ function  renderTemplate(string $name, string $title, array|string $authUser, ar
         $message = $errMessage;
 
     http_response_code($responseCode);
-    echo renderTemplate('404-template.php', $title, '', $categories, [
+    echo renderTemplate('404-template.php', $title, $authUser, $categories, [
         'categories' => $categories,
         'title' => $title,
         'message'=> $message,

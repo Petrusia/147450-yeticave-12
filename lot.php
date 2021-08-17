@@ -21,6 +21,19 @@ $bets = getBetsByLotId($db, $lotId);
 $currentPrice = $bets[0]['bet_price'] ?? $lot['lot_price'];
 $minBetStep = $currentPrice + $lot['lot_bet_step'];
 
+// Блок добавления ставки не показывается если:
+// - пользователь не авторизован - проверяем $authUser;
+// - срок размещения лота истёк;
+$TermExpired = time() >= strtotime($lot['lot_end']);
+
+// - лот создан текущим пользователем;
+$createdByCurrentUser = $authUser && $authUser['user_id'] == $lot['lot_author_id'];
+
+// - последняя ставка сделана текущим пользователем.
+$lastBetByCurrentUser = $authUser && $authUser['user_id'] == $bets && $bets[0]['bet_author_id'];
+
+$showBetForm = $authUser && !$TermExpired && !$createdByCurrentUser && !$lastBetByCurrentUser;
+
 
 echo renderTemplate(
     'lot-template.php', $title, $authUser, $categories, [
@@ -30,5 +43,6 @@ echo renderTemplate(
         'bets' => $bets,
         'currentPrice' => $currentPrice,
         'minBetStep' => $minBetStep,
+        'showBetForm' => $showBetForm
        ]
 );

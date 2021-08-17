@@ -5,7 +5,7 @@ require __DIR__ . '/initialize.php';
 $title = 'Регистрация';
 
 if ($authUser) {
-    httpError($categories,  403, HEADER_USER_REGISTER_ERR);
+    httpError($categories,  403, HEADER_USER_REGISTER_ERR, $authUser);
 }
 
 $formErrors = [];

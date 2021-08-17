@@ -7,9 +7,9 @@
  * @param string $sql
  * @param array $params
  * @param string $types
- * @return bool|mysqli_stmt
+ * @return mysqli_stmt
  */
-function dbGetPrepareStmt(mysqli $mysqli,string $sql, array $params, string $types = '' ): bool|mysqli_stmt
+function dbGetPrepareStmt(mysqli $mysqli,string $sql, array $params, string $types = '' ): mysqli_stmt
 {
     if ($types === '') {
         $types = str_repeat('s', count($params));
@@ -26,14 +26,14 @@ function dbGetPrepareStmt(mysqli $mysqli,string $sql, array $params, string $typ
  * @param string $sql
  * @param array $params
  * @param string $types
- * @return mysqli_result|bool|mysqli_stmt
+ * @return mysqli_result|mysqli_stmt
  */
-function dbSelect(mysqli $mysqli,string $sql, array $params = [], string $types = '' ): mysqli_result|bool|mysqli_stmt
+function dbSelect(mysqli $mysqli,string $sql, array $params = [], string $types = '' ): mysqli_result|mysqli_stmt
 {
     if (!$params) {
         return $mysqli->query($sql);
     }
-    return dbGetPrepareStmt($mysqli, $sql, $params, $types);
+    return dbGetPrepareStmt($mysqli, $sql, $params, $types)->get_result();
 }
 
 /**
@@ -45,22 +45,21 @@ function dbSelect(mysqli $mysqli,string $sql, array $params = [], string $types 
  */
 function dbFetchAssoc(mysqli $db, string $sqlQuery, array $params = [], string $types = ''): ?array
 {
-    $stmt =dbSelect($db, $sqlQuery, $params, $types);
-    $result = $stmt->get_result();
+    $result =dbSelect($db, $sqlQuery, $params, $types);
     return $result->fetch_assoc();
 }
+
 
 /**
  * @param mysqli $db
  * @param string $sqlQuery
  * @param array $params
  * @param string $types
- * @return mixed
+ * @return array|null
  */
-function dbFetchAll(mysqli $db, string $sqlQuery, array $params = [], string $types = ''): mixed
+function dbFetchAll(mysqli $db, string $sqlQuery, array $params = [], string $types = ''): ?array
 {
-    $stmt =dbSelect($db, $sqlQuery, $params, $types);
-    $result = $stmt->get_result();
+    $result = dbSelect($db, $sqlQuery, $params, $types);
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
@@ -150,9 +149,9 @@ function getLotById(mysqli $db, int $lotId): ?array
 /**
  * @param mysqli $db
  * @param $lotId
- * @return mixed
+ * @return array|null
  */
-function getBetsByLotId(mysqli $db,  $lotId): mixed
+function getBetsByLotId(mysqli $db,  $lotId): ?array
 {
     $sql = "SELECT * FROM bet
         INNER JOIN user ON bet_author_id = user_id
@@ -180,10 +179,7 @@ function saveLotData(mysqli $db, array $submittedData, array $authUser): int|str
                  lot_category_id,
                  lot_author_id
                  )  VALUES (?,?,?,?,?,?,?,?)";
-
-    $stmt = $db->prepare($sql);
-    $stmt->bind_param(
-        'ssssssss',
+    dbGetPrepareStmt( $db, $sql,[
         $submittedData['lot-name'],
         $submittedData['lot-message'],
         $submittedData['lot-img'],
@@ -191,9 +187,9 @@ function saveLotData(mysqli $db, array $submittedData, array $authUser): int|str
         $submittedData['lot-date'],
         $submittedData['lot-step'],
         $submittedData['lot-category'],
-        $authUser['id']
-    );
-    $stmt->execute();
+        $authUser['user_id'],
+    ]);
+
     return $db->insert_id;
 }
 
@@ -221,12 +217,28 @@ function saveUser(mysqli $db, array $submittedData)
                  user_password,
                  user_contact
                  )  VALUES (?,?,?,?)";
-    $stmt = $db->prepare($sql);
-    $stmt->bind_param( 'ssss',
-                           $submittedData['user-email'],
-                           $submittedData['user-name'],
-                           $submittedData['user-password'],
-                           $submittedData['user-message']
-    );
-    $stmt->execute();
+    dbGetPrepareStmt($db, $sql, [
+        $submittedData['user-email'],
+        $submittedData['user-name'],
+        $submittedData['user-password'],
+        $submittedData['user-message'],
+    ]);
+}
+
+function getLotsCount($db, $searchQuery, $categoryQuery){
+    $sql = "SELECT
+        COUNT(lot_id) as count
+        FROM lot ";
+    if($searchQuery) {
+        $sql .= " WHERE lot_end > NOW()
+        AND MATCH(lot_name, lot_desc) AGAINST(?) ";
+        $params[] = $searchQuery;
+    }
+    if($categoryQuery) {
+        $sql .= " JOIN category ON lot_category_id = category_id
+        WHERE lot_end > NOW()
+        AND category_name = ?  ";
+        $params[] = $categoryQuery;
+    }
+    return dbFetchAssoc($db, $sql, $params)['count'];
 }
