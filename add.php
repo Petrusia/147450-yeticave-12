@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (count($formErrors) === 0) {
         $submittedData['lot-img']  = uploadFile($submittedFile['lot-img'], IMAGE_PATH);
         $id = saveLotData($db, $submittedData, $authUser);
-        header("Location: lot.php?lot_id={$id}");
+        header("Location: /lot.php?lot_id={$id}");
         exit;
     }
 }
