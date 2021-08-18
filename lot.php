@@ -7,14 +7,14 @@ $lotId = filter_input(INPUT_GET, 'lot_id', FILTER_VALIDATE_INT);
 
 // Если параметр запроса отсутствует, то вместо содержимого страницы возвращать код ответа 404.
 if (!$lotId ) {
-    httpError($categories,  404);
+    httpError($categories,  $authUser,404);
 }
 // Сформируйте и выполните SQL-запрос на чтение записи из таблицы с лотами,
 // где ID лота равен полученному из параметра запроса.
 $lot = getLotById($db, $lotId);
 // Если по этому ID не нашли ни одной записи, то вместо содержимого страницы возвращать код ответа 404.
 if (!$lot) {
-    httpError($categories, 404);
+    httpError($categories, $authUser,404);
 }
 $title = $lot['lot_name'];
 $bets = getBetsByLotId($db, $lotId);
@@ -39,7 +39,7 @@ $formErrors = [];
 $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_SESSION['token'] !== $_POST['token']) {
-        httpError($categories, 403);
+        httpError($categories, $authUser,403);
     }
     // этап 1: принять все данные формы:
     $submittedData = [

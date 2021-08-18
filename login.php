@@ -6,14 +6,14 @@ $title = 'Вход';
 
 
 if ($authUser) {
-    httpError($categories,403, HEADER_USER_REGISTER_ERR, $authUser );
+    httpError($categories, $authUser,403, HEADER_USER_REGISTER_ERR );
 }
 
 $formErrors = [];
 $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_SESSION['token'] !== $_POST['token']) {
-        httpError($categories,403 );
+        httpError($categories, $authUser,403 );
     }
 
 

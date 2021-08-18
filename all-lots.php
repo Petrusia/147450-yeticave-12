@@ -12,7 +12,7 @@ foreach ($categories  as  $category) {
  }
 
 if(!in_array($categoryQuery, $categoryName)) {
-    httpError($categories,404, HEADER_CATEGORY_ERR, $authUser );
+    httpError($categories, $authUser,404, HEADER_CATEGORY_ERR );
 }
 
 $lotsCount  = getLotsCount($db, '', $categoryQuery);
@@ -22,7 +22,7 @@ $lotsPagesRange = range(1, $lotsPagesCount);
 $offset =  $lotsPerPage  * ($currentPage - 1);
 
 if($currentPage < 1 || $currentPage > $lotsPagesCount) {
-    httpError($categories,404,HEADER_PAGE_NUMBER_ERR, $authUser );
+    httpError($categories, $authUser,404,HEADER_PAGE_NUMBER_ERR );
 }
 
 $lots = getLots($db,'', $categoryQuery, $lotsPerPage, $offset);
