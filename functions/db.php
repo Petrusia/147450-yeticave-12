@@ -242,3 +242,17 @@ function getLotsCount($db, $searchQuery, $categoryQuery){
     }
     return dbFetchAssoc($db, $sql, $params)['count'];
 }
+
+function saveBetData(mysqli $db, array $submittedData, array $authUser, int $lotId)
+{
+    $sql = "INSERT INTO bet (
+                 bet_price,
+                bet_author_id,
+                bet_lot_id
+                 )  VALUES (?,?,?)";
+    dbGetPrepareStmt($db, $sql, [
+        $submittedData['cost'],
+        $authUser['user_id'],
+        $lotId,
+    ]);
+}

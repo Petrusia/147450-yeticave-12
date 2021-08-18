@@ -12,6 +12,7 @@ $config = require PROJECT_ROOT . '/config.php';
 // https://github.com/ro-htmlacademy/textbook/blob/main/appendix1.md
 error_reporting(E_ALL); // задаем максимальный уровень, чтобы РНР нас информировал обо ВСЕХ ошибках без исключений
 ini_set('display_errors', $config['env_local'] === true ? '1' : '0'); // задаем режим вывода на экран
+date_default_timezone_set($config['timezone']);
 
 require PROJECT_ROOT . '/functions/helpers.php';
 require PROJECT_ROOT . '/functions/db.php';

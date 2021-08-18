@@ -1,5 +1,7 @@
 <?php
 use JetBrains\PhpStorm\NoReturn;
+use JetBrains\PhpStorm\Pure;
+
 /**
  * Проверяет переданную дату на соответствие формату 'ГГГГ-ММ-ДД'
  *
@@ -258,3 +260,26 @@ function uploadFile(array $submittedFile, string $uploadPath) : string
     }
 }
 
+#[Pure] function betDateFormat(string $betDateTime): string
+{
+    $dateNow = date_create();
+    $dateBetCreated = date_create($betDateTime);
+
+    //считает разницу с текущим временем
+    $dateDifference = date_diff($dateBetCreated, $dateNow);
+    $days = $dateDifference->d;// Количество дней int
+    $hours = $dateDifference->h;// Количество часов int
+    $minutes = $dateDifference->i;// Количество минут int
+    $seconds = $dateDifference->s ?: 1;// Количество секунд int
+
+    if($days){
+        return date('d.m.y в H:i',  strtotime($betDateTime));
+    } elseif ($hours) {
+        $date = sprintf("%s %s назад", $hours, get_noun_plural_form($hours, 'час', 'часа', 'часов'));
+    } elseif ($minutes) {
+        $date = sprintf("%s %s назад", $minutes, get_noun_plural_form($minutes, 'минута', 'минуты', 'минут'));
+    } elseif ($seconds) {
+        $date = sprintf("%s %s назад", $seconds, get_noun_plural_form($seconds, 'секунда', 'секунды', 'секунд'));
+    }
+    return $date;
+}

@@ -40,3 +40,7 @@ const REGISTER_MESSAGE_MAX_LENGTH_ERR = 'Сообщение должно  быт
 const HEADER_USER_REGISTER_ERR = 'Вы уже зарегистрированы на сайте.';
 const HEADER_CATEGORY_ERR = 'Да нет такой категории .... пока. ';
 const HEADER_PAGE_NUMBER_ERR = 'Да нет такой страницы .... пока. ';
+
+const BET_ERR = 'Введите начальную сумму ставки.';
+const BET_MIN_LENGTH_ERR = 'Ставка должна быть не меньше ';
+

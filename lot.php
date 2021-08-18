@@ -30,9 +30,37 @@ $TermExpired = time() >= strtotime($lot['lot_end']);
 $createdByCurrentUser = $authUser && $authUser['user_id'] == $lot['lot_author_id'];
 
 // - последняя ставка сделана текущим пользователем.
-$lastBetByCurrentUser = $authUser && $authUser['user_id'] == $bets && $bets[0]['bet_author_id'];
+$lastBetByCurrentUser = ((isset($authUser['user_id'])) == (isset($bets[0]['bet_author_id'])));
 
 $showBetForm = $authUser && !$TermExpired && !$createdByCurrentUser && !$lastBetByCurrentUser;
+
+
+$formErrors = [];
+$submittedData = [];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($_SESSION['token'] !== $_POST['token']) {
+        httpError($categories, 403);
+    }
+    // этап 1: принять все данные формы:
+    $submittedData = [
+        'cost' => filter_input(INPUT_POST, 'cost'),
+    ];
+    // этап 2: проверить данные запроса:
+    $formErrors = [
+        'cost' => validateNumber($submittedData['cost'],
+            NUMBER_ERR,
+            BET_ERR,
+            BET_REQUIRED,
+            $minBetStep,
+            BET_MIN_LENGTH_ERR . $minBetStep . ' ₽')
+    ];
+    $formErrors = array_filter($formErrors);
+    if (count($formErrors) === 0) {
+        saveBetData($db, $submittedData, $authUser, $lotId);
+        header("Location: /lot.php?lot_id={$lotId}");
+        exit;
+    }
+}
 
 
 echo renderTemplate(
@@ -43,6 +71,8 @@ echo renderTemplate(
         'bets' => $bets,
         'currentPrice' => $currentPrice,
         'minBetStep' => $minBetStep,
-        'showBetForm' => $showBetForm
+        'showBetForm' => $showBetForm,
+        'formErrors' => $formErrors,
+        'submittedData' => $submittedData,
        ]
 );

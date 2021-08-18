@@ -58,10 +58,10 @@ function validateNumber(
 ): ?string {
     $length = mb_strlen($number);
 
-    if (!is_numeric($number)) {
-        return $formatErrText;
-    } elseif ($required && $length === 0) {
+    if ($required && $length === 0) {
         return $emptyErrText;
+    } elseif (!is_numeric($number) ) {
+        return $formatErrText;
     } elseif ($min !== null && $number < $min) {
         return $minErrText;
     } elseif ($max !== null && $number > $max) {
