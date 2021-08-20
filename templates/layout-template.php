@@ -13,13 +13,13 @@
         <div class="main-header__container container">
             <h1 class="visually-hidden">YetiCave</h1>
             <a class="main-header__logo" <?= !$isIndex ? 'href="/"' : ''; ?>>
-                <img src="img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
+                <img src="/img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
             </a>
-            <form class="main-header__search" method="get" action="https://echo.htmlacademy.ru" autocomplete="off">
-                <input type="search" name="search" placeholder="Поиск лота">
-                <input class="main-header__search-btn" type="submit" name="find" value="Найти">
+            <form class="main-header__search" method="get" action="/search.php"  autocomplete="off">
+                <input type="search" name="search" placeholder="Поиск лота" value="<?= esc($_GET['search'] ?? ''); ?>">
+                <input class="main-header__search-btn" type="submit" name="" value="">
             </form>
-            <a class="main-header__add-lot button" href="add.php">Добавить лот</a>
+            <a class="main-header__add-lot button" href="/add.php">Добавить лот</a>
 
             <nav class="user-menu">
 
@@ -28,17 +28,17 @@
                 if ($authUser) : ?>
                     <div class="user-menu__logged">
                         <p><?= esc($authUser['user_name']) ?></p>
-                        <a class="user-menu__bets" href="pages/my-bets.html">Мои ставки</a>
-                        <a class="user-menu__logout" href="logout.php">Выход</a>
+                        <a class="user-menu__bets" href="/pages/my-bets.html">Мои ставки</a>
+                        <a class="user-menu__logout" href="/logout.php">Выход</a>
                     </div>
                 <?php
                 else : ?>
                     <ul class="user-menu__list">
                         <li class="user-menu__item">
-                            <a href="register.php">Регистрация</a>
+                            <a href="/register.php">Регистрация</a>
                         </li>
                         <li class="user-menu__item">
-                            <a href="login.php">Вход</a>
+                            <a href="/login.php">Вход</a>
                         </li>
                     </ul>
                 <?php
@@ -53,8 +53,8 @@
         <ul class="nav__list container">
             <!--заполните этот список из массива категорий-->
             <?php foreach ($categories as $category) : ?>
-                <li class="nav__item">
-                    <a href="pages/all-lots.html"><?= esc($category['category_name']) ?></a>
+                <li class="nav__item <?= esc($category['category_name'] == $searchQuery ? 'nav__item--current' : ''); ?>">
+                    <a href="/all-lots.php?category=<?= esc($category['category_name']) ?>"><?= esc($category['category_name']) ?></a>
                 </li>
             <?php
             endforeach; ?>
@@ -103,7 +103,7 @@
                 </svg>
             </a>
         </div>
-        <a class="main-footer__add-lot button" href="add-lot.html">Добавить лот</a>
+        <a class="main-footer__add-lot button" href="/add.php">Добавить лот</a>
         <div class="main-footer__developed-by">
             <span class="visually-hidden">Разработано:</span>
             <a class="logo-academy" href="https://htmlacademy.ru/intensive/php">

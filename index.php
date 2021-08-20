@@ -10,5 +10,5 @@ $lots = getLots($db);
 echo renderTemplate('index-template.php', $title, $authUser, $categories, [
     'categories' => $categories,
     'lots' => $lots,
-], $isIndex);
+], '',$isIndex);
 

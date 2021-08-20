@@ -1,5 +1,7 @@
 <?php
 use JetBrains\PhpStorm\NoReturn;
+use JetBrains\PhpStorm\Pure;
+
 /**
  * Проверяет переданную дату на соответствие формату 'ГГГГ-ММ-ДД'
  *
@@ -190,7 +192,7 @@ function esc(string $str): string
  * @param array $data
  * @return string
  */
-function  renderTemplate(string $name, string $title, array|string $authUser, array $categories,  array $data = [], bool $isIndex = false): string
+function  renderTemplate(string $name, string $title, array|string $authUser, array $categories, array $data = [], string $searchQuery = '', bool $isIndex = false): string
 {
     $main = include_template($name, $data);
     return include_template('layout-template.php', [
@@ -198,6 +200,7 @@ function  renderTemplate(string $name, string $title, array|string $authUser, ar
         'isIndex' => $isIndex,
         'authUser' => $authUser,
         'categories' => $categories,
+        'searchQuery' => $searchQuery,
         'main' => $main,
     ]);
 }
@@ -207,8 +210,9 @@ function  renderTemplate(string $name, string $title, array|string $authUser, ar
  * @param array $categories
  * @param int $responseCode
  * @param string $errMessage
+ * @var $message
  */
-#[NoReturn] function httpError(array $categories, int $responseCode, string $errMessage = '' )
+#[NoReturn] function httpError(array $categories, array $authUser, int $responseCode,  string $errMessage = '' )
 {
     $error = [
         403 => '403 - У вас нет права зайти на страницу ',
@@ -219,7 +223,7 @@ function  renderTemplate(string $name, string $title, array|string $authUser, ar
         $message = $errMessage;
 
     http_response_code($responseCode);
-    echo renderTemplate('404-template.php', $title, '', $categories, [
+    echo renderTemplate('404-template.php', $title, $authUser, $categories, [
         'categories' => $categories,
         'title' => $title,
         'message'=> $message,
@@ -256,3 +260,26 @@ function uploadFile(array $submittedFile, string $uploadPath) : string
     }
 }
 
+#[Pure] function betDateFormat(string $betDateTime): string
+{
+    $dateNow = date_create();
+    $dateBetCreated = date_create($betDateTime);
+
+    //считает разницу с текущим временем
+    $dateDifference = date_diff($dateBetCreated, $dateNow);
+    $days = $dateDifference->d;// Количество дней int
+    $hours = $dateDifference->h;// Количество часов int
+    $minutes = $dateDifference->i;// Количество минут int
+    $seconds = $dateDifference->s ?: 1;// Количество секунд int
+
+    if($days){
+        return date('d.m.y в H:i',  strtotime($betDateTime));
+    } elseif ($hours) {
+        $date = sprintf("%s %s назад", $hours, get_noun_plural_form($hours, 'час', 'часа', 'часов'));
+    } elseif ($minutes) {
+        $date = sprintf("%s %s назад", $minutes, get_noun_plural_form($minutes, 'минута', 'минуты', 'минут'));
+    } elseif ($seconds) {
+        $date = sprintf("%s %s назад", $seconds, get_noun_plural_form($seconds, 'секунда', 'секунды', 'секунд'));
+    }
+    return $date;
+}

@@ -5,14 +5,14 @@ require __DIR__ . '/initialize.php';
 $title = 'Регистрация';
 
 if ($authUser) {
-    httpError($categories,  403, HEADER_USER_REGISTER_ERR);
+    httpError($categories,  $authUser,403, HEADER_USER_REGISTER_ERR);
 }
 
 $formErrors = [];
 $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_SESSION['token'] !== $_POST['token']) {
-        httpError($categories, 403);
+        httpError($categories, $authUser,403);
     }
 
 
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (count($formErrors) === 0) {
         $submittedData['user-password'] = password_hash($submittedData['user-password'], PASSWORD_DEFAULT);
         saveUser($db, $submittedData);
-        header("Location: login.php");
+        header("Location: /login.php");
         exit;
     }
 }

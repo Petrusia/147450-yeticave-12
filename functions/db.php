@@ -1,6 +1,69 @@
 <?php
 
-use JetBrains\PhpStorm\NoReturn;
+// https://github.com/ro-htmlacademy/textbook/blob/main/54.md
+
+/**
+ * @param mysqli $mysqli
+ * @param string $sql
+ * @param array $params
+ * @param string $types
+ * @return mysqli_stmt
+ */
+function dbGetPrepareStmt(mysqli $mysqli,string $sql, array $params, string $types = '' ): mysqli_stmt
+{
+    if ($types === '') {
+        $types = str_repeat('s', count($params));
+    }
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    return $stmt;
+};
+
+
+/**
+ * @param mysqli $mysqli
+ * @param string $sql
+ * @param array $params
+ * @param string $types
+ * @return mysqli_result|mysqli_stmt
+ */
+function dbSelect(mysqli $mysqli,string $sql, array $params = [], string $types = '' ): mysqli_result|mysqli_stmt
+{
+    if (!$params) {
+        return $mysqli->query($sql);
+    }
+    return dbGetPrepareStmt($mysqli, $sql, $params, $types)->get_result();
+}
+
+/**
+ * @param mysqli $db
+ * @param string $sqlQuery
+ * @param array $params
+ * @param string $types
+ * @return array|null
+ */
+function dbFetchAssoc(mysqli $db, string $sqlQuery, array $params = [], string $types = ''): ?array
+{
+    $result =dbSelect($db, $sqlQuery, $params, $types);
+    return $result->fetch_assoc();
+}
+
+
+/**
+ * @param mysqli $db
+ * @param string $sqlQuery
+ * @param array $params
+ * @param string $types
+ * @return array|null
+ */
+function dbFetchAll(mysqli $db, string $sqlQuery, array $params = [], string $types = ''): ?array
+{
+    $result = dbSelect($db, $sqlQuery, $params, $types);
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
+
 
 /**
  * @param mysqli $db
@@ -8,19 +71,33 @@ use JetBrains\PhpStorm\NoReturn;
  */
 function getCategories(mysqli $db): array
 {
-    $sqlQuery = "SELECT * FROM category";
-    $result = $db->query( $sqlQuery);
+    $sql = "SELECT * FROM category";
+    $result = dbSelect($db, $sql);
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
+
 /**
  * @param mysqli $db
+ * @param string $searchQuery
+ * @param string $category
+ * @param int $limit
+ * @param int $offset
  * @return array
  */
-function getLots(mysqli $db): array
-{
-    $sqlQuery = "SELECT  lot.lot_id,
+function getLots(
+
+    mysqli $db,
+    string $searchQuery = '',
+    string $category = '',
+    int $limit = 9,
+    int $offset = 0,
+): array {
+    $params = [];
+    $sql = "SELECT
+        lot_id,
         lot_name,
+        lot_desc,
         lot_img,
         lot_create,
         lot_end,
@@ -30,42 +107,57 @@ function getLots(mysqli $db): array
         COUNT(bet.bet_id) bet_count
 
 FROM lot
-         left  join category ON lot_category_id = category.category_id
-         left  join user ON lot_author_id = user.user_id
-         left  join bet ON lot.lot_id = bet.bet_lot_id
-WHERE lot_end > NOW()
-group by lot.lot_id
-ORDER BY lot_create DESC
-LIMIT 9 ";
+         left  join category ON lot_category_id = category_id
+         left  join user ON lot_author_id = user_id
+         left  join bet ON lot_id = bet_lot_id
+WHERE lot_end > NOW()";
 
-    $result = $db->query($sqlQuery);
-    return $result->fetch_all(MYSQLI_ASSOC);
+    if($searchQuery) {
+        $sql .= " AND MATCH(lot_name, lot_desc) AGAINST(?) ";
+        $params[] = $searchQuery;
+    }
+    if($category) {
+        $sql .= " AND category_name = ? ";
+        $params[] = $category;
+    }
+
+    $sql .= "GROUP BY lot.lot_id
+    ORDER BY lot_create DESC
+    LIMIT ?
+    OFFSET ?
+    ";
+
+    $params[] = $limit;
+    $params[] = $offset;
+  return dbFetchAll($db, $sql, $params);
 }
+
 
 /**
  * @param mysqli $db
  * @param int $lotId
- * @return array
+ * @return array|null
  */
 function getLotById(mysqli $db, int $lotId): ?array
 {
     $sql = "SELECT * FROM lot
         INNER JOIN category ON category_id = lot_category_id
         WHERE lot_id = ?";
-        return dbFetchAssoc($db, $sql, $lotId);
+        return dbFetchAssoc($db, $sql, [$lotId]);
 }
 
+/**
+ * @param mysqli $db
+ * @param $lotId
+ * @return array|null
+ */
 function getBetsByLotId(mysqli $db,  $lotId): ?array
 {
     $sql = "SELECT * FROM bet
-        INNER JOIN user ON bet_author_id = user.user_id
+        INNER JOIN user ON bet_author_id = user_id
         WHERE bet_lot_id = ?
         ORDER BY bet_price DESC ";
-    $stmt = $db->prepare($sql); // подготавливаем запрос, получаем stmt
-    $stmt->bind_param("s", $lotId); //
-    $stmt->execute(); // выполняем запрос
-    $result = $stmt->get_result(); // получаем result
-    return $result->fetch_all(MYSQLI_ASSOC);
+        return dbFetchAll($db, $sql, [$lotId]);
 }
 
 
@@ -87,10 +179,7 @@ function saveLotData(mysqli $db, array $submittedData, array $authUser): int|str
                  lot_category_id,
                  lot_author_id
                  )  VALUES (?,?,?,?,?,?,?,?)";
-
-    $stmt = $db->prepare($sql);
-    $stmt->bind_param(
-        'ssssssss',
+    dbGetPrepareStmt( $db, $sql,[
         $submittedData['lot-name'],
         $submittedData['lot-message'],
         $submittedData['lot-img'],
@@ -98,9 +187,9 @@ function saveLotData(mysqli $db, array $submittedData, array $authUser): int|str
         $submittedData['lot-date'],
         $submittedData['lot-step'],
         $submittedData['lot-category'],
-        $authUser['id']
-    );
-    $stmt->execute();
+        $authUser['user_id'],
+    ]);
+
     return $db->insert_id;
 }
 
@@ -113,37 +202,57 @@ function saveLotData(mysqli $db, array $submittedData, array $authUser): int|str
 function getUserByEmail(mysqli $db, string $email): ?array
 {
     $sql = "SELECT * FROM user WHERE user_email = ?";
-    return dbFetchAssoc($db, $sql, $email);
-}
-
-function dbFetchAssoc(mysqli $db, string $sqlQuery, string $where): ?array
-{
-    $stmt = $db->prepare($sqlQuery); // подготавливаем запрос, получаем stmt
-    $stmt->bind_param("s", $where); //
-    $stmt->execute(); // выполняем запрос
-    $result = $stmt->get_result(); // получаем result
-    return $result->fetch_assoc();
+    return dbFetchAssoc($db, $sql, [$email]);
 }
 
 /**
  * @param mysqli $db
- * @param $submittedData
+ * @param array $submittedData
  */
-function saveUser(mysqli $db, $submittedData)
+function saveUser(mysqli $db, array $submittedData)
 {
     $sql = "INSERT INTO user (
-                 user_registered,
-                  user_email,
+                 user_email,
                  user_name,
                  user_password,
                  user_contact
-                 )  VALUES (NOW(),?,?,?,?)";
-    $stmt = $db->prepare($sql);
-    $stmt->bind_param( 'ssss',
-                           $submittedData['user-email'],
-                           $submittedData['user-name'],
-                           $submittedData['user-password'],
-                           $submittedData['user-message']
-    );
-    $stmt->execute();
+                 )  VALUES (?,?,?,?)";
+    dbGetPrepareStmt($db, $sql, [
+        $submittedData['user-email'],
+        $submittedData['user-name'],
+        $submittedData['user-password'],
+        $submittedData['user-message'],
+    ]);
+}
+
+function getLotsCount($db, $searchQuery, $categoryQuery){
+    $sql = "SELECT
+        COUNT(lot_id) as count
+        FROM lot ";
+    if($searchQuery) {
+        $sql .= " WHERE lot_end > NOW()
+        AND MATCH(lot_name, lot_desc) AGAINST(?) ";
+        $params[] = $searchQuery;
+    }
+    if($categoryQuery) {
+        $sql .= " JOIN category ON lot_category_id = category_id
+        WHERE lot_end > NOW()
+        AND category_name = ?  ";
+        $params[] = $categoryQuery;
+    }
+    return dbFetchAssoc($db, $sql, $params)['count'];
+}
+
+function saveBetData(mysqli $db, array $submittedData, array $authUser, int $lotId)
+{
+    $sql = "INSERT INTO bet (
+                 bet_price,
+                bet_author_id,
+                bet_lot_id
+                 )  VALUES (?,?,?)";
+    dbGetPrepareStmt($db, $sql, [
+        $submittedData['cost'],
+        $authUser['user_id'],
+        $lotId,
+    ]);
 }

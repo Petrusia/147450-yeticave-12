@@ -5,7 +5,7 @@
             <?php
             foreach ($categories as $category) : ?>
                 <li class="nav__item">
-                    <a href="all-lots.html"><?= esc($category['category_name']) ?></a>
+                    <a href="/all-lots.php?category=<?= esc($category['category_name']) ?>"><?= esc($category['category_name']) ?></a>
                 </li>
             <?php
             endforeach;
@@ -38,13 +38,18 @@
                             Мин. ставка <span><?= esc(getPrice($minBetStep)) ?></span>
                         </div>
                     </div>
-                    <?php if($authUser) : ?>
-                    <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post" autocomplete="off">
-                        <p class="lot-item__form-item form__item form__item--invalid">
+                    <?php if($showBetForm) : ?>
+                    <form class="lot-item__form"
+                          action="/lot.php?lot_id=<?= esc($lot['lot_id']) ?>" method="post" autocomplete="off">
+                        <p class="lot-item__form-item form__item <?= count($formErrors) > 0 ? 'form__item--invalid' : ''?>">
                             <label for="cost">Ваша ставка</label>
-                            <input id="cost" type="text" name="cost" placeholder="<?= esc(getPrice($minBetStep)) ?>">
-                            <span class="form__error">Введите наименование лота</span>
+                            <input id="cost" type="text" name="cost"
+                                   placeholder="<?= esc(getPrice($minBetStep)) ?>"
+                                   value= "<?= esc($submittedData['cost']?? '') ?>"
+                            >
+                            <span class="form__error"><?= esc($formErrors['cost'] ?? '') ?></span>
                         </p>
+                        <input type="hidden" name="token" value="<?= $_SESSION['token'] ?? '' ?>">
                         <button type="submit" class="button">Сделать ставку</button>
                     </form>
                     <?php endif; ?>
@@ -58,7 +63,7 @@
                                 <tr class="history__item">
                                     <td class="history__name"><?= esc($bet['user_name']); ?></td>
                                     <td class="history__price"><?= esc(getPrice($bet['bet_price'])); ?></td>
-                                    <td class="history__time"><?= esc(date('d.m.y в H:i', strtotime($bet['bet_date']))); ?></td>
+                                    <td class="history__time"><?= esc(betDateFormat($bet['bet_date'])); ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </table>
