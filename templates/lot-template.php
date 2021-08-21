@@ -26,7 +26,7 @@
 
                 <div class="lot-item__state">
                     <?php $data = getDateDiff($lot['lot_end']) ?>
-                    <div class="lot-item__timer timer<?= ($data['hours'] <= 0) ? 'timer--finishing' : ''; ?>">
+                    <div class="lot-item__timer timer <?= ($data['hours'] <= 0) ? 'timer--finishing' : ''; ?>">
                         <?= esc($data['hours']) . ':' . esc($data['minutes']) ?>
                     </div>
                     <div class="lot-item__cost-state">

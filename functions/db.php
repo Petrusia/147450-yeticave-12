@@ -107,9 +107,9 @@ function getLots(
         COUNT(bet.bet_id) bet_count
 
 FROM lot
-         left  join category ON lot_category_id = category_id
-         left  join user ON lot_author_id = user_id
-         left  join bet ON lot_id = bet_lot_id
+         left join category ON lot_category_id = category_id
+         left join user ON lot_author_id = user_id
+         left join bet ON lot_id = bet_lot_id
 WHERE lot_end > NOW()";
 
     if($searchQuery) {
@@ -225,7 +225,7 @@ function saveUser(mysqli $db, array $submittedData)
     ]);
 }
 
-function getLotsCount($db, $searchQuery, $categoryQuery){
+function getLotsCount(mysqli $db, string $searchQuery, string $categoryQuery){
     $sql = "SELECT
         COUNT(lot_id) as count
         FROM lot ";
@@ -255,4 +255,29 @@ function saveBetData(mysqli $db, array $submittedData, array $authUser, int $lot
         $authUser['user_id'],
         $lotId,
     ]);
+}
+
+function getMyBets(mysqli $db, int $userId): ?array
+{
+    $sql = " SELECT
+    lot_id,
+    lot_name,
+    lot_desc,
+    lot_img,
+    lot_end,
+    lot_winner_id,
+    user_contact,
+    category_name,
+    MAX(bet_price) AS lot_price,
+    MAX(bet_date) AS bet_date
+
+    FROM lot
+         left join bet ON lot_id = bet_lot_id
+         left join user ON lot_author_id = user_id
+         left join category ON lot_category_id = category_id
+WHERE bet_author_id = ?
+GROUP BY lot_id
+ORDER BY bet_date DESC";
+
+    return  dbFetchAll($db, $sql, [$userId]);
 }

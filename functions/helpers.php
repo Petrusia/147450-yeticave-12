@@ -272,7 +272,9 @@ function uploadFile(array $submittedFile, string $uploadPath) : string
     $minutes = $dateDifference->i;// Количество минут int
     $seconds = $dateDifference->s ?: 1;// Количество секунд int
 
-    if($days){
+    if($days == 1){
+        return date('Вчера, в H:i',  strtotime($betDateTime));
+    } elseif($days){
         return date('d.m.y в H:i',  strtotime($betDateTime));
     } elseif ($hours) {
         $date = sprintf("%s %s назад", $hours, get_noun_plural_form($hours, 'час', 'часа', 'часов'));
