@@ -27,10 +27,10 @@ $minBetStep = $currentPrice + $lot['lot_bet_step'];
 $TermExpired = time() >= strtotime($lot['lot_end']);
 
 // - лот создан текущим пользователем;
-$createdByCurrentUser = $authUser && $authUser['user_id'] == $lot['lot_author_id'];
+$createdByCurrentUser = (isset($authUser['user_id'])) == $lot['lot_author_id'];
 
 // - последняя ставка сделана текущим пользователем.
-$lastBetByCurrentUser = ((isset($authUser['user_id'])) == (isset($bets[0]['bet_author_id'])));
+$lastBetByCurrentUser = (isset($authUser['user_id'])) == (isset($bets[0]['bet_author_id']));
 
 $showBetForm = $authUser && !$TermExpired && !$createdByCurrentUser && !$lastBetByCurrentUser;
 
@@ -38,7 +38,7 @@ $showBetForm = $authUser && !$TermExpired && !$createdByCurrentUser && !$lastBet
 $formErrors = [];
 $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if ($_SESSION['token'] !== $_POST['token']) {
+    if (($_SESSION['token'] !== $_POST['token']) || !$showBetForm){
         httpError($categories, $authUser,403);
     }
     // этап 1: принять все данные формы:

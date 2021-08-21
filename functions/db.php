@@ -256,3 +256,28 @@ function saveBetData(mysqli $db, array $submittedData, array $authUser, int $lot
         $lotId,
     ]);
 }
+
+function getMyBets(mysqli $db, int $userId): ?array
+{
+    $sql = " SELECT
+    lot_id,
+    lot_name,
+    lot_desc,
+    lot_img,
+    lot_end,
+    lot_winner_id,
+    user_contact,
+    category_name,
+    bet_date,
+    MAX(bet_price) AS lot_price
+
+    FROM lot
+         left join bet ON lot_id = bet_lot_id
+         left join user ON lot_author_id = user_id
+         left join category ON lot_category_id = category_id
+WHERE bet_author_id = ?
+GROUP BY lot_id
+ORDER BY bet_date DESC";
+
+    return  dbFetchAll($db, $sql, [$userId]);
+}
