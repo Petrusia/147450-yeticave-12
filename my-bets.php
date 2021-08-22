@@ -10,7 +10,6 @@ if (!$authUser) {
 
 $lots = getMyBets($db, $authUser['user_id']);
 
-
 echo renderTemplate('my-bets-template.php', $title, $authUser, $categories, [
     'categories' => $categories,
     'lots' => $lots,

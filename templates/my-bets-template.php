@@ -15,7 +15,7 @@
         <?php if (count($lots) > 0): ?>
             <h2>Мои ставки</h2>
         <?php else: ?>
-            <h2>Ничего не найдено</h2>
+            <h2>Ваших ставок нету</h2>
         <?php endif; ?>
         <table class="rates__list">
             <?php foreach ($lots as $lot) : ?>
