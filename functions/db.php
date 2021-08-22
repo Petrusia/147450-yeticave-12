@@ -153,7 +153,8 @@ function getLotById(mysqli $db, int $lotId): ?array
  */
 function getBetsByLotId(mysqli $db,  $lotId): ?array
 {
-    $sql = "SELECT * FROM bet
+    $sql = "SELECT bet_date, bet_price, bet_author_id, bet_lot_id, user_id, user_name
+    FROM bet
         INNER JOIN user ON bet_author_id = user_id
         WHERE bet_lot_id = ?
         ORDER BY bet_price DESC ";
