@@ -282,3 +282,24 @@ ORDER BY bet_date DESC";
 
     return  dbFetchAll($db, $sql, [$userId]);
 }
+
+function getWinnerLots(mysqli $db): ?array
+{
+    $sql = "SELECT
+    lot_id,
+    lot_end,
+    lot_name,
+    lot_winner_id,
+    bet_author_id,
+    user_name,
+    user_email,
+    MAX(bet_price) AS max_price
+
+FROM lot
+         left join bet ON lot_id = bet_lot_id
+         left join user ON bet_author_id = user_id
+
+WHERE  lot_winner_id IS NULL AND lot_end <= NOW()
+GROUP BY lot_id";
+    return dbFetchAll($db, $sql);
+}

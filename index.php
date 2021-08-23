@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 require __DIR__ . '/initialize.php';
+require PROJECT_ROOT . '/getwinner.php';
+header("Refresh: SECONDS_IN_DAY");
 
 $isIndex = true; //Используем в  main-header__logo в  layout-template.php
 $title = 'Главная страница';

@@ -3,6 +3,7 @@ CREATE DATABASE yeticave
 
 USE yeticave;
 
+
 CREATE TABLE category
 (
   category_id    INT AUTO_INCREMENT PRIMARY KEY,
@@ -20,6 +21,7 @@ CREATE TABLE user
   user_contact  VARCHAR(500)
 );
 
+drop table if exists lot cascade;
 CREATE TABLE lot
 (
   lot_id      INT AUTO_INCREMENT PRIMARY KEY,
@@ -35,6 +37,7 @@ CREATE TABLE lot
   lot_category_id INT UNSIGNED
 );
 
+drop table if exists bet cascade;
 CREATE TABLE bet
 (
   bet_id    INT AUTO_INCREMENT PRIMARY KEY,

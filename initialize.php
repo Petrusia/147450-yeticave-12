@@ -7,6 +7,7 @@ if (!file_exists( PROJECT_ROOT . '/config.php')) {
 }
 require PROJECT_ROOT . '/constants.php';
 require PROJECT_ROOT . '/messages.php';
+require PROJECT_ROOT . '/vendor/autoload.php';
 $config = require PROJECT_ROOT . '/config.php';
 
 // https://github.com/ro-htmlacademy/textbook/blob/main/appendix1.md
