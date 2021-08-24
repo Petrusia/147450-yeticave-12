@@ -17,13 +17,14 @@ if($allWinnersLots) {
         $email = include_template('email-template.php', [
             'winnerLot' => $winnerLot
         ]);
-
-        $message = new Swift_Message();
-        $message->setSubject('Ваша ставка победила');
-        $message->setFrom("keks@phpdemo.ru", "Yeticave");
-        $message->setTo($winnerLot['user_email']);
-        $message->setBody($email, 'text/html');
-        $mailer->send($message);
+        if ($stmt->affected_rows == 1) {
+            $message = new Swift_Message();
+            $message->setSubject('Ваша ставка победила');
+            $message->setFrom("keks@phpdemo.ru", "Yeticave");
+            $message->setTo($winnerLot['user_email']);
+            $message->setBody($email, 'text/html');
+            $mailer->send($message);
+        }
     }
 }
-var_dump($allWinnersLots);
+
