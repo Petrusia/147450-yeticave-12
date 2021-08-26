@@ -9,6 +9,7 @@ require PROJECT_ROOT . '/constants.php';
 require PROJECT_ROOT . '/messages.php';
 require PROJECT_ROOT . '/vendor/autoload.php';
 $config = require PROJECT_ROOT . '/config.php';
+$host = $config['host'];
 
 // https://github.com/ro-htmlacademy/textbook/blob/main/appendix1.md
 error_reporting(E_ALL); // задаем максимальный уровень, чтобы РНР нас информировал обо ВСЕХ ошибках без исключений
