@@ -2,7 +2,8 @@
   "name": "petras/yeti.local",
   "description": "YetiCave",
   "require": {
-    "swiftmailer/swiftmailer": "^6.2"
+    "swiftmailer/swiftmailer": "^6.2",
+    "ext-mysqli": "*"
   },
   "authors": [
     {

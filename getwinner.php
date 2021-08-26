@@ -7,6 +7,7 @@ $mailer = new Swift_Mailer($transport);
 
 
 $allWinnersLots = getWinnerLots($db);
+
 if($allWinnersLots) {
     $sql = "UPDATE lot SET lot_winner_id = ? WHERE lot_id = ? ";
     $stmt = $db->prepare($sql);
@@ -14,10 +15,12 @@ if($allWinnersLots) {
         $stmt->bind_param('ss', $winnerLot['bet_author_id'], $winnerLot['lot_id']);
         $stmt->execute();
 
-        $email = include_template('email-template.php', [
-            'winnerLot' => $winnerLot
-        ]);
+
         if ($stmt->affected_rows == 1) {
+
+            $email = include_template('email-template.php', [
+                'winnerLot' => $winnerLot
+            ]);
             $message = new Swift_Message();
             $message->setSubject('Ваша ставка победила');
             $message->setFrom("keks@phpdemo.ru", "Yeticave");
