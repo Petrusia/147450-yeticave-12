@@ -17,4 +17,5 @@ return [
         'port' => '2525',
         'encryption' => 'tls',
     ],
+    'host' => '',
 ];
