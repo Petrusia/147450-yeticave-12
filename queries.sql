@@ -40,7 +40,7 @@ SET user_name     = 'Igor',
 
 INSERT INTO lot
 SET lot_name    = '2014 Rossignol District Snowboard',
-    lot_price   = 10999,
+    lot_price   = 10000,
     lot_desc = 'orem ipsum dolor sit amet, consectetur adipiscing elit,
                 sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -50,13 +50,13 @@ SET lot_name    = '2014 Rossignol District Snowboard',
                 sunt in culpa qui officia deserunt mollit anim id est laborum.',
     lot_img     = '/img/lot-1.jpg',
     lot_create   = '2021-05-01',
-    lot_end     = '2021-08-20',
-    lot_bet_step    = 1000,
-    lot_author_id   = 1,
+    lot_end     = '2021-08-23',
+    lot_bet_step    = 100,
+    lot_author_id   = 5,
     lot_category_id = 1;
 INSERT INTO lot
 SET lot_name    = 'DC Ply Mens 2016/2017 Snowboard',
-    lot_price   = 159999,
+    lot_price   = 11000,
     lot_desc = 'orem ipsum dolor sit amet, consectetur adipiscing elit,
                 sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -66,13 +66,13 @@ SET lot_name    = 'DC Ply Mens 2016/2017 Snowboard',
                 sunt in culpa qui officia deserunt mollit anim id est laborum.',
     lot_img     = '/img/lot-2.jpg',
     lot_create   = '2021-05-01',
-    lot_end     = '2021-08-20',
-    lot_bet_step    = 1000,
-    lot_author_id   = 2,
+    lot_end     = '2021-08-23',
+    lot_bet_step    = 100,
+    lot_author_id   = 6,
     lot_category_id = 1;
 INSERT INTO lot
 SET lot_name    = 'Крепления Union Contact Pro 2015 года размер L/XL',
-    lot_price   = 8000,
+    lot_price   = 12000,
     lot_desc = 'orem ipsum dolor sit amet, consectetur adipiscing elit,
                 sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -82,13 +82,13 @@ SET lot_name    = 'Крепления Union Contact Pro 2015 года разме
                 sunt in culpa qui officia deserunt mollit anim id est laborum.',
     lot_img     = '/img/lot-3.jpg',
     lot_create   = '2021-05-01',
-    lot_end     = '2021-08-20',
-    lot_bet_step    = 1120,
-    lot_author_id   = 3,
+    lot_end     = '2021-08-23',
+    lot_bet_step    = 100,
+    lot_author_id   = 5,
     lot_category_id = 2;
 INSERT INTO lot
 SET lot_name    = 'Ботинки для сноуборда DC Mutiny Charocal',
-    lot_price   = 10999,
+    lot_price   = 14000,
     lot_desc = 'orem ipsum dolor sit amet, consectetur adipiscing elit,
                 sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -98,13 +98,13 @@ SET lot_name    = 'Ботинки для сноуборда DC Mutiny Charocal',
                 sunt in culpa qui officia deserunt mollit anim id est laborum.',
     lot_img     = '/img/lot-4.jpg',
     lot_create   = '2021-05-01',
-    lot_end     = '2021-08-20',
-    lot_bet_step    = 550,
-    lot_author_id   = 4,
+    lot_end     = '2021-08-24',
+    lot_bet_step    = 100,
+    lot_author_id   = 6,
     lot_category_id = 3;
 INSERT INTO lot
 SET lot_name    = 'Куртка для сноуборда DC Mutiny Charocal',
-    lot_price   = 7500,
+    lot_price   = 15000,
     lot_desc = 'orem ipsum dolor sit amet, consectetur adipiscing elit,
                 sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -114,13 +114,13 @@ SET lot_name    = 'Куртка для сноуборда DC Mutiny Charocal',
                 sunt in culpa qui officia deserunt mollit anim id est laborum.',
     lot_img     = '/img/lot-5.jpg',
     lot_create  = '2021-05-01',
-    lot_end     = '2021-08-20',
-    lot_bet_step    = 720,
-    lot_author_id   = 1,
+    lot_end     = '2021-08-24',
+    lot_bet_step    = 100,
+    lot_author_id   = 5,
     lot_category_id = 4;
 INSERT INTO lot
 SET lot_name    = 'Маска Oakley Canopy',
-    lot_price   = 5400,
+    lot_price   = 16000,
     lot_desc = 'orem ipsum dolor sit amet, consectetur adipiscing elit,
                 sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -130,22 +130,56 @@ SET lot_name    = 'Маска Oakley Canopy',
                 sunt in culpa qui officia deserunt mollit anim id est laborum.',
     lot_img     = '/img/lot-6.jpg',
     lot_create   = '2021-05-01',
-    lot_end     = '2021-08-20',
-    lot_bet_step    = 2020,
-    lot_author_id   = 2,
+    lot_end     = '2021-08-24',
+    lot_bet_step    = 100,
+    lot_author_id   = 6,
     lot_category_id = 6;
 
 INSERT INTO bet
-SET bet_price = 11999,
+SET bet_price = 11000,
     bet_date = '2020-05-01',
     bet_lot_id    = 1,
-    bet_author_id   = 1;
+    bet_author_id   = 5;
 INSERT INTO bet
-SET bet_price = 12999,
+SET bet_price = 12000,
     bet_date = '2020-05-01',
     bet_lot_id    = 1,
-    bet_author_id   = 2;
-
+    bet_author_id   = 6;
+INSERT INTO bet
+SET bet_price = 13000,
+    bet_date = '2020-05-01',
+    bet_lot_id    = 2,
+    bet_author_id   = 5;
+INSERT INTO bet
+SET bet_price = 14000,
+    bet_date = '2020-05-01',
+    bet_lot_id    = 2,
+    bet_author_id   = 5;
+INSERT INTO bet
+SET bet_price = 13000,
+    bet_date = '2020-05-01',
+    bet_lot_id    = 2,
+    bet_author_id   = 6;
+INSERT INTO bet
+SET bet_price = 16000,
+    bet_date = '2020-05-01',
+    bet_lot_id    = 3,
+    bet_author_id   = 6;
+INSERT INTO bet
+SET bet_price = 17000,
+    bet_date = '2020-05-01',
+    bet_lot_id    = 3,
+    bet_author_id   = 5;
+INSERT INTO bet
+SET bet_price = 18000,
+    bet_date = '2020-05-01',
+    bet_lot_id    = 3,
+    bet_author_id   = 6;
+INSERT INTO bet
+SET bet_price = 19000,
+    bet_date = '2020-05-01',
+    bet_lot_id    = 3,
+    bet_author_id   = 5;
 
 SELECT *
 FROM category;

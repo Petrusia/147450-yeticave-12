@@ -1,5 +1,4 @@
 <?php
-
 const SECONDS_IN_DAY = 86400; // Используема в  function validateDate() путь  functions/validation.php
 const ONE_MB = 1048576;
 const LOT_NAME_REQUIRED = true;

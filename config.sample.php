@@ -9,5 +9,12 @@ return [
         'dbname' => 'yeticave',
         'port' => 3306,
         'charset' => 'utf8mb4',
-    ]
+    ],
+    'email' => [
+        'host' => 'smtp.mailtrap.io',
+        'username' => '',
+        'password' => '',
+        'port' => '2525',
+        'encryption' => 'tls',
+    ],
 ];

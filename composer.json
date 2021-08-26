@@ -1,0 +1,19 @@
+{
+  "name": "petras/yeti.local",
+  "description": "YetiCave",
+  "require": {
+    "swiftmailer/swiftmailer": "^6.2",
+    "ext-mysqli": "*"
+  },
+  "authors": [
+    {
+      "name": "Petras Blaževičius",
+      "email": "petrasblazevicius1@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "App\\": "/"
+    }
+  }
+}
