@@ -19,7 +19,7 @@ if($allWinnersLots) {
         if ($stmt->affected_rows == 1) {
 
             $email = include_template('email-template.php', [
-                'host' => $host,
+                'host' => $config['host'],
                 'winnerLot' => $winnerLot
             ]);
             $message = new Swift_Message();
