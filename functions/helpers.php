@@ -33,7 +33,7 @@ function is_date_valid(string $date): bool
  *
  * @return mysqli_stmt Подготовленное выражение
  */
-function db_get_prepare_stmt($link, $sql, $data = [])
+function db_get_prepare_stmt(mysqli $link, string $sql, array $data = [])
 {
     $stmt = mysqli_prepare($link, $sql);
 
@@ -208,11 +208,11 @@ function  renderTemplate(string $name, string $title, array|string $authUser, ar
 
 /**
  * @param array $categories
+ * @param array $authUser
  * @param int $responseCode
  * @param string $errMessage
- * @var $message
  */
-#[NoReturn] function httpError(array $categories, array $authUser, int $responseCode,  string $errMessage = '' )
+#[NoReturn] function httpError(array $categories, array $authUser, int $responseCode, string $errMessage = '' )
 {
     $error = [
         403 => '403 - У вас нет права зайти на страницу ',
@@ -243,8 +243,10 @@ function randomString($length): string
     return substr(str_shuffle($characters), 0, $length);
 }
 
+
 /**
  * @param array $submittedFile
+ * @param string $uploadPath
  * @return string
  */
 function uploadFile(array $submittedFile, string $uploadPath) : string
@@ -260,6 +262,10 @@ function uploadFile(array $submittedFile, string $uploadPath) : string
     }
 }
 
+/**
+ * @param string $betDateTime
+ * @return string
+ */
 #[Pure] function betDateFormat(string $betDateTime): string
 {
     $dateNow = date_create();

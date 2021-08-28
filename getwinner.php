@@ -1,6 +1,7 @@
 <?php
 
-$transport = new Swift_SmtpTransport($config['email']['host'], $config['email']['port'], $config['email']['encryption']);
+$transport = new Swift_SmtpTransport($config['email']['host'], $config['email']['port'],
+    $config['email']['encryption']);
 $transport->setUsername($config['email']['username']);
 $transport->setPassword($config['email']['password']);
 $mailer = new Swift_Mailer($transport);
@@ -8,10 +9,10 @@ $mailer = new Swift_Mailer($transport);
 
 $allWinnersLots = getWinnerLots($db);
 
-if($allWinnersLots) {
+if ($allWinnersLots) {
     $sql = "UPDATE lot SET lot_winner_id = ? WHERE lot_id = ? ";
     $stmt = $db->prepare($sql);
-    foreach ($allWinnersLots as $winnerLot){
+    foreach ($allWinnersLots as $winnerLot) {
         $stmt->bind_param('ss', $winnerLot['bet_author_id'], $winnerLot['lot_id']);
         $stmt->execute();
 

@@ -20,7 +20,6 @@ const LOT_ALLOWED_IMG_EXT = ['jpeg', 'jpg', 'png'];
 const IMAGE_PATH = 'uploads';
 const LOT_DATE_REQUIRED = true;
 const LOT_DATE_FORMAT = 'Y-m-d';
-const TOKEN_EXPIRE = 3600;
 const REGISTER_PASSWORD_MIN_LENGTH = 12;
 const REGISTER_PASSWORD_MAX_LENGTH = 1024;
 const REGISTER_NAME_MIN_LENGTH = 6;

@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use JetBrains\PhpStorm\NoReturn;
-
 /**
  * @param string $string
  * @param string $emptyErrText
@@ -156,6 +154,12 @@ function validateImage(array $submittedFile, string $emptyErrText, string $extEr
 }
 
 
+/**
+ * @param string $email
+ * @param mysqli $db
+ * @param string $emailExistErrText
+ * @return string|null
+ */
 function isUserEmailExists(
     string $email,
     mysqli $db,

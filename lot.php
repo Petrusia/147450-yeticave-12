@@ -6,8 +6,8 @@ require __DIR__ . '/initialize.php';
 $lotId = filter_input(INPUT_GET, 'lot_id', FILTER_VALIDATE_INT);
 
 // Если параметр запроса отсутствует, то вместо содержимого страницы возвращать код ответа 404.
-if (!$lotId ) {
-    httpError($categories,  $authUser,404);
+if (!$lotId) {
+    httpError($categories, $authUser, 404);
 }
 
 // Сформируйте и выполните SQL-запрос на чтение записи из таблицы с лотами,
@@ -16,7 +16,7 @@ $lot = getLotById($db, $lotId);
 
 // Если по этому ID не нашли ни одной записи, то вместо содержимого страницы возвращать код ответа 404.
 if (!$lot) {
-    httpError($categories, $authUser,404);
+    httpError($categories, $authUser, 404);
 }
 $title = $lot['lot_name'];
 $bets = getBetsByLotId($db, $lotId);
@@ -29,7 +29,7 @@ $minBetStep = $currentPrice + $lot['lot_bet_step'];
 $TermExpired = time() >= strtotime($lot['lot_end']);
 
 // - лот создан текущим пользователем;
-$createdByCurrentUser = ($authUser['user_id'] ?? 0 )== $lot['lot_author_id'];
+$createdByCurrentUser = ($authUser['user_id'] ?? 0) == $lot['lot_author_id'];
 
 // - последняя ставка сделана текущим пользователем.
 $lastBetByCurrentUser = ($authUser['user_id'] ?? 0) == ($bets[0]['bet_author_id'] ?? 0);
@@ -40,8 +40,8 @@ $showBetForm = $authUser && !$TermExpired && !$createdByCurrentUser && !$lastBet
 $formErrors = [];
 $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (($_SESSION['token'] !== $_POST['token']) || !$showBetForm){
-        httpError($categories, $authUser,403);
+    if (($_SESSION['token'] !== $_POST['token']) || !$showBetForm) {
+        httpError($categories, $authUser, 403);
     }
     // этап 1: принять все данные формы:
     $submittedData = [
@@ -76,5 +76,5 @@ echo renderTemplate(
         'showBetForm' => $showBetForm,
         'formErrors' => $formErrors,
         'submittedData' => $submittedData,
-       ]
+    ]
 );

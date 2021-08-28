@@ -18,7 +18,7 @@ function dbGetPrepareStmt(mysqli $mysqli,string $sql, array $params, string $typ
     $stmt->bind_param($types, ...$params);
     $stmt->execute();
     return $stmt;
-};
+}
 
 
 /**
@@ -226,6 +226,12 @@ function saveUser(mysqli $db, array $submittedData)
     ]);
 }
 
+/**
+ * @param $db
+ * @param $searchQuery
+ * @param $categoryQuery
+ * @return mixed
+ */
 function getLotsCount($db, $searchQuery, $categoryQuery){
     $sql = "SELECT
         COUNT(lot_id) as count
@@ -244,6 +250,12 @@ function getLotsCount($db, $searchQuery, $categoryQuery){
     return dbFetchAssoc($db, $sql, $params)['count'];
 }
 
+/**
+ * @param mysqli $db
+ * @param array $submittedData
+ * @param array $authUser
+ * @param int $lotId
+ */
 function saveBetData(mysqli $db, array $submittedData, array $authUser, int $lotId)
 {
     $sql = "INSERT INTO bet (
@@ -258,6 +270,11 @@ function saveBetData(mysqli $db, array $submittedData, array $authUser, int $lot
     ]);
 }
 
+/**
+ * @param mysqli $db
+ * @param int $userId
+ * @return array|null
+ */
 function getMyBets(mysqli $db, int $userId): ?array
 {
     $sql = " SELECT
@@ -283,6 +300,11 @@ ORDER BY bet_date DESC";
     return  dbFetchAll($db, $sql, [$userId]);
 }
 
+
+/**
+ * @param mysqli $db
+ * @return array|null
+ */
 function getWinnerLots(mysqli $db): ?array
 {
     $sql = "SELECT

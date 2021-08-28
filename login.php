@@ -6,16 +6,15 @@ $title = 'Вход';
 
 
 if ($authUser) {
-    httpError($categories, $authUser,403, HEADER_USER_REGISTER_ERR );
+    httpError($categories, $authUser, 403, HEADER_USER_REGISTER_ERR);
 }
 
 $formErrors = [];
 $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_SESSION['token'] !== $_POST['token']) {
-        httpError($categories, $authUser,403 );
+        httpError($categories, $authUser, 403);
     }
-
 
     // этап 1: принять все данные формы:
     $submittedData = [
@@ -56,5 +55,5 @@ echo renderTemplate(
         'categories' => $categories,
         'formErrors' => $formErrors,
         'submittedData' => $submittedData,
-        ]
+    ]
 );

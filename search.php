@@ -10,12 +10,12 @@ $lotsCount = getLotsCount($db, $searchQuery, '');
 $lotsPerPage = LOTS_PER_PAGE;
 $lotsPagesCount = ceil($lotsCount / $lotsPerPage) ?: 1;
 $lotsPagesRange = range(1, $lotsPagesCount);
-$offset =  $lotsPerPage  * ($currentPage - 1);
+$offset = $lotsPerPage * ($currentPage - 1);
 
-if($currentPage < 1 || $currentPage > $lotsPagesCount) {
-    httpError($categories, $authUser,404, HEADER_PAGE_NUMBER_ERR);
+if ($currentPage < 1 || $currentPage > $lotsPagesCount) {
+    httpError($categories, $authUser, 404, HEADER_PAGE_NUMBER_ERR);
 }
-$lots = getLots($db, $searchQuery,'', $lotsPerPage, $offset);
+$lots = getLots($db, $searchQuery, '', $lotsPerPage, $offset);
 
 echo renderTemplate('search-template.php', $title, $authUser, $categories, [
     'categories' => $categories,

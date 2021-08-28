@@ -5,7 +5,7 @@ require __DIR__ . '/initialize.php';
 $title = 'Мои ставки';
 
 if (!$authUser) {
-    httpError($categories, $authUser,403);
+    httpError($categories, $authUser, 403);
 }
 
 $lots = getMyBets($db, $authUser['user_id']);

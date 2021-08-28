@@ -5,7 +5,7 @@ require __DIR__ . '/initialize.php';
 $title = 'Добавление лота';
 
 if (!$authUser) {
-    httpError($categories, $authUser,403);
+    httpError($categories, $authUser, 403);
 }
 
 $formErrors = [];
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $submittedData = [
         'lot-name' => trim(filter_input(INPUT_POST, 'lot-name')),
         'lot-category' => trim(filter_input(INPUT_POST, 'lot-category')),
-        'lot-message' =>trim(filter_input(INPUT_POST, 'lot-message')),
+        'lot-message' => trim(filter_input(INPUT_POST, 'lot-message')),
         'lot-rate' => trim(filter_input(INPUT_POST, 'lot-rate')),
         'lot-step' => trim(filter_input(INPUT_POST, 'lot-step')),
         'lot-date' => trim(filter_input(INPUT_POST, 'lot-date')),
@@ -87,11 +87,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ),
         'lot-img' => validateImage($submittedFile, LOT_IMG_EXIST_ERR, LOT_IMG_EXTENSION_ERR, LOT_IMG_SIZE_ERR),
     ];
-    $formErrors=array_filter($formErrors);
+    $formErrors = array_filter($formErrors);
 
     // этап 3: сохранить проверенные данные если соответствует правилам валидации:
     if (count($formErrors) === 0) {
-        $submittedData['lot-img']  = uploadFile($submittedFile['lot-img'], IMAGE_PATH);
+        $submittedData['lot-img'] = uploadFile($submittedFile['lot-img'], IMAGE_PATH);
         $id = saveLotData($db, $submittedData, $authUser);
         header("Location: /lot.php?lot_id={$id}");
         exit;
@@ -102,7 +102,7 @@ echo renderTemplate(
     'add-template.php', $title, $authUser, $categories, [
         'categories' => $categories,
         'formErrors' => $formErrors,
-        'submittedData' =>  $submittedData,
+        'submittedData' => $submittedData,
     ]
 );
 

@@ -5,14 +5,14 @@ require __DIR__ . '/initialize.php';
 $title = 'Регистрация';
 
 if ($authUser) {
-    httpError($categories,  $authUser,403, HEADER_USER_REGISTER_ERR);
+    httpError($categories, $authUser, 403, HEADER_USER_REGISTER_ERR);
 }
 
 $formErrors = [];
 $submittedData = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_SESSION['token'] !== $_POST['token']) {
-        httpError($categories, $authUser,403);
+        httpError($categories, $authUser, 403);
     }
 
 
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $submittedData = [
         'user-email' => trim(filter_input(INPUT_POST, 'user-email')),
         'user-password' => trim(filter_input(INPUT_POST, 'user-password')),
-        'user-name' =>trim(filter_input(INPUT_POST, 'user-name')),
+        'user-name' => trim(filter_input(INPUT_POST, 'user-name')),
         'user-message' => trim(filter_input(INPUT_POST, 'user-message')),
     ];
 
@@ -79,7 +79,7 @@ echo renderTemplate(
     'register-template.php', $title, $authUser, $categories, [
         'categories' => $categories,
         'formErrors' => $formErrors,
-        'submittedData' =>  $submittedData,
-        ]
+        'submittedData' => $submittedData,
+    ]
 );
 

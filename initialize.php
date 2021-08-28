@@ -1,7 +1,7 @@
 <?php
 const PROJECT_ROOT = __DIR__;
 
-if (!file_exists( PROJECT_ROOT . '/config.php')) {
+if (!file_exists(PROJECT_ROOT . '/config.php')) {
     $msg = 'Создайте файл config.php на основе config.sample.php и внесите туда настройки проекта';
     trigger_error($msg, E_USER_ERROR);
 }
@@ -27,7 +27,7 @@ require PROJECT_ROOT . '/functions/db_connect.php';
 //А вот режим вывода ошибок я бы задал как раз повыше.
 
 session_start();
-if(!isset($_SESSION['token'])){
+if (!isset($_SESSION['token'])) {
     $_SESSION['token'] = bin2hex(random_bytes(32));
 }
 $authUser = $_SESSION['authUser'] ?? '';
